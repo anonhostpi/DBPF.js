@@ -29,7 +29,7 @@
         "prebuild:node":    "npm run make:imports",
         
         "test":             "npm run build:test && npm run test:serve",
-        "test:serve":       "live-server --port=8080 --open=./test/index.html"
+        "test:serve":       "cd ./test live-server --port=8080 --open=./index.html"
     },
 
     "devDependencies": {
