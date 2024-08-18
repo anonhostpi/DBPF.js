@@ -12,9 +12,13 @@ const {
 } = polyfill(
     {
         isAbsolute: (path: string) => /^[a-zA-Z]:[\\/]/.test(path),
-        resolve: (...paths: string[]) => paths.join("/"),
+        resolve: (...paths: string[]) => {
+            paths = paths.map( path => path.replace(/\\/g, '/') ).filter( path => path.length );
+            return paths.join('/');
+        },
         existsSync: () => true, 
         writeFileSync: () => {}, // no-op
+        cwd: () => ""
     },
     "path",
     "fs",
