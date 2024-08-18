@@ -1,5 +1,3 @@
-import { polyfill } from "../src/polyfill";
-(globalThis as any).polyfill = polyfill;
 import {
     DBPF,
     load,
