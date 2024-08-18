@@ -1,7 +1,7 @@
 import { polyfill } from "./polyfill";
 import { fs, Buffer } from "./polyfill.fs";
 import { EventEmitter } from "./polyfill.events";
-import { ByteBuffer } from "./bytebuffer";
+import { BufferReader } from "./bytebuffer";
 import { Deserialized, JSONPrimitive } from "./serde";
 
 let {
@@ -151,7 +151,7 @@ export class DBPF extends EventEmitter {
         }
 
         this.headerbuffer = buffer.subarray( 0, HEADERLENGTH );
-        const reader = new ByteBuffer( this.headerbuffer );
+        const reader = new BufferReader( this.headerbuffer );
 
         const magic = reader.getInt(); // 0 -> 4 bytes
 
@@ -559,7 +559,7 @@ class DBPFIndexTable extends EventEmitter {
         if( !this.instance._buffer )
             throw new Error("DBPFIndexTable: No index table buffer, try awaiting init() first");
 
-        const reader = new ByteBuffer( this.instance._buffer );
+        const reader = new BufferReader( this.instance._buffer );
 
         reader.move( index * ENTRYLENGTH );
 

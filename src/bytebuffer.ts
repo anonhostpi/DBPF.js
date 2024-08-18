@@ -1,17 +1,17 @@
 import { Buffer } from "./polyfill.fs";
 
-export class ByteBuffer extends Buffer {
+// a simple library for reading bytes from a buffer
+
+export class BufferReader {
     private _buffer: Buffer;
     private _cursor: number; // position in buffer
 
     constructor( buffer: Buffer ){
-        super( buffer.length );
         this._buffer = buffer;
         this._cursor = 0;
-        (this as any).__proto__ = ByteBuffer.prototype; 
     }
 
-    override get buffer(): Buffer {
+    get buffer(): Buffer {
         return this._buffer;
     }
 
@@ -30,7 +30,7 @@ export class ByteBuffer extends Buffer {
     // 1 byte
     getByte(): number {
         if( this._cursor + 1 >= this._buffer.length )
-            throw new RangeError("ByteBuffer: Read out of range");
+            throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readUInt8( this._cursor );
         this.advance();
@@ -40,7 +40,7 @@ export class ByteBuffer extends Buffer {
     // 2 bytes
     getShort(): number {
         if( this._cursor + 2 >= this._buffer.length )
-            throw new RangeError("ByteBuffer: Read out of range");
+            throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readUInt16LE( this._cursor );
         this.advance(2);
@@ -50,7 +50,7 @@ export class ByteBuffer extends Buffer {
     // 4 bytes
     getInt(): number {
         if( this._cursor + 4 >= this._buffer.length )
-            throw new RangeError("ByteBuffer: Read out of range");
+            throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readUInt32LE( this._cursor );
         this.advance(4);
@@ -60,7 +60,7 @@ export class ByteBuffer extends Buffer {
     // 4 bytes
     getFloat(): number {
         if( this._cursor + 4 >= this._buffer.length )
-            throw new RangeError("ByteBuffer: Read out of range");
+            throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readFloatLE( this._cursor );
         this.advance(4);
@@ -70,7 +70,7 @@ export class ByteBuffer extends Buffer {
     // 8 bytes
     getLong(): bigint {
         if( this._cursor + 8 >= this._buffer.length )
-            throw new RangeError("ByteBuffer: Read out of range");
+            throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readBigInt64LE( this._cursor );
         this.advance(8);
@@ -80,7 +80,7 @@ export class ByteBuffer extends Buffer {
     // 'n' bytes
     getSection( length: number ): Buffer {
         if( this._cursor + length >= this._buffer.length )
-            throw new RangeError("ByteBuffer: Read out of range");
+            throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.subarray( this._cursor, this._cursor + length );
         this.advance(length);
@@ -103,7 +103,7 @@ export class ByteBuffer extends Buffer {
         } while( (byte & 0x80) && i < bytelimit );
 
         if( (byte & 0x80) && i === bytelimit ){
-            throw new RangeError("ByteBuffer: LEB128 value too large");
+            throw new RangeError("BufferReader: LEB128 value too large");
         }
 
         return value;
@@ -124,7 +124,7 @@ export class ByteBuffer extends Buffer {
         } while( (byte & 0x80) && i < bytelimit );
 
         if( (byte & 0x80) && i === bytelimit ){
-            throw new RangeError("ByteBuffer: LEB128 value too large");
+            throw new RangeError("BufferReader: LEB128 value too large");
         }
 
         if( (byte & 0x40) && i < bytelimit ){
@@ -149,7 +149,7 @@ export class ByteBuffer extends Buffer {
         } while( (byte & 0x80) && i < bytelimit );
 
         if( (byte & 0x80) && i === bytelimit ){
-            throw new RangeError("ByteBuffer: LEB128 value too large");
+            throw new RangeError("BufferReader: LEB128 value too large");
         }
 
         return value
@@ -170,7 +170,7 @@ export class ByteBuffer extends Buffer {
         } while( (byte & 0x80) && i < bytelimit );
 
         if( (byte & 0x80) && i === bytelimit ){
-            throw new RangeError("ByteBuffer: LEB128 value too large");
+            throw new RangeError("BufferReader: LEB128 value too large");
         }
 
         if( (byte & 0x40) && i < bytelimit ){
