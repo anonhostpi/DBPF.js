@@ -33,3 +33,5 @@ Built files:
 Source files:
 - `src/dbpf.ts` - The main library
 - `src/test.ts` - The test environment used by `npm run test`
+
+![DBPF.js test environment](docs/test.png)
