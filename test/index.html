@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Testing</title>
+    <style>
+* {
+    /*Reset's every elements apperance*/
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    border-spacing: 0;
+    color: black;
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.42rem;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0;
+}
+
+button {
+    cursor: pointer;
+}
+
+h1,h2,h3 {
+    text-align: center;
+    font-weight: bold;
+}
+
+h1 {
+    margin: 25px;
+    font-size: 32px;
+}
+
+#file-select, #output > div  {
+    margin: 25px;
+    padding: 15px;
+    border: 5px black;
+    border-radius: 15px;
+    border-style: solid;
+    background: #94a7ff;
+}
+
+#output > div::after {
+    content: " ";
+    background: #000000;
+    display: block;
+    width: 100%;
+    height: 5px;
+    border-radius: 2.5px;
+    margin-top: 5px;
+    margin-bottom: 25px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    margin-bottom: 10px;
+}
+
+table {
+    table-layout: auto;
+    width: 100%;
+}
+
+table tr > td:first-of-type {
+    font-weight: bold;
+    position: relative;
+}
+
+table tr > td:last-of-type{
+    width: 100%;
+}
+
+table tr > td:nth-of-type(2){
+    padding-left: 10px;
+    vertical-align: bottom;
+}
+
+table tr > td:first-of-type::after {
+    content: " ";
+    background: black;
+    display: block;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 0.5px;
+}
+
+.dbpf > table {
+    padding: 7px;
+    border: 5px black;
+    border-style: solid;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+.file-header {
+    border: 5px black solid;
+    border-radius: 7px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #e49797;
+}
+
+.file-header > table {
+    border: 5px black solid;
+    border-radius: 7px;
+    padding: 10px;
+    margin-top: 10px;
+    width: 100%;
+    background-color: white;
+}
+
+.file-header table tr:first-of-type {
+    background: #e7e79e
+}
+
+.dbpf-contents-wrapper {
+    border: 5px black solid;
+    border-radius: 7px;
+    padding: 10px;
+    background-color: #a8ffca;
+}
+
+.dbpf-contents > div > table {
+    padding: 7px;
+    border: 5px black;
+    border-style: solid;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+.dbpf-contents table tr:first-of-type {
+    background: #59c4c4;
+}
+
+.dbpf-contents table tr:first-of-type > td {
+    font-size: 18px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.dbpf-contents table tr td[colspan="2"] {
+    padding-top: 10px;
+    font-size: 18px;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.dbpf-contents table tr td[colspan="2"]::after {
+    display: none;
+}
+
+#clicker {
+    background: white;
+    padding: 2px 10px;
+    border-radius: 7px;
+    border: 4px #484c56 solid;
+}
+
+#clicker:hover {
+    background: #ece5f5;
+}
+    </style>
+</head>
+<body>
+    <h1>Open Devtools for Further Testing</h1>
+    
+    <div id="file-select">
+        <label for="avatar">Choose files to parse:</label>
+        <input
+            title="NoTitle"
+            style="display:none"
+            type="file"
+            id="input"
+            name="input"
+            multiple />
+        <button
+            id="clicker"
+            onclick="
+            const output = document.getElementById('output');
+            while (output.firstChild) {
+                output.removeChild(output.firstChild);
+            }
+            const h2 = document.createElement('h2');
+            h2.style.color = 'red';
+            h2.textContent = 'No Files Selected';
+            output.appendChild( h2 );
+            document.getElementById('input').click();
+            " type="button">Select File</button>
+    </div>
+
+    <!--Template - do not render-->
+    <div id="file-template" style="display: none;">
+        <div class = "dbpf">
+            <h2 class="filename"></h2>
+            <table class="file-info">
+                <tr>
+                    <td>File Path:</td>
+                    <td class="filepath"></td>
+                </tr>
+                <tr>
+                    <td>File Extension:</td>
+                    <td class="fileext"></td>
+                </tr>
+                <tr>
+                    <td>Magic Number:</td>
+                    <td class="magic"></td>
+                </tr>
+            </table>
+            <div class="file-header">
+                <h3>DBPF Header:</h3>
+                <table class="dbpf-info">
+                    <tr>
+                        <td colspan="2">DBPF Info:</td>
+                    </tr>
+                    <tr>
+                        <td>Major:</td>
+                        <td class="dbpf-major"></td>
+                    </tr>
+                    <tr>
+                        <td>Minor:</td>
+                        <td class="dbpf-minor"></td>
+                    </tr>
+                    <tr>
+                        <td>Created:</td>
+                        <td class="dbpf-created"></td>
+                    </tr>
+                    <tr>
+                        <td>Modified:</td>
+                        <td class="dbpf-modified"></td>
+                    </tr>
+                </table>
+                <table class="index-info">
+                    <tr>
+                        <td colspan="2">Index Table Info:</td>
+                    </tr>
+                    <tr>
+                        <td>Major:</td>
+                        <td class="index-major"></td>
+                    </tr>
+                    <tr>
+                        <td>Minor:</td>
+                        <td class="index-minor"></td>
+                    </tr>
+                    <tr>
+                        <td>Count:</td>
+                        <td class="index-count"></td>
+                    </tr>
+                    <tr>
+                        <td>Size:</td>
+                        <td class="index-size"></td>
+                    </tr>
+                    <tr>
+                        <td>Offset:</td>
+                        <td class="index-offset"></td>
+                    </tr>
+                    <tr>
+                        <td>First:</td>
+                        <td class="index-first"></td>
+                    </tr>
+                </table>
+                <table class="hole-info">
+                    <tr>
+                        <td colspan="2">Hole Table Info:</td>
+                    </tr>
+                    <tr>
+                        <td>Count:</td>
+                        <td class="hole-count"></td>
+                    </tr>
+                    <tr>
+                        <td>Size:</td>
+                        <td class="hole-size"></td>
+                    </tr>
+                    <tr>
+                        <td>Offset:</td>
+                        <td class="hole-offset"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="dbpf-contents-wrapper">
+                <h3>DBPF Contents:</h3>
+                <div class="dbpf-contents">loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!--Template - do not render-->
+    <div id="contents-template" style="display: none;">
+        <table>
+            <tr>
+                <td>Index:</td>
+                <td class="resource-index"></td>
+            </tr>
+            <tr>
+                <td>Resource Group:</td>
+                <td class="resource-group"></td>
+            </tr>
+            <tr>
+                <td>Resource Type:</td>
+                <td class="resource-type"></td>
+            </tr>
+            <tr>
+                <td>Instance:</td>
+                <td class="resource-instance"></td>
+            </tr>
+            <tr>
+                <td>Offset:</td>
+                <td class="resource-offset"></td>
+            </tr>
+            <tr>
+                <td colspan="2">Resource Size:</td>
+            </tr>
+            <tr>
+                <td>Compressed:</td>
+                <td class="resource-size-compressed"></td>
+            </tr>
+            <tr>
+                <td>Memory:</td>
+                <td class="resource-size-memory"></td>
+            </tr>
+            <tr>
+                <td>File:</td>
+                <td class="resource-size-file"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="output">
+        <h2 style="color:red">No Files Selected</h2>
+    </div>
+
+    <script src="test.web.js"></script> <!-- Local script -->
+</body>
+</html>

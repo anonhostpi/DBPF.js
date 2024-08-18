@@ -1,0 +1,53 @@
+{
+    "name":             "dbpf",
+    "author":           "anonhostpi",
+    "license":          "MIT",
+    "version":          "1.0.0",
+    "description":      "A library for reading and writing DBPF files.",
+    
+    "main":             "./dist/dbpf.js",
+    "browser":          "./dist/dbpf.web.js",
+    
+    "scripts": {
+        "clean":            "rimraf ./dist && mkdirp ./dist",
+
+        "make:imports":     "node scripts/imports.js",
+        "make:node":        "tsc --project ./tsconfig.json",
+        "make:web":         "webpack --config webpack.config.js",
+        "make:test":        "webpack --config webpack.test.config.js",
+
+        "build":            "npm run make:node && npm run make:web",
+
+        "build:web":        "webpack --config webpack.config.js",
+        "build:test":       "webpack --config webpack.test.config.js",
+        "build:node":       "tsc --project ./tsconfig.json",
+
+        "prebuild":         "npm run clean && npm run make:imports",
+
+        "prebuild:web":     "npm run make:imports",
+        "prebuild:test":    "npm run make:imports",
+        "prebuild:node":    "npm run make:imports",
+        
+        "test":             "npm run build:test && npm run test:serve",
+        "test:serve":       "live-server --port=8080 --open=./test/index.html"
+    },
+
+    "devDependencies": {
+        "@types/node": "^22.3.0",
+        "browserify": "^17.0.0",
+        "live-server": "^1.2.2",
+        "mkdirp": "^3.0.1",
+        "rimraf": "^6.0.1",
+        "ts-loader": "^9.5.1",
+        "tsc-alias": "^1.8.10",
+        "tslib": "^2.4.0",
+        "typescript": "~5.4.5",
+        "webpack": "^5.93.0",
+        "webpack-cli": "^5.1.4"
+    },
+    "dependencies": {
+        "buffer": "^6.0.3",
+        "path-browserify": "^1.0.1",
+        "process": "^0.11.10"
+    }
+}
