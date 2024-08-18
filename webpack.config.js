@@ -27,10 +27,6 @@ module.exports = {
             },
         ],
     },
-    externals: {
-        "buffer" : "Buffer",
-        "process" : "process",
-    },
     devtool: false,  // Disable source maps to match your tsconfig
     mode: 'development',  // Can be 'development' or 'production'
 };
