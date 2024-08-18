@@ -28,6 +28,8 @@ type DBPFHeader = {
     dbpf: {
         major: number,
         minor: number,
+        usermajor: number,
+        userminor: number,
         created: number,
         modified: number,
     }
@@ -164,8 +166,10 @@ export class DBPF extends EventEmitter {
 
         const major = reader.getInt(); // 4 -> 8 bytes
         const minor = reader.getInt(); // 8 -> 12 bytes
+        const usermajor = reader.getInt(); // 12 -> 16 bytes
+        const userminor = reader.getInt(); // 16 -> 20 bytes
+        const unused = reader.getInt(); // 20 -> 24 bytes
 
-        reader.advance( 12 ); // 12 -> 24 bytes
         const created = reader.getInt(); // 24 -> 28 bytes
         const modified = reader.getInt(); // 28 -> 32 bytes
 
@@ -183,6 +187,8 @@ export class DBPF extends EventEmitter {
             dbpf: {
                 major,
                 minor,
+                usermajor,
+                userminor,
                 created,
                 modified
             },
@@ -416,7 +422,7 @@ export class DBPFEntry {
     group: ResourceGroup;
 
     // - index and identification:
-    instance: number;
+    instance: bigint;
     offset: number;
 
     // - size:
@@ -433,7 +439,7 @@ export class DBPFEntry {
         file: DBPF,
         type: ResourceType,
         group: ResourceGroup,
-        instance: number,
+        instance: bigint,
         offset: number,
         size: {
             file: number,
@@ -477,7 +483,7 @@ class DBPFIndexTable extends EventEmitter {
             ready_resolve: () => void,
             ready_reject: (err: Error) => void
         )=>{
-            file.read( table_size, table_offset ).then((
+            file.read( table_size, table_offset + 4 ).then((
                 buffer: Buffer
             )=>{
                 this._buffer = buffer;
@@ -559,15 +565,17 @@ class DBPFIndexTable extends EventEmitter {
 
         const type: ResourceType = reader.getInt(); // 0 -> 4 bytes
         const group: ResourceGroup = reader.getInt(); // 4 -> 8 bytes
-        const instance_low: number = reader.getInt(); // 8 -> 12 bytes
-        const instance_high: number = reader.getInt(); // 12 -> 16 bytes
+        const instance_high: number = reader.getInt(); // 8 -> 12 bytes
+        const instance_low: number = reader.getInt(); // 12 -> 16 bytes
         const offset: number = reader.getInt(); // 16 -> 20 bytes
         const size_file: number = reader.getInt(); // 20 -> 24 bytes
         const size_memory: number = reader.getInt(); // 24 -> 28 bytes
         const size_compressed: number = reader.getShort(); // 28 -> 30 bytes
         const unknown: number = reader.getShort(); // 30 -> 32 bytes
 
-        const instance = instance_high + instance_low;
+        // instance is a 128-bit number
+        // the low and high parts are concatenated as 64-bit hex numbers
+        const instance = BigInt( instance_low ) + (BigInt( instance_high ) << BigInt( 32 ));
 
         const base_entry = new DBPFEntry(
             this.instance.file,

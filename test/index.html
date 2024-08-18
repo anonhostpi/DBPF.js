@@ -15,7 +15,7 @@
     font-size: 16px;
     font-weight: normal;
     line-height: 1.42rem;
-    list-style: none outside none;
+    /* list-style: none outside none; */
     margin: 0;
     padding: 0;
     text-align: left;
@@ -174,10 +174,48 @@ table tr > td:first-of-type::after {
 #clicker:hover {
     background: #ece5f5;
 }
+
+body > ul {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+code {
+    border: 2px black solid;
+    border-radius: 5px;
+    padding: 0 5px;
+    margin-top: 2px;
+    display: inline-block;
+}
+
+b {
+    font-weight: bold;
+}
     </style>
 </head>
 <body>
     <h1>Open Devtools for Further Testing</h1>
+    <p style="text-align: center;">
+        This page is for testing the browser's ability to parse files. 
+        <br>
+        <br>
+        Open the developer tools to play and see more output!
+        <br>
+        <b>You are provided with 3 variables in global scope:</b>
+        <br>
+        <br>
+        <ul>
+            <li>
+                <code>files</code> - an array of all <code>File</code> objects provided by user
+            </li>
+            <li>
+                <code>dbpfs</code> - an array of all associated <code>DBPF</code> objects
+            </li>
+            <li>
+                <code>entries</code> - an array of all <code>DBPFEntry</code> objects
+            </li>
+        </ul>
+    </p>
     
     <div id="file-select">
         <label for="avatar">Choose files to parse:</label>
@@ -234,6 +272,14 @@ table tr > td:first-of-type::after {
                     <tr>
                         <td>Minor:</td>
                         <td class="dbpf-minor"></td>
+                    </tr>
+                    <tr>
+                        <td>User Major:</td>
+                        <td class="dbpf-usermajor"></td>
+                    </tr>
+                    <tr>
+                        <td>User Minor:</td>
+                        <td class="dbpf-userminor"></td>
                     </tr>
                     <tr>
                         <td>Created:</td>
@@ -306,12 +352,12 @@ table tr > td:first-of-type::after {
                 <td class="resource-index"></td>
             </tr>
             <tr>
-                <td>Resource Group:</td>
-                <td class="resource-group"></td>
-            </tr>
-            <tr>
                 <td>Resource Type:</td>
                 <td class="resource-type"></td>
+            </tr>
+            <tr>
+                <td>Resource Group:</td>
+                <td class="resource-group"></td>
             </tr>
             <tr>
                 <td>Instance:</td>
@@ -325,16 +371,16 @@ table tr > td:first-of-type::after {
                 <td colspan="2">Resource Size:</td>
             </tr>
             <tr>
-                <td>Compressed:</td>
-                <td class="resource-size-compressed"></td>
-            </tr>
-            <tr>
                 <td>Memory:</td>
                 <td class="resource-size-memory"></td>
             </tr>
             <tr>
                 <td>File:</td>
                 <td class="resource-size-file"></td>
+            </tr>
+            <tr>
+                <td>Compressed:</td>
+                <td class="resource-size-compressed"></td>
             </tr>
         </table>
     </div>
