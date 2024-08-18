@@ -16,7 +16,6 @@ const {
         existsSync: () => true, 
         writeFileSync: () => {}, // no-op
     },
-    "path-browserify",
     "path",
     "fs",
     globalThis.process as any || {}

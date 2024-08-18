@@ -1,4 +1,3 @@
-import { polyfill } from "./polyfill";
 import { Buffer } from "./polyfill.fs";
 
 export class ByteBuffer extends Buffer {
