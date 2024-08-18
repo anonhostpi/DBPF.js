@@ -33,7 +33,7 @@ jobs:
           release_name: ${{ github.ref_name || 'Manual Release' }}
           draft: true
           prerelease: false
-          body_path: ./readme.md
+          body_path: ./README.md
 
       - name: Upload dist files to release
         uses: actions/upload-release-asset@v1
