@@ -45,6 +45,8 @@ jobs:
           asset_path: './dist/dbpf.web.js'
           asset_name: 'dbpf.web.js'
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload zip to release
         uses: actions/upload-release-asset@v1
@@ -53,3 +55,5 @@ jobs:
           asset_path: './dist/module.zip'
           asset_name: 'module.zip'
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
