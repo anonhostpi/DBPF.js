@@ -4,5 +4,5 @@ package-lock.json
 
 # build
 dist
-/test/test.web.js
+/test/serve
 #/src/imports.ts

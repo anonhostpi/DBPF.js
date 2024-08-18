@@ -914,3 +914,10 @@ export function load(
 ): Plugins | undefined {
     return DBPFIndexTable.plugins = Plugins.read( pluginsFile ) as Plugins | undefined;
 }
+
+// umd export
+export const dbpf = {
+    DBPF,
+    load,
+    DBPFEntry
+}

@@ -25,16 +25,17 @@
         "prebuild":         "npm run clean && npm run make:imports",
 
         "prebuild:web":     "npm run make:imports",
-        "prebuild:test":    "npm run make:imports",
+        "prebuild:test":    "npm run build:web",
         "prebuild:node":    "npm run make:imports",
         
         "test":             "npm run build:test && npm run test:serve",
-        "test:serve":       "cd ./test live-server --port=8080 --open=./index.html"
+        "test:serve":       "cd ./test/serve && live-server --port=8080 --open=./index.html"
     },
 
     "devDependencies": {
         "@types/node": "^22.3.0",
         "browserify": "^17.0.0",
+        "copyfiles": "^2.4.1",
         "live-server": "^1.2.2",
         "mkdirp": "^3.0.1",
         "rimraf": "^6.0.1",
