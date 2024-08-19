@@ -39,6 +39,7 @@ input?.addEventListener("change", function( event ) {
                 "filename",
                 "filepath",
                 "fileext",
+                "filesize",
                 "magic",
                 "dbpf-major",
                 "dbpf-minor",
@@ -62,6 +63,7 @@ input?.addEventListener("change", function( event ) {
 
             dbpfChildren["filename"].textContent = dbpf.filename;
             dbpfChildren["filepath"].textContent = dbpf.filepath;
+            dbpfChildren["filesize"].textContent = `${ dbpf.filesize } bytes`;
             dbpfChildren["fileext"].textContent = dbpf.extension;
             const magic = dbpf.magic;
             const magicText = `0x${
@@ -244,121 +246,117 @@ input?.addEventListener("change", function( event ) {
                     dbpfChildren["hole-offset"].style.fontWeight = "bold";
                 }
 
-                let removedLoading = false;
+                let removedLoading = false;const indeces = Object.keys( initialized.table );
+                console.log( indeces.length, "entries found" );
+                for( let index of indeces ){
+                    const entry = initialized.table[Number(index)];
+                    entries.push( entry );
 
-                initialized.table.init().then(()=>{
-                    const indeces = Object.keys( initialized.table );
-                    console.log( indeces.length, "entries found" );
-                    for( let index of indeces ){
-                        const entry = initialized.table[Number(index)];
-                        entries.push( entry );
+                    const entryElement = templates.contents?.cloneNode(true) as HTMLElement;
+                    entryElement.removeAttribute("id");
+                    entryElement.removeAttribute("style");
 
-                        const entryElement = templates.contents?.cloneNode(true) as HTMLElement;
-                        entryElement.removeAttribute("id");
-                        entryElement.removeAttribute("style");
+                    const entryChildren: Record<string,HTMLElement> = {};
+                    ([
+                        "resource-index",
+                        "resource-group",
+                        "resource-type",
+                        "resource-instance",
+                        "resource-offset",
+                        "resource-size-compressed",
+                        "resource-size-memory",
+                        "resource-size-file",
+                    ] as string[]).forEach(
+                        (className: string) => entryChildren[className] = entryElement.querySelector(`.${className}`) as HTMLElement
+                    );
+                    
+                    entryChildren["resource-index"].textContent = index;
 
-                        const entryChildren: Record<string,HTMLElement> = {};
-                        ([
-                            "resource-index",
-                            "resource-group",
-                            "resource-type",
-                            "resource-instance",
-                            "resource-offset",
-                            "resource-size-compressed",
-                            "resource-size-memory",
-                            "resource-size-file",
-                        ] as string[]).forEach(
-                            (className: string) => entryChildren[className] = entryElement.querySelector(`.${className}`) as HTMLElement
-                        );
-                        
-                        entryChildren["resource-index"].textContent = index;
+                    const group = entry.group;
+                    const groupText = `0x${
+                        group.toString(16).padStart(8,"0").toUpperCase()
+                    } (=${ group })`;
+                    const type = entry.type;
+                    const typeText = `0x${
+                        type.toString(16).padStart(8,"0").toUpperCase()
+                    } (=${ type })`;
+                    const instance = entry.instance;
+                    const instanceText = `0x${
+                        instance.toString(16).padStart(16,"0").toUpperCase()
+                    } (=${ instance })`;
+                    const offset = entry.offset;
+                    const offsetText = `0x${
+                        offset.toString(16).padStart(8,"0").toUpperCase()
+                    } (=${ offset })`;
+                    const sizeCompressed = entry.size.compressed;
+                    const sizeCompressedText = `0x${
+                        sizeCompressed.toString(16).padStart(8,"0").toUpperCase()
+                    } (=${ sizeCompressed })`;
+                    const sizeMemory = entry.size.memory;
+                    const sizeMemoryText = `0x${
+                        sizeMemory.toString(16).padStart(8,"0").toUpperCase()
+                    } (=${ sizeMemory })`;
+                    const sizeFile = entry.size.file;
+                    const sizeFileText = `0x${
+                        sizeFile.toString(16).padStart(8,"0").toUpperCase()
+                    } (=${ sizeFile })`;
 
-                        const group = entry.group;
-                        const groupText = `0x${
-                            group.toString(16).padStart(8,"0").toUpperCase()
-                        } (=${ group })`;
-                        const type = entry.type;
-                        const typeText = `0x${
-                            type.toString(16).padStart(8,"0").toUpperCase()
-                        } (=${ type })`;
-                        const instance = entry.instance;
-                        const instanceText = `0x${
-                            instance.toString(16).padStart(16,"0").toUpperCase()
-                        } (=${ instance })`;
-                        const offset = entry.offset;
-                        const offsetText = `0x${
-                            offset.toString(16).padStart(8,"0").toUpperCase()
-                        } (=${ offset })`;
-                        const sizeCompressed = entry.size.compressed;
-                        const sizeCompressedText = `0x${
-                            sizeCompressed.toString(16).padStart(8,"0").toUpperCase()
-                        } (=${ sizeCompressed })`;
-                        const sizeMemory = entry.size.memory;
-                        const sizeMemoryText = `0x${
-                            sizeMemory.toString(16).padStart(8,"0").toUpperCase()
-                        } (=${ sizeMemory })`;
-                        const sizeFile = entry.size.file;
-                        const sizeFileText = `0x${
-                            sizeFile.toString(16).padStart(8,"0").toUpperCase()
-                        } (=${ sizeFile })`;
-
-                        entryChildren["resource-group"].textContent = groupText;
-                        if( group === 0 ){
-                            entryChildren["resource-group"].style.color = "grey";
-                            entryChildren["resource-group"].style.fontStyle = "italic";
-                        } else {
-                            entryChildren["resource-group"].style.fontWeight = "bold";
-                        }
-                        entryChildren["resource-type"].textContent = typeText;
-                        if( type === 0 ){
-                            entryChildren["resource-type"].style.color = "grey";
-                            entryChildren["resource-type"].style.fontStyle = "italic";
-                        } else {
-                            entryChildren["resource-type"].style.fontWeight = "bold";
-                        }
-                        entryChildren["resource-instance"].textContent = instanceText;
-                        if( instance === BigInt(0) ){
-                            entryChildren["resource-instance"].style.color = "grey";
-                            entryChildren["resource-instance"].style.fontStyle = "italic";
-                        } else {
-                            entryChildren["resource-instance"].style.fontWeight = "bold";
-                        }
-                        entryChildren["resource-offset"].textContent = offsetText;
-                        if( offset === 0 ){
-                            entryChildren["resource-offset"].style.color = "grey";
-                            entryChildren["resource-offset"].style.fontStyle = "italic";
-                        } else {
-                            entryChildren["resource-offset"].style.fontWeight = "bold";
-                        }
-                        entryChildren["resource-size-compressed"].textContent = sizeCompressedText;
-                        if( sizeCompressed === 0 ){
-                            entryChildren["resource-size-compressed"].style.color = "grey";
-                            entryChildren["resource-size-compressed"].style.fontStyle = "italic";
-                        } else {
-                            entryChildren["resource-size-compressed"].style.fontWeight = "bold";
-                        }
-                        entryChildren["resource-size-memory"].textContent = sizeMemoryText;
-                        if( sizeMemory === 0 ){
-                            entryChildren["resource-size-memory"].style.color = "grey";
-                            entryChildren["resource-size-memory"].style.fontStyle = "italic";
-                        } else {
-                            entryChildren["resource-size-memory"].style.fontWeight = "bold";
-                        }
-                        entryChildren["resource-size-file"].textContent = sizeFileText;
-                        if( sizeFile === 0 ){
-                            entryChildren["resource-size-file"].style.color = "grey";
-                            entryChildren["resource-size-file"].style.fontStyle = "italic";
-                        } else {
-                            entryChildren["resource-size-file"].style.fontWeight = "bold";
-                        }
-
-                        if( !removedLoading ){
-                            dbpfChildren["dbpf-contents"].innerText = '';
-                            removedLoading = true;
-                        }
-                        dbpfChildren["dbpf-contents"]?.appendChild( entryElement );
+                    entryChildren["resource-group"].textContent = groupText;
+                    if( group === 0 ){
+                        entryChildren["resource-group"].style.color = "grey";
+                        entryChildren["resource-group"].style.fontStyle = "italic";
+                    } else {
+                        entryChildren["resource-group"].style.fontWeight = "bold";
                     }
-                })
+                    entryChildren["resource-type"].textContent = typeText;
+                    if( type === 0 ){
+                        entryChildren["resource-type"].style.color = "grey";
+                        entryChildren["resource-type"].style.fontStyle = "italic";
+                    } else {
+                        entryChildren["resource-type"].style.fontWeight = "bold";
+                    }
+                    entryChildren["resource-instance"].textContent = instanceText;
+                    if( instance === BigInt(0) ){
+                        entryChildren["resource-instance"].style.color = "grey";
+                        entryChildren["resource-instance"].style.fontStyle = "italic";
+                    } else {
+                        entryChildren["resource-instance"].style.fontWeight = "bold";
+                    }
+                    entryChildren["resource-offset"].textContent = offsetText;
+                    if( offset === 0 ){
+                        entryChildren["resource-offset"].style.color = "grey";
+                        entryChildren["resource-offset"].style.fontStyle = "italic";
+                    } else {
+                        entryChildren["resource-offset"].style.fontWeight = "bold";
+                    }
+                    entryChildren["resource-size-compressed"].textContent = sizeCompressedText;
+                    if( sizeCompressed === 0 ){
+                        entryChildren["resource-size-compressed"].style.color = "grey";
+                        entryChildren["resource-size-compressed"].style.fontStyle = "italic";
+                    } else {
+                        entryChildren["resource-size-compressed"].style.fontWeight = "bold";
+                    }
+                    entryChildren["resource-size-memory"].textContent = sizeMemoryText;
+                    if( sizeMemory === 0 ){
+                        entryChildren["resource-size-memory"].style.color = "grey";
+                        entryChildren["resource-size-memory"].style.fontStyle = "italic";
+                    } else {
+                        entryChildren["resource-size-memory"].style.fontWeight = "bold";
+                    }
+                    entryChildren["resource-size-file"].textContent = sizeFileText;
+                    if( sizeFile === 0 ){
+                        entryChildren["resource-size-file"].style.color = "grey";
+                        entryChildren["resource-size-file"].style.fontStyle = "italic";
+                    } else {
+                        entryChildren["resource-size-file"].style.fontWeight = "bold";
+                    }
+
+                    if( !removedLoading ){
+                        dbpfChildren["dbpf-contents"].innerText = '';
+                        removedLoading = true;
+                    }
+                    dbpfChildren["dbpf-contents"]?.appendChild( entryElement );
+                }
             })
         }
     }
