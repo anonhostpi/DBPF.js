@@ -144,6 +144,7 @@ export class DBPF extends EventEmitter {
     // provides safe access to a defragged buffer cache via a mutex protected set method
     private _cache: PromiseSafeBufferCache = new PromiseSafeBufferCache();
     clearCache(): Promise<void> {
+        this._fullbuffer = undefined;
         return this._cache.clear();
     }
 
