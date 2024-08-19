@@ -4,11 +4,31 @@ import './imports';
 const {
     assign,
     defineProperty,
+    freeze,
+    getOwnPropertyNames
 } = Object;
 
 const {
     hasOwnProperty
 } = Object.prototype;
+
+export function deepFreeze(object: any): any {
+    // Retrieve the property names defined on object
+    const propNames = getOwnPropertyNames(object);
+
+    // Freeze properties before freezing the object itself
+    for (const name of propNames) {
+        const value = object[name];
+
+        // If value is an object, recursively freeze it
+        if (value && typeof value === "object") {
+            deepFreeze(value);
+        }
+    }
+
+    // Freeze the object itself
+    return freeze(object);
+}
 
 const hasRequire = typeof (globalThis.require || (typeof window !== "undefined" && window.require) || require) === 'function';
 const isNode = !!(typeof process !== "undefined" && process.versions && process.release);
