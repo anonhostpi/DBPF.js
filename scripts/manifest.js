@@ -27,8 +27,8 @@ if( restore ){
     const package = require(__dirname + '/../package.json');
     
     // get date string for backup
-    const date = new Date();
-    date = date.toISOString().replace(/:/g, '.').replace('T', '.')
+    let date = new Date();
+    date = date.toISOString().replace(/:/g, '.').replace('T', '.').replace('-', '.').replace('Z', '');
 
     // backup the package.json via copy
     const filepath = `${__dirname}/manifests/package.${date}.bak.json`;
