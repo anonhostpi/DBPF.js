@@ -6,6 +6,7 @@
     "description":      "A library for reading and writing DBPF files.",
     
     "main":             "./dist/dbpf.js",
+    "types":            "./dist/dbpf.d.ts",
     "browser":          "./dist/dbpf.web.js",
     
     "scripts": {
