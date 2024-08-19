@@ -15,6 +15,7 @@ import {
     EightBytes,
 } from "./bytebuffer";
 import { Deserialized, JSONPrimitive } from "./serde";
+import { Mutex } from "./mutex";
 
 let {
     resolve
@@ -130,10 +131,14 @@ export class DBPF extends EventEmitter {
     private fullbuffer: Buffer | undefined;
     private headerbuffer: Buffer | undefined;
 
+    // this should never be public, and access should be wrapped in a buffermapmutex lock/unlock pair to prevent race conditions
     private buffermap: Map<BufferOffset, Buffer> = new Map<BufferOffset, Buffer>();
-    
-    private buffer( offset: BufferOffset, length: BufferLength ): Buffer | undefined {
+    private buffermapmutex: Mutex = new Mutex();
+
+    // this should never be public. It should only be accessed by the read method to prevent race conditions caused by parallel reads
+    private async buffer( offset: BufferOffset, length: BufferLength ): Promise<Buffer | undefined> {
         // defrag
+        const unlock = await this.buffermapmutex.getLock();
 
         const sortedEntries = Array.from( this.buffermap.entries() ).sort(( a, b ) => a[0] - b[0]);
 
@@ -173,6 +178,8 @@ export class DBPF extends EventEmitter {
 
         // find the range that contains the requested offset
         const range = ranges.find(([ start, end ]) => offset >= start && offset < end);
+
+        unlock();
 
         if( !range )
             return undefined;
@@ -331,7 +338,7 @@ export class DBPF extends EventEmitter {
                 out_resolve( buffer );
                 return;
             }
-            const existingbuffer = this.buffer( offset, length );
+            const existingbuffer = await this.buffer( offset, length );
             if( existingbuffer ){
                 this.emit( "read", existingbuffer );
                 out_resolve( existingbuffer );
@@ -343,7 +350,7 @@ export class DBPF extends EventEmitter {
                     blobRead_resolve: (buffer: Buffer) => void,
                     blobRead_reject: (err: Error) => void
                 ) => {
-                    fs.read( this.file, out_buffer, 0, length, offset, (
+                    fs.read( this.file, out_buffer, 0, length, offset, async (
                         err: NullableError,
                         bytesRead: Unused,
                         buffer: Unused
@@ -352,7 +359,9 @@ export class DBPF extends EventEmitter {
                             blobRead_reject( new Error(`DBPF: Error reading file: ${err}`) );
                             return;
                         }
+                        const unlock = await this.buffermapmutex.getLock();
                         this.buffermap.set( offset, out_buffer );
+                        unlock();
                         this.emit( "read", out_buffer );
                         blobRead_resolve( out_buffer );
                     });
@@ -390,7 +399,7 @@ export class DBPF extends EventEmitter {
                             read_resolve: (buffer: Buffer) => void,
                             read_reject: (err: Error) => void
                         )=>{
-                            fs.read( fd, out_buffer, 0, length, offset, (
+                            fs.read( fd, out_buffer, 0, length, offset, async (
                                 err: NullableError,
                                 bytesRead: Unused,
                                 buffer: Unused
@@ -399,7 +408,9 @@ export class DBPF extends EventEmitter {
                                     read_reject( new Error(`DBPF: Error reading file: ${err}`) );
                                     return;
                                 }
+                                const unlock = await this.buffermapmutex.getLock();
                                 this.buffermap.set( offset, out_buffer );
+                                unlock();
                                 this.emit( "read", out_buffer );
                                 read_resolve( out_buffer );
 
