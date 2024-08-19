@@ -129,6 +129,66 @@ export class DBPF extends EventEmitter {
 
     private fullbuffer: Buffer | undefined;
     private headerbuffer: Buffer | undefined;
+
+    private buffermap: Map<BufferOffset, Buffer> = new Map<BufferOffset, Buffer>();
+    
+    private buffer( offset: BufferOffset, length: BufferLength ): Buffer | undefined {
+        // defrag
+
+        const sortedEntries = Array.from( this.buffermap.entries() ).sort(( a, b ) => a[0] - b[0]);
+
+        const mergedBuffers: Map<BufferOffset, Buffer> = new Map<BufferOffset, Buffer>();
+        let currentOffset = sortedEntries[0][0];
+        let currentBuffer = sortedEntries[0][1];
+
+        for( let i = 1; i < sortedEntries.length; i++ ){
+            const [offset, buffer] = sortedEntries[i];
+
+            // Check if the current buffer overlaps with the next buffer
+            if( currentOffset + currentBuffer.length >= offset ){
+                // They overlap/are adjacent, so merge them
+                const overlap = offset - currentOffset;
+                const bufferToMerge = buffer.subarray( Math.max( 0, overlap ) );
+                if( bufferToMerge.length )
+                    currentBuffer = Buffer.concat([currentBuffer, bufferToMerge]);
+            } else {
+                // No overlap - store the current buffer and move to the next one
+                mergedBuffers.set( currentOffset, currentBuffer );
+                currentOffset = offset;
+                currentBuffer = buffer;
+            }
+        }
+
+        // Store the last buffer
+        mergedBuffers.set( currentOffset, currentBuffer );
+
+        // update the buffermap
+        this.buffermap = mergedBuffers;
+
+        // get the ranges from the buffermap
+        const ranges = Array.from( this.buffermap.entries() ).map(([ offset, buffer ]) => [
+            offset,
+            offset + buffer.length
+        ]);
+
+        // find the range that contains the requested offset
+        const range = ranges.find(([ start, end ]) => offset >= start && offset < end);
+
+        if( !range )
+            return undefined;
+
+        const [ start, end ] = range;
+        // check that bytes from offset to offset + length are within the range
+        if( offset + length > end )
+            return undefined;
+
+        const buffer = this.buffermap.get( start );
+        if( !buffer )
+            return undefined;
+
+        return buffer.subarray( offset - start, offset - start + length );
+    }
+
     private _header: DBPFHeader | undefined;
     get header(): DBPFHeader {
         if( !this._header )
@@ -260,6 +320,24 @@ export class DBPF extends EventEmitter {
                     callback( error );
                 out_reject( error );
             }
+            if( this.fullbuffer ){
+                const fullbuffer = this.fullbuffer;
+                if( offset + length > fullbuffer.length ){
+                    emit_reject( new Error("DBPF: Invalid read: Out of range") );
+                    return;
+                }
+                const buffer = fullbuffer.subarray( offset, offset + length );
+                this.emit( "read", buffer );
+                out_resolve( buffer );
+                return;
+            }
+            const existingbuffer = this.buffer( offset, length );
+            if( existingbuffer ){
+                this.emit( "read", existingbuffer );
+                out_resolve( existingbuffer );
+                return;
+            }
+
             if( this.file instanceof File ){
                 const blobRead_promise = new Promise<Buffer>((
                     blobRead_resolve: (buffer: Buffer) => void,
@@ -274,6 +352,7 @@ export class DBPF extends EventEmitter {
                             blobRead_reject( new Error(`DBPF: Error reading file: ${err}`) );
                             return;
                         }
+                        this.buffermap.set( offset, out_buffer );
                         this.emit( "read", out_buffer );
                         blobRead_resolve( out_buffer );
                     });
@@ -320,6 +399,7 @@ export class DBPF extends EventEmitter {
                                     read_reject( new Error(`DBPF: Error reading file: ${err}`) );
                                     return;
                                 }
+                                this.buffermap.set( offset, out_buffer );
                                 this.emit( "read", out_buffer );
                                 read_resolve( out_buffer );
 
