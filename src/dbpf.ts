@@ -1,4 +1,7 @@
-import { polyfill } from "./polyfill";
+import {
+    polyfill,
+    deepFreeze
+} from "./polyfill";
 import {
     fs,
     Buffer,
@@ -231,6 +234,8 @@ export class DBPF extends EventEmitter {
                 size: hole_size
             }
         }
+
+        deepFreeze( this._header );
 
         this._table = new DBPFIndexTable( this );
 
