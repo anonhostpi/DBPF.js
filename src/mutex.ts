@@ -15,8 +15,8 @@ export class Mutex {
             this._isLocked = true;
             this._lock = new Promise<void>(resolve => {
                 unlock = () => {
-                    this._isLocked = false;
                     resolve();
+                    this._isLocked = false;
                 }
                 set_resolve();
             });
