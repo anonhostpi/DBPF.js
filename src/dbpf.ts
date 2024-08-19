@@ -83,6 +83,7 @@ export class DBPF extends EventEmitter {
     private _filepath: string = "";
     private _filename: string = "";
     private _extension: string = "";
+    private _filesize: BufferLength = 0;
 
     get file(): string | File {
         return this._file as string | File;
@@ -96,6 +97,9 @@ export class DBPF extends EventEmitter {
     get extension(): string {
         return this._extension as string;
     }
+    get filesize(): BufferLength {
+        return this._filesize
+    }
 
     set file( file: string | File ){
         let blob: File | undefined;
@@ -103,9 +107,12 @@ export class DBPF extends EventEmitter {
         if( file instanceof File ){
             blob = file;
             filepath = file.name;
+            this._filesize = file.size;
         }
-        else if( typeof file === "string" )
+        else if( typeof file === "string" ){
             filepath = file;
+            this._filesize = fs.statSync( file ).size;
+        }
         else
             throw new Error(`DBPF: Invalid file: Invalid type for file argument`);
 
@@ -126,6 +133,8 @@ export class DBPF extends EventEmitter {
 
         if( file instanceof File )
             this.load();
+        else
+            this.init();
     }
 
     private fullbuffer: Buffer | undefined;
@@ -202,13 +211,6 @@ export class DBPF extends EventEmitter {
             throw new Error("DBPF: No header data, try running load() or init() first");
 
         return this._header;
-    }
-
-    copy(): Buffer {
-        if( !this.fullbuffer )
-            throw new Error("DBPF: No buffer to copy, try running load() first");
-
-        return Buffer.from( this.fullbuffer );
     }
 
     private _table: DBPFIndexTable | undefined;
@@ -295,7 +297,12 @@ export class DBPF extends EventEmitter {
 
     constructor( file: string | File ){
         super();
-        this.file = file;
+        if( typeof file === "string" )
+            file = file.trim();
+        if( file instanceof File || (typeof file === "string" && file.length && polyfill.isNode) ){
+            this.file = file;
+        } else
+            throw new Error("DBPF: Invalid file: File must be a string (node-only) or a File object");
     }
 
     validate( callback?: DBPFCallback ){
@@ -327,6 +334,7 @@ export class DBPF extends EventEmitter {
                     callback( error );
                 out_reject( error );
             }
+
             if( this.fullbuffer ){
                 const fullbuffer = this.fullbuffer;
                 if( offset + length > fullbuffer.length ){
@@ -370,8 +378,6 @@ export class DBPF extends EventEmitter {
                 blobRead_promise
                     .then( out_resolve )
                     .catch( emit_reject );
-            } else if( !polyfill.isNode ){
-                emit_reject( new Error("DBPF: Invalid file: In the browser, File must be a File object") );
             } else {
                 const open_promise = new Promise<FileDescriptor>((
                     open_resolve: (fd: FileDescriptor) => void,
@@ -488,8 +494,6 @@ export class DBPF extends EventEmitter {
 
             if( this.file instanceof File )
                 filesize = (this.file as File).size;
-            else if( !polyfill.isNode )
-                return out_reject( new Error("DBPF: Invalid file: In the browser, File must be a File object") );
             else
                 filesize = fs.statSync( this.filepath ).size;
 
