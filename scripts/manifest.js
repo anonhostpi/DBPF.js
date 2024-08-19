@@ -6,6 +6,8 @@ const restore = process.argv.includes('--restore');
 
 if( restore ){
 
+    console.log( "Restoring development package.json" );
+
     // get latest backup
     const files = fs.readdirSync(__dirname + '/manifests');
     const latest = files.sort().reverse()[0];
@@ -20,6 +22,8 @@ if( restore ){
     });
 
 } else {
+    console.log( "Cleaning up package.json for packing/publishing" );
+    
     if (!fs.existsSync(__dirname + '/manifests')) {
         fs.mkdirSync(__dirname + '/manifests');
     }
