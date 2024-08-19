@@ -79,6 +79,10 @@ function MagicByte( string: string ): FourBytes {
 }
 
 export class DBPF extends EventEmitter {
+    protected override emit(event: string, ...args: any[]): boolean {
+        return super.emit( event, ...args );
+    }
+
     static readonly magic: FourBytes = MagicByte("DBPF");
     public readonly magic: FourBytes = DBPF.magic; // for inheritance, in case I ever write a dbbf reader
 
