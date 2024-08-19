@@ -21,7 +21,10 @@ jobs:
         run: npm install
 
       - name: Pack the build
-        run: npm pack --pack-dest=./dist
+        id: pack
+        run: |
+          npm pack --pack-dest=./dist
+          echo "TGZ_PATH=$(find ./dist -name 'dbpf-*.tgz')" >> $GITHUB_OUTPUT
 
       - name: Create Release Draft
         id: create_release
@@ -49,7 +52,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './dist/dbpf-*.tgz'
+          asset_path: ${{ steps.pack.outputs.TGZ_PATH }}
           asset_name: 'module.tgz'
           asset_content_type: application/octet-stream
         env:
