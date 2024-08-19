@@ -140,7 +140,6 @@ export class DBPF extends EventEmitter {
     }
 
     private _fullbuffer: Buffer | undefined;
-    private _headerbuffer: Buffer | undefined;
 
     // provides safe access to a defragged buffer cache via a mutex protected set method
     private _cache: PromiseSafeBufferCache = new PromiseSafeBufferCache();
@@ -178,8 +177,8 @@ export class DBPF extends EventEmitter {
                 throw error;
         }
 
-        this._headerbuffer = buffer.subarray( 0, HEADERLENGTH );
-        const reader = new BufferReader( this._headerbuffer );
+        const headerbuffer = buffer.subarray( 0, HEADERLENGTH );
+        const reader = new BufferReader( headerbuffer );
 
         const magic: FourBytes = reader.getInt(); // 0 -> 4 bytes
 
