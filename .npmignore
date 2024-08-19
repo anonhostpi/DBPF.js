@@ -1,8 +1,8 @@
 # node.js
 node_modules
 
-# build
-dist
+# test
 /test/serve
-#/src/imports.ts
+
+# backups
 /scripts/manifests
