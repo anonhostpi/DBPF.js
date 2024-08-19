@@ -1,5 +1,9 @@
 export class Mutex {
     private _lock: Promise<void>;
+    private _isLocked: boolean = false;
+    get isLocked() {
+        return this._isLocked;
+    }
     constructor() {
         this._lock = Promise.resolve();
     }
@@ -8,8 +12,12 @@ export class Mutex {
         let unlock: () => void;
         await this._lock;
         await new Promise<void>( set_resolve => {
+            this._isLocked = true;
             this._lock = new Promise<void>(resolve => {
-                unlock = resolve;
+                unlock = () => {
+                    this._isLocked = false;
+                    resolve();
+                }
                 set_resolve();
             });
         })
