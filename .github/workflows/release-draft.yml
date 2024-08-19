@@ -17,14 +17,8 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run build
-        run: npm run build
-
-      - name: Zip the package
-        run: zip -r dist/module.zip ./  # Replace 'dist/' with the directory you want to zip
+      - name: Pack the build
+        run: npm pack --pack-dest=./dist
 
       - name: Create Release Draft
         id: create_release
@@ -52,8 +46,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './dist/module.zip'
-          asset_name: 'module.zip'
+          asset_path: './dist/dbpf-*.tgz'
+          asset_name: 'module.tgz'
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

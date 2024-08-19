@@ -6,3 +6,6 @@ node_modules
 
 # backups
 /scripts/manifests
+
+#build
+/dist/*.tgz
