@@ -1,14 +1,23 @@
 const fs = require('fs');
 // ensure __dirname/manifests exists
+const { execSync } = require('child_process');
 
 const restore = process.argv.includes('--restore');
 
 if( restore ){
 
-    if( fs.existsSync(__dirname + '/manifests/package.bak.json') ){
-        fs.copyFileSync(__dirname + '/manifests/package.bak.json', __dirname + '/../package.json');
-    } else
-        throw new Error('No backup found to restore from! Use git to revert changes.');
+    // get latest backup
+    const files = fs.readdirSync(__dirname + '/manifests');
+    const latest = files.sort().reverse()[0];
+    const filepath = `${__dirname}/manifests/${latest}`;
+
+    // restore the package.json via copy
+    fs.copyFileSync(filepath, __dirname + '/../package.json');
+
+    execSync('npm install', {
+        cwd: __dirname + '/..',
+        stdio: 'inherit'
+    });
 
 } else {
     if (!fs.existsSync(__dirname + '/manifests')) {
@@ -17,8 +26,14 @@ if( restore ){
     
     const package = require(__dirname + '/../package.json');
     
+    // get date string for backup
+    const date = new Date();
+    date = date.toISOString().replace(/:/g, '.').replace('T', '.')
+
     // backup the package.json via copy
-    fs.copyFileSync(__dirname + '/../package.json', __dirname + '/manifests/package.bak.json');
+    const filepath = `${__dirname}/manifests/package.${date}.bak.json`;
+
+    fs.copyFileSync(__dirname + '/../package.json', filepath);
     
     delete package.devDependencies["live-server"];
     delete package.scripts["make:test"];
@@ -28,4 +43,9 @@ if( restore ){
     delete package.scripts["test:serve"];
     
     fs.writeFileSync(__dirname + '/../package.json', JSON.stringify(package, null, 2));
+
+    execSync('npm install', {
+        cwd: __dirname + '/..',
+        stdio: 'inherit'
+    })
 }

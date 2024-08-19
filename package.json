@@ -32,7 +32,8 @@
         "test:serve":       "cd ./test/serve && live-server --port=8080 --open=./index.html",
 
         "prepack:build":    "npm run build",
-        "prepack:manifest": "node scripts/manifest.js"
+        "prepack:man":      "node scripts/manifest.js",
+        "postpack:man":     "node scripts/manifest.js --restore"
     },
 
     "devDependencies": {
