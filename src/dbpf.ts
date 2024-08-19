@@ -132,16 +132,16 @@ export class DBPF extends EventEmitter {
         this._extension = extension;
 
         if( file instanceof File )
-            this.load();
+            this.loadAll();
         else
             this.init();
     }
 
-    private fullbuffer: Buffer | undefined;
-    private headerbuffer: Buffer | undefined;
+    private _fullbuffer: Buffer | undefined;
+    private _headerbuffer: Buffer | undefined;
 
     // provides safe access to a defragged buffer cache via a mutex protected set method
-    private cache: PromiseSafeBufferCache = new PromiseSafeBufferCache();
+    private _cache: PromiseSafeBufferCache = new PromiseSafeBufferCache();
 
     private _header: DBPFHeader | undefined;
     get header(): DBPFHeader {
@@ -159,7 +159,7 @@ export class DBPF extends EventEmitter {
         return this._table;
     }
 
-    private parseHeader(
+    private _parseHeader(
         buffer: Buffer,
         callback?: ErrorOnlyCallback
     ): void {
@@ -173,8 +173,8 @@ export class DBPF extends EventEmitter {
                 throw error;
         }
 
-        this.headerbuffer = buffer.subarray( 0, HEADERLENGTH );
-        const reader = new BufferReader( this.headerbuffer );
+        this._headerbuffer = buffer.subarray( 0, HEADERLENGTH );
+        const reader = new BufferReader( this._headerbuffer );
 
         const magic: FourBytes = reader.getInt(); // 0 -> 4 bytes
 
@@ -257,7 +257,7 @@ export class DBPF extends EventEmitter {
     }
 
     read(
-        length: BufferLength,
+        length: BufferLength = this.filesize,
         offset: BufferOffset = 0,
         callback?: ErrorOnlyCallback
     ): Promise<Buffer> {
@@ -273,8 +273,8 @@ export class DBPF extends EventEmitter {
                 out_reject( error );
             }
 
-            if( this.fullbuffer ){
-                const fullbuffer = this.fullbuffer;
+            if( this._fullbuffer ){
+                const fullbuffer = this._fullbuffer;
                 if( offset + length > fullbuffer.length ){
                     emit_reject( new Error("DBPF: Invalid read: Out of range") );
                     return;
@@ -284,7 +284,7 @@ export class DBPF extends EventEmitter {
                 out_resolve( buffer );
                 return;
             }
-            const existingbuffer = await this.cache.get( offset, length );
+            const existingbuffer = await this._cache.get( offset, length );
 
             if( existingbuffer ){
                 this.emit( "read", existingbuffer );
@@ -306,15 +306,15 @@ export class DBPF extends EventEmitter {
                             blobRead_reject( new Error(`DBPF: Error reading file: ${err}`) );
                             return;
                         }
-                        await this.cache.set( offset, out_buffer );
+                        await this._cache.set( offset, out_buffer );
                         
                         if(
-                            !this.fullbuffer &&
-                            this.cache.count === 1 &&
-                            this.cache.start === 0 &&
-                            this.cache.end  >= this.filesize
+                            !this._fullbuffer &&
+                            this._cache.count === 1 &&
+                            this._cache.start === 0 &&
+                            this._cache.end  >= this.filesize
                         ){
-                            this.fullbuffer = await this.cache.get( 0, this.filesize );
+                            this._fullbuffer = await this._cache.get( 0, this.filesize );
                             this.emit( "load", this );
                         }
                         this.emit( "read", out_buffer );
@@ -361,14 +361,14 @@ export class DBPF extends EventEmitter {
                                     read_reject( new Error(`DBPF: Error reading file: ${err}`) );
                                     return;
                                 }
-                                await this.cache.set( offset, out_buffer );
+                                await this._cache.set( offset, out_buffer );
                                 if(
-                                    !this.fullbuffer &&
-                                    this.cache.count === 1 &&
-                                    this.cache.start === 0 &&
-                                    this.cache.end  >= this.filesize
+                                    !this._fullbuffer &&
+                                    this._cache.count === 1 &&
+                                    this._cache.start === 0 &&
+                                    this._cache.end  >= this.filesize
                                 ){
-                                    this.fullbuffer = await this.cache.get( 0, this.filesize );
+                                    this._fullbuffer = await this._cache.get( 0, this.filesize );
                                     this.emit( "load", this );
                                 }
                                 this.emit( "read", out_buffer );
@@ -418,7 +418,7 @@ export class DBPF extends EventEmitter {
         )=>{
             this.read( HEADERLENGTH, 0, callback as ErrorOnlyCallback )
                 .then(( buffer: Buffer ) => {
-                    this.parseHeader( buffer, callback as ErrorOnlyCallback );
+                    this._parseHeader( buffer, callback as ErrorOnlyCallback );
                     this.table.init().then(()=>{
                         this.emit( "load", this );
                         out_resolve( this );
@@ -440,7 +440,7 @@ export class DBPF extends EventEmitter {
     }
 
     // auto-promisified load method
-    load( callback?: DBPFCallback ): void | Promise<DBPF> {
+    loadAll( callback?: DBPFCallback ): void | Promise<DBPF> {
         this.validate( callback );
 
         const out: Promise<DBPF> = new Promise((
@@ -457,8 +457,8 @@ export class DBPF extends EventEmitter {
 
             this.read( filesize, 0, callback as ErrorOnlyCallback )
                 .then(( buffer: Buffer ) => {
-                    this.fullbuffer = buffer;
-                    this.parseHeader( buffer, callback as ErrorOnlyCallback );
+                    this._fullbuffer = buffer;
+                    this._parseHeader( buffer, callback as ErrorOnlyCallback );
                     this.table.init().then(()=>{
                         this.emit( "init", this );
                         this.emit( "load", this );
@@ -531,14 +531,14 @@ export class DBPFEntry {
 
 class DBPFIndexTable extends EventEmitter {
     static plugins: Plugins | undefined;
-    private instance: DBPFIndexTable;
-    private proxy: DBPFIndexTable;
+    private _instance: DBPFIndexTable;
+    private _proxy: DBPFIndexTable;
     private _buffer: Buffer | undefined;
-    private ready: Promise<void>;
+    private _ready: Promise<void>;
     file: DBPF;
 
     init(): Promise<void>{
-        return this.ready;
+        return this._ready;
     }
 
     constructor(
@@ -550,7 +550,7 @@ class DBPFIndexTable extends EventEmitter {
         const table_size = file.header.index.size;
         const table_count = file.header.index.count;
 
-        this.ready = new Promise<void>((
+        this._ready = new Promise<void>((
             ready_resolve: () => void,
             ready_reject: (err: Error) => void
         )=>{
@@ -568,7 +568,7 @@ class DBPFIndexTable extends EventEmitter {
         });
 
         const entries = new Map<IndexNumeric, DBPFEntry>();
-        const self = this.instance = this;
+        const self = this._instance = this;
 
         const handler: ProxyHandler<DBPFIndexTable> = {
             get: function( target: Unused, prop: any ){
@@ -622,16 +622,16 @@ class DBPFIndexTable extends EventEmitter {
             }
         }
 
-        return this.proxy = new Proxy( this, handler );
+        return this._proxy = new Proxy( this, handler );
     }
 
     get(
         index: IndexNumeric
     ): DBPFExpandedEntry {
-        if( !this.instance._buffer )
+        if( !this._instance._buffer )
             throw new Error("DBPFIndexTable: No index table buffer, try awaiting init() first");
 
-        const reader = new BufferReader( this.instance._buffer );
+        const reader = new BufferReader( this._instance._buffer );
 
         reader.move( index * ENTRYLENGTH );
 
@@ -650,7 +650,7 @@ class DBPFIndexTable extends EventEmitter {
         const instance:         EightBytes = BigInt( instance_low ) + (BigInt( instance_high ) << BigInt( 32 ));
 
         const base_entry = new DBPFEntry(
-            this.instance.file,
+            this._instance.file,
             type,
             group,
             instance,
@@ -695,8 +695,8 @@ export type DBPFExpandedEntry = DBPFEntry & {
 type PluginsFinal = Array<Plugin> & Plugins;
 
 class Plugins extends Deserialized { // extends Array<Plugin> via typescript composition
-    private readonly instance: Plugins;
-    private readonly proxy: PluginsFinal;
+    private readonly _instance: Plugins;
+    private readonly _proxy: PluginsFinal;
 
     static override from(
         this: any,
@@ -748,7 +748,7 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
             }
         }
 
-        const self = this.instance = this;
+        const self = this._instance = this;
 
         const handler: ProxyHandler<Plugins> = {
             get: function( target: Unused, prop: any ){
@@ -785,144 +785,144 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
 
         (this as PluginsFinal); // to generate compiler errors for missing methods
 
-        return this.proxy = new Proxy( this, handler ) as PluginsFinal;
+        return this._proxy = new Proxy( this, handler ) as PluginsFinal;
     }
 
     get length(): ArraylikeLength {
-        return this.instance._plugins.length;
+        return this._instance._plugins.length;
     }
 
     pop(): Plugin | undefined {
-        return this.instance._plugins.pop();
+        return this._instance._plugins.pop();
     }
 
     push( plugin: Plugin ): ArraylikeLength {
-        return this.instance._plugins.push( plugin );
+        return this._instance._plugins.push( plugin );
     }
 
     shift(): Plugin | undefined {
-        return this.instance._plugins.shift();
+        return this._instance._plugins.shift();
     }
 
     unshift( plugin: Plugin ): ArraylikeLength {
-        return this.instance._plugins.unshift( plugin );
+        return this._instance._plugins.unshift( plugin );
     }
 
     concat( ...items: ConcatArray<Plugin>[] ): Plugin[] {
-        return this.instance._plugins.concat( ...items );
+        return this._instance._plugins.concat( ...items );
     }
 
     slice( start?: IndexNumeric, end?: IndexNumeric ): Plugin[] {
-        return this.instance._plugins.slice( start, end );
+        return this._instance._plugins.slice( start, end );
     }
 
     splice( start: IndexNumeric, deleteCount: IterationCount, ...items: Plugin[] ): Plugin[] {
-        return this.instance._plugins.splice( start, deleteCount, ...items );
+        return this._instance._plugins.splice( start, deleteCount, ...items );
     }
 
     indexOf( searchElement: Plugin, fromIndex?: IndexNumeric ): IndexNumeric {
-        return this.instance._plugins.indexOf( searchElement, fromIndex );
+        return this._instance._plugins.indexOf( searchElement, fromIndex );
     }
 
     lastIndexOf( searchElement: Plugin, fromIndex?: IndexNumeric ): IndexNumeric {
-        return this.instance._plugins.lastIndexOf( searchElement, fromIndex );
+        return this._instance._plugins.lastIndexOf( searchElement, fromIndex );
     }
 
     every<S extends Plugin>(
         predicate: (value: Plugin, index: IndexNumeric, array: Plugin[]) => value is S,
         thisArg?: any
     ): this is S[] {
-        return this.instance._plugins.every( predicate, thisArg );
+        return this._instance._plugins.every( predicate, thisArg );
     }
 
     some( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => boolean, thisArg?: any ): boolean {
-        return this.instance._plugins.some( callback, thisArg );
+        return this._instance._plugins.some( callback, thisArg );
     }
 
     forEach( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => void, thisArg?: any ): void {
-        this.instance._plugins.forEach( callback, thisArg );
+        this._instance._plugins.forEach( callback, thisArg );
     }
 
     map( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => any, thisArg?: any ): any[] {
-        return this.instance._plugins.map( callback, thisArg );
+        return this._instance._plugins.map( callback, thisArg );
     }
 
     filter( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => boolean, thisArg?: any ): Plugin[] {
-        return this.instance._plugins.filter( callback, thisArg );
+        return this._instance._plugins.filter( callback, thisArg );
     }
 
     reduce(
         callback: (previousValue: Plugin, currentValue: Plugin, currentIndex: IndexNumeric, array: Plugin[]) => Plugin,
         initialValue?: Plugin
     ): Plugin {
-        return this.instance._plugins.reduce( callback, initialValue as Plugin );
+        return this._instance._plugins.reduce( callback, initialValue as Plugin );
     }
 
     reduceRight(
         callback: (previousValue: Plugin, currentValue: Plugin, currentIndex: IndexNumeric, array: Plugin[]) => Plugin,
         initialValue?: Plugin
     ): Plugin {
-        return this.instance._plugins.reduceRight( callback, initialValue as Plugin );
+        return this._instance._plugins.reduceRight( callback, initialValue as Plugin );
     }
 
     find( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => boolean, thisArg?: any ): Plugin | undefined {
-        return this.instance._plugins.find( callback, thisArg );
+        return this._instance._plugins.find( callback, thisArg );
     }
 
     findIndex( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => boolean, thisArg?: any ): IndexNumeric {
-        return this.instance._plugins.findIndex( callback, thisArg );
+        return this._instance._plugins.findIndex( callback, thisArg );
     }
 
     includes( searchElement: Plugin, fromIndex?: IndexNumeric ): boolean {
-        return this.instance._plugins.includes( searchElement, fromIndex );
+        return this._instance._plugins.includes( searchElement, fromIndex );
     }
 
     keys(): IterableIterator<IndexNumeric> {
-        return this.instance._plugins.keys();
+        return this._instance._plugins.keys();
     }
 
     values(): IterableIterator<Plugin> {
-        return this.instance._plugins.values();
+        return this._instance._plugins.values();
     }
 
     entries(): IterableIterator<[IndexNumeric, Plugin]> {
-        return this.instance._plugins.entries();
+        return this._instance._plugins.entries();
     }
 
     join( separator?: string ): string {
-        return this.instance._plugins.join( separator );
+        return this._instance._plugins.join( separator );
     }
 
     reverse(): Plugin[] {
-        return this.instance._plugins.reverse();
+        return this._instance._plugins.reverse();
     }
 
     sort( compareFn?: (a: Plugin, b: Plugin) => number ): Plugin[] {
-        return this.instance._plugins.sort( compareFn );
+        return this._instance._plugins.sort( compareFn );
     }
 
     fill( value: Plugin, start?: IndexNumeric, end?: IndexNumeric ): Plugin[] {
-        return this.instance._plugins.fill( value, start, end );
+        return this._instance._plugins.fill( value, start, end );
     }
 
     copyWithin( target: IndexNumeric, start: IndexNumeric, end?: IndexNumeric ): Plugin[] {
-        return this.instance._plugins.copyWithin( target, start, end );
+        return this._instance._plugins.copyWithin( target, start, end );
     }
 
     flatMap( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => any, thisArg?: any ): any[] {
-        return this.instance._plugins.flatMap( callback, thisArg );
+        return this._instance._plugins.flatMap( callback, thisArg );
     }
 
     flat( depth?: IterationCount ): any[] {
-        return this.instance._plugins.flat( depth );
+        return this._instance._plugins.flat( depth );
     }
 
     at( index: IndexNumeric ): Plugin {
-        return this.instance._plugins[index];
+        return this._instance._plugins[index];
     }
 
     *[Symbol.iterator](): IterableIterator<Plugin>{
-        for (let i = 0; i < this.instance.length; i++) {
+        for (let i = 0; i < this._instance.length; i++) {
             yield this[i] as Plugin;
         }
     }
