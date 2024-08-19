@@ -79,4 +79,10 @@ export class PromiseSafeBufferCache {
         await this.defrag();
         unlock();
     }
+
+    public async clear(): Promise<void> {
+        const unlock = await this._cacheMutex.getLock();
+        this._cache.clear();
+        unlock();
+    }
 }
