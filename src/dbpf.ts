@@ -162,7 +162,7 @@ export class DBPF extends EventEmitter {
     private _parseHeader(
         buffer: Buffer,
         callback?: ErrorOnlyCallback
-    ): void {
+    ): Promise<void> {
         this.validate( callback );
         if( buffer.length < HEADERLENGTH ){
             const error = new Error("DBPF: Invalid buffer: Not enough data to parse the header");
@@ -231,6 +231,8 @@ export class DBPF extends EventEmitter {
         }
 
         this._table = new DBPFIndexTable( this );
+
+        return this._table.init()
     }
 
     constructor( file: string | File ){
@@ -418,11 +420,11 @@ export class DBPF extends EventEmitter {
         )=>{
             this.read( HEADERLENGTH, 0, callback as ErrorOnlyCallback )
                 .then(( buffer: Buffer ) => {
-                    this._parseHeader( buffer, callback as ErrorOnlyCallback );
-                    this.table.init().then(()=>{
-                        this.emit( "load", this );
-                        out_resolve( this );
-                    }).catch( out_reject );
+                    this._parseHeader( buffer, callback as ErrorOnlyCallback )
+                        .then(()=>{
+                            this.emit( "load", this );
+                            out_resolve( this );
+                        }).catch( out_reject );
                 })
                 .catch( out_reject );
         })
@@ -458,12 +460,12 @@ export class DBPF extends EventEmitter {
             this.read( filesize, 0, callback as ErrorOnlyCallback )
                 .then(( buffer: Buffer ) => {
                     this._fullbuffer = buffer;
-                    this._parseHeader( buffer, callback as ErrorOnlyCallback );
-                    this.table.init().then(()=>{
-                        this.emit( "init", this );
-                        this.emit( "load", this );
-                        out_resolve( this );
-                    }).catch( out_reject );
+                    this._parseHeader( buffer, callback as ErrorOnlyCallback )
+                        .then(()=>{
+                            this.emit( "init", this );
+                            this.emit( "load", this );
+                            out_resolve( this );
+                        }).catch( out_reject );
                 })
         });
 
