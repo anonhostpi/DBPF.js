@@ -4,7 +4,11 @@ import {
     Buffer as CommunityBuffer
 } from "buffer";
 
-type FileDescriptor = number;
+export type BufferOffset = number;
+export type BufferLength = number;
+
+export type FileDescriptor = number;
+
 const {
     Buffer: PolyfillBuffer
 } = polyfill(
@@ -39,10 +43,10 @@ const {
         read: function(
             file: FileDescriptor | Blob,
             buffer: Buffer,
-            offset: number,
-            length: number,
-            position: number,
-            callback: (err: Error | null | undefined, bytesRead: number | undefined, buffer: Buffer | undefined) => void
+            offset: BufferOffset,
+            length: BufferLength,
+            position: BufferOffset,
+            callback: (err: Error | null | undefined, bytesRead: BufferLength | undefined, buffer: Buffer | undefined) => void
         ){
             if( typeof file === "number" )
                 throw new Error("FileDescriptor not supported in browser environment");

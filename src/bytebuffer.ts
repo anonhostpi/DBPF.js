@@ -2,9 +2,17 @@ import { Buffer } from "./polyfill.fs";
 
 // a simple library for reading bytes from a buffer
 
+type Position = number;
+type BufferLength = number;
+
+export type OneByte = number;
+export type TwoBytes = number;
+export type FourBytes = number;
+export type EightBytes = bigint;
+
 export class BufferReader {
     private _buffer: Buffer;
-    private _cursor: number; // position in buffer
+    private _cursor: Position; // position in buffer
 
     constructor( buffer: Buffer ){
         this._buffer = buffer;
@@ -15,20 +23,20 @@ export class BufferReader {
         return this._buffer;
     }
 
-    get cursor(): number {
+    get cursor(): Position {
         return this._cursor;
     }
 
-    advance( length: number = 1 ): void {
+    advance( length: BufferLength = 1 ): void {
         this._cursor = this._cursor + length;
     }
 
-    move( position: number ): void {
+    move( position: Position ): void {
         this._cursor = position;
     }
 
     // 1 byte
-    getByte(): number {
+    getByte(): OneByte {
         if( this._cursor + 1 >= this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
@@ -38,7 +46,7 @@ export class BufferReader {
     }
 
     // 2 bytes
-    getShort(): number {
+    getShort(): TwoBytes {
         if( this._cursor + 2 >= this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
@@ -48,7 +56,7 @@ export class BufferReader {
     }
 
     // 4 bytes
-    getInt(): number {
+    getInt(): FourBytes {
         if( this._cursor + 4 >= this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
@@ -58,7 +66,7 @@ export class BufferReader {
     }
 
     // 4 bytes
-    getFloat(): number {
+    getFloat(): FourBytes {
         if( this._cursor + 4 >= this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
@@ -68,7 +76,7 @@ export class BufferReader {
     }
 
     // 8 bytes
-    getLong(): bigint {
+    getLong(): EightBytes {
         if( this._cursor + 8 >= this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
@@ -134,7 +142,7 @@ export class BufferReader {
         return value;
     }
 
-    getUnsignedLEB128BigInt(): bigint {
+    getUnsignedLEB128BigInt(): EightBytes {
         let value = BigInt(0);
         let shift = BigInt(0);
         let byte: number;
@@ -155,7 +163,7 @@ export class BufferReader {
         return value
     }
 
-    getLEB128BigInt(): bigint {
+    getLEB128BigInt(): EightBytes {
         let value = BigInt(0);
         let shift = BigInt(0);
         let byte: number;

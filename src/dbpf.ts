@@ -1,7 +1,19 @@
 import { polyfill } from "./polyfill";
-import { fs, Buffer } from "./polyfill.fs";
+import {
+    fs,
+    Buffer,
+    BufferOffset,
+    BufferLength,
+    FileDescriptor,
+} from "./polyfill.fs";
 import { EventEmitter } from "./polyfill.events";
-import { BufferReader } from "./bytebuffer";
+import {
+    BufferReader,
+    OneByte,
+    TwoBytes,
+    FourBytes,
+    EightBytes,
+} from "./bytebuffer";
 import { Deserialized, JSONPrimitive } from "./serde";
 
 let {
@@ -16,39 +28,43 @@ const {
     getOwnPropertyDescriptor: obj_getOwnPropertyDescriptor,
 } = Object
 
-const HEADERLENGTH: number = 0x60; // 96 bytes
-const ENTRYLENGTH: number = 0x20; // 32 bytes
+const HEADERLENGTH: BufferLength = 0x60; // 96 bytes
+const ENTRYLENGTH: BufferLength = 0x20; // 32 bytes
 
 type NullableError = Error | null | undefined;
 type Unused = any;
+
+type IndexNumeric = number;
+type ArraylikeLength = number;
+type IterationCount = number;
 
 type DBPFCallback = (err: NullableError, dbpf?: DBPF) => void;
 type ErrorOnlyCallback = (err: NullableError) => void;
 type DBPFHeader = {
     dbpf: {
-        major: number,
-        minor: number,
-        usermajor: number,
-        userminor: number,
-        created: number,
-        modified: number,
+        major: FourBytes,
+        minor: FourBytes,
+        usermajor: FourBytes,
+        userminor: FourBytes,
+        created: FourBytes,
+        modified: FourBytes,
     }
     index: {
-        major: number,
-        minor: number,
-        count: number,
-        first: number,
-        size: number,
-        offset: number,
+        major: FourBytes,
+        minor: FourBytes,
+        count: FourBytes,
+        first: FourBytes,
+        size: BufferLength, // 4 bytes
+        offset: BufferOffset, // 4 bytes
     }
     hole: {
-        count: number,
-        offset: number,
-        size: number,
+        count: FourBytes,
+        offset: BufferOffset, // 4 bytes
+        size: BufferLength, // 4 bytes
     }
 }
 
-function MagicByte( string: string ): number {
+function MagicByte( string: string ): FourBytes {
     string = string.padEnd( 4, '\0' );
     const chars = string.split('');
     let out = 0;
@@ -59,8 +75,8 @@ function MagicByte( string: string ): number {
 }
 
 export class DBPF extends EventEmitter {
-    static readonly magic: number = MagicByte("DBPF");
-    public readonly magic: number = DBPF.magic; // for inheritance, in case I ever write a dbbf reader
+    static readonly magic: FourBytes = MagicByte("DBPF");
+    public readonly magic: FourBytes = DBPF.magic; // for inheritance, in case I ever write a dbbf reader
 
     private _file: string | File = "";
     private _filepath: string = "";
@@ -153,7 +169,7 @@ export class DBPF extends EventEmitter {
         this.headerbuffer = buffer.subarray( 0, HEADERLENGTH );
         const reader = new BufferReader( this.headerbuffer );
 
-        const magic = reader.getInt(); // 0 -> 4 bytes
+        const magic: FourBytes = reader.getInt(); // 0 -> 4 bytes
 
         if( magic !== this.magic ){
             const error = new Error("DBPF: Invalid buffer: Incorrect magic number");
@@ -164,24 +180,24 @@ export class DBPF extends EventEmitter {
                 throw error;
         }
 
-        const major = reader.getInt(); // 4 -> 8 bytes
-        const minor = reader.getInt(); // 8 -> 12 bytes
-        const usermajor = reader.getInt(); // 12 -> 16 bytes
-        const userminor = reader.getInt(); // 16 -> 20 bytes
-        const unused = reader.getInt(); // 20 -> 24 bytes
+        const major: FourBytes = reader.getInt(); // 4 -> 8 bytes
+        const minor: FourBytes = reader.getInt(); // 8 -> 12 bytes
+        const usermajor: FourBytes = reader.getInt(); // 12 -> 16 bytes
+        const userminor: FourBytes = reader.getInt(); // 16 -> 20 bytes
+        const unused: FourBytes = reader.getInt(); // 20 -> 24 bytes
 
-        const created = reader.getInt(); // 24 -> 28 bytes
-        const modified = reader.getInt(); // 28 -> 32 bytes
+        const created: FourBytes = reader.getInt(); // 24 -> 28 bytes
+        const modified: FourBytes = reader.getInt(); // 28 -> 32 bytes
 
-        const index_major = reader.getInt(); // 32 -> 36 bytes
-        const count = reader.getInt(); // 36 -> 40 bytes
-        const first = reader.getInt(); // 40 -> 44 bytes
-        const size = reader.getInt(); // 44 -> 48 bytes
-        const hole_count = reader.getInt(); // 48 -> 52 bytes
-        const hole_offset = reader.getInt(); // 52 -> 56 bytes
-        const hole_size = reader.getInt(); // 56 -> 60 bytes
-        const index_minor = reader.getInt(); // 60 -> 64 bytes
-        const offset = reader.getInt(); // 64 -> 68 bytes
+        const index_major: FourBytes = reader.getInt(); // 32 -> 36 bytes
+        const count: FourBytes = reader.getInt(); // 36 -> 40 bytes
+        const first: FourBytes = reader.getInt(); // 40 -> 44 bytes
+        const size: BufferLength = reader.getInt(); // 44 -> 48 bytes
+        const hole_count: FourBytes = reader.getInt(); // 48 -> 52 bytes
+        const hole_offset: BufferOffset = reader.getInt(); // 52 -> 56 bytes
+        const hole_size: BufferLength = reader.getInt(); // 56 -> 60 bytes
+        const index_minor: FourBytes = reader.getInt(); // 60 -> 64 bytes
+        const offset: BufferOffset = reader.getInt(); // 64 -> 68 bytes
 
         this._header = {
             dbpf: {
@@ -229,8 +245,8 @@ export class DBPF extends EventEmitter {
     }
 
     read(
-        length: number,
-        offset: number = 0,
+        length: BufferLength,
+        offset: BufferOffset = 0,
         callback?: ErrorOnlyCallback
     ): Promise<Buffer> {
         this.validate( callback );
@@ -269,13 +285,13 @@ export class DBPF extends EventEmitter {
             } else if( !polyfill.isNode ){
                 emit_reject( new Error("DBPF: Invalid file: In the browser, File must be a File object") );
             } else {
-                const open_promise = new Promise<number>((
-                    open_resolve: (fd: number) => void,
+                const open_promise = new Promise<FileDescriptor>((
+                    open_resolve: (fd: FileDescriptor) => void,
                     open_reject: (err: Error) => void
                 ) => {
                     fs.open( this.filepath, 'r', (
                         err: NullableError,
-                        fd: number | undefined
+                        fd: FileDescriptor | undefined
                     )=>{
                         if( err ){
                             open_reject( new Error(`DBPF: Error opening file: ${err}`) );
@@ -290,7 +306,7 @@ export class DBPF extends EventEmitter {
                 });
 
                 open_promise
-                    .then(( fd: number ) => {
+                    .then(( fd: FileDescriptor ) => {
                         const read_promise = new Promise<Buffer>((
                             read_resolve: (buffer: Buffer) => void,
                             read_reject: (err: Error) => void
@@ -377,7 +393,7 @@ export class DBPF extends EventEmitter {
             out_reject: (err: Error) => void
         ) => {
 
-            let filesize: number;
+            let filesize: BufferLength;
 
             if( this.file instanceof File )
                 filesize = (this.file as File).size;
@@ -409,44 +425,44 @@ export class DBPF extends EventEmitter {
     }
 }
 
-type ResourceType = number;
-type ResourceGroup = number;
+type ResourceType = FourBytes;
+type ResourceGroup = FourBytes;
 
 export class DBPFEntry {
     // These fields are not part of the DBPF file format
-    file: DBPF;
+    file:       DBPF;
 
     // DBPF file format fields:
     // - categorization:
-    type: ResourceType;
-    group: ResourceGroup;
+    type:       ResourceType; // FourBytes
+    group:      ResourceGroup; // FourBytes
 
     // - index and identification:
-    instance: bigint;
-    offset: number;
+    instance:   EightBytes;
+    offset:     BufferOffset; // FourBytes
 
     // - size:
     size: {
-        file: number;
-        memory: number;
-        compressed: number;
+        file:           FourBytes;
+        memory:         FourBytes;
+        compressed:     TwoBytes;
     };
 
     // - unknown:
-    unknown: number;
+    unknown:    TwoBytes;
 
     constructor(
-        file: DBPF,
-        type: ResourceType,
-        group: ResourceGroup,
-        instance: bigint,
-        offset: number,
+        file:               DBPF,
+        type:               ResourceType, // FourBytes
+        group:              ResourceGroup, // FourBytes
+        instance:           EightBytes,
+        offset:             BufferOffset, // FourBytes
         size: {
-            file: number,
-            memory: number,
-            compressed: number
+            file:           FourBytes,
+            memory:         FourBytes,
+            compressed:     TwoBytes
         },
-        unknown: number
+        unknown:            TwoBytes
     ){
         this.file = file;
         this.type = type;
@@ -495,7 +511,7 @@ class DBPFIndexTable extends EventEmitter {
             this.emit( "error", error );
         });
 
-        const entries = new Map<number, DBPFEntry>();
+        const entries = new Map<IndexNumeric, DBPFEntry>();
         const self = this.instance = this;
 
         const handler: ProxyHandler<DBPFIndexTable> = {
@@ -554,7 +570,7 @@ class DBPFIndexTable extends EventEmitter {
     }
 
     get(
-        index: number
+        index: IndexNumeric
     ): DBPFExpandedEntry {
         if( !this.instance._buffer )
             throw new Error("DBPFIndexTable: No index table buffer, try awaiting init() first");
@@ -563,19 +579,19 @@ class DBPFIndexTable extends EventEmitter {
 
         reader.move( index * ENTRYLENGTH );
 
-        const type: ResourceType = reader.getInt(); // 0 -> 4 bytes
-        const group: ResourceGroup = reader.getInt(); // 4 -> 8 bytes
-        const instance_high: number = reader.getInt(); // 8 -> 12 bytes
-        const instance_low: number = reader.getInt(); // 12 -> 16 bytes
-        const offset: number = reader.getInt(); // 16 -> 20 bytes
-        const size_file: number = reader.getInt(); // 20 -> 24 bytes
-        const size_memory: number = reader.getInt(); // 24 -> 28 bytes
-        const size_compressed: number = reader.getShort(); // 28 -> 30 bytes
-        const unknown: number = reader.getShort(); // 30 -> 32 bytes
+        const type:             ResourceType = reader.getInt(); // 0 -> 4 bytes
+        const group:            ResourceGroup = reader.getInt(); // 4 -> 8 bytes
+        const instance_high:    FourBytes = reader.getInt(); // 8 -> 12 bytes
+        const instance_low:     FourBytes = reader.getInt(); // 12 -> 16 bytes
+        const offset:           BufferOffset = reader.getInt(); // 16 -> 20 bytes
+        const size_file:        FourBytes = reader.getInt(); // 20 -> 24 bytes
+        const size_memory:      FourBytes = reader.getInt(); // 24 -> 28 bytes
+        const size_compressed:  TwoBytes = reader.getShort(); // 28 -> 30 bytes
+        const unknown:          TwoBytes = reader.getShort(); // 30 -> 32 bytes
 
         // instance is a 128-bit number
-        // the low and high parts are concatenated as 64-bit hex numbers
-        const instance = BigInt( instance_low ) + (BigInt( instance_high ) << BigInt( 32 ));
+        // the low and high parts are concatenated as individual 64-bit hex numbers
+        const instance:         EightBytes = BigInt( instance_low ) + (BigInt( instance_high ) << BigInt( 32 ));
 
         const base_entry = new DBPFEntry(
             this.instance.file,
@@ -611,7 +627,7 @@ class DBPFIndexTable extends EventEmitter {
         return modified_entry as DBPFExpandedEntry;
     }
 
-    [index: number]: DBPFEntry;
+    [index: IndexNumeric]: DBPFEntry;
 }
 
 export type DBPFExpandedEntry = DBPFEntry & {
@@ -716,7 +732,7 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
         return this.proxy = new Proxy( this, handler ) as PluginsFinal;
     }
 
-    get length(): number {
+    get length(): ArraylikeLength {
         return this.instance._plugins.length;
     }
 
@@ -724,7 +740,7 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
         return this.instance._plugins.pop();
     }
 
-    push( plugin: Plugin ): number {
+    push( plugin: Plugin ): ArraylikeLength {
         return this.instance._plugins.push( plugin );
     }
 
@@ -732,7 +748,7 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
         return this.instance._plugins.shift();
     }
 
-    unshift( plugin: Plugin ): number {
+    unshift( plugin: Plugin ): ArraylikeLength {
         return this.instance._plugins.unshift( plugin );
     }
 
@@ -740,72 +756,72 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
         return this.instance._plugins.concat( ...items );
     }
 
-    slice( start?: number, end?: number ): Plugin[] {
+    slice( start?: IndexNumeric, end?: IndexNumeric ): Plugin[] {
         return this.instance._plugins.slice( start, end );
     }
 
-    splice( start: number, deleteCount: number, ...items: Plugin[] ): Plugin[] {
+    splice( start: IndexNumeric, deleteCount: IterationCount, ...items: Plugin[] ): Plugin[] {
         return this.instance._plugins.splice( start, deleteCount, ...items );
     }
 
-    indexOf( searchElement: Plugin, fromIndex?: number ): number {
+    indexOf( searchElement: Plugin, fromIndex?: IndexNumeric ): IndexNumeric {
         return this.instance._plugins.indexOf( searchElement, fromIndex );
     }
 
-    lastIndexOf( searchElement: Plugin, fromIndex?: number ): number {
+    lastIndexOf( searchElement: Plugin, fromIndex?: IndexNumeric ): IndexNumeric {
         return this.instance._plugins.lastIndexOf( searchElement, fromIndex );
     }
 
     every<S extends Plugin>(
-        predicate: (value: Plugin, index: number, array: Plugin[]) => value is S,
+        predicate: (value: Plugin, index: IndexNumeric, array: Plugin[]) => value is S,
         thisArg?: any
     ): this is S[] {
         return this.instance._plugins.every( predicate, thisArg );
     }
 
-    some( callback: (value: Plugin, index: number, array: Plugin[]) => boolean, thisArg?: any ): boolean {
+    some( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => boolean, thisArg?: any ): boolean {
         return this.instance._plugins.some( callback, thisArg );
     }
 
-    forEach( callback: (value: Plugin, index: number, array: Plugin[]) => void, thisArg?: any ): void {
+    forEach( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => void, thisArg?: any ): void {
         this.instance._plugins.forEach( callback, thisArg );
     }
 
-    map( callback: (value: Plugin, index: number, array: Plugin[]) => any, thisArg?: any ): any[] {
+    map( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => any, thisArg?: any ): any[] {
         return this.instance._plugins.map( callback, thisArg );
     }
 
-    filter( callback: (value: Plugin, index: number, array: Plugin[]) => boolean, thisArg?: any ): Plugin[] {
+    filter( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => boolean, thisArg?: any ): Plugin[] {
         return this.instance._plugins.filter( callback, thisArg );
     }
 
     reduce(
-        callback: (previousValue: Plugin, currentValue: Plugin, currentIndex: number, array: Plugin[]) => Plugin,
+        callback: (previousValue: Plugin, currentValue: Plugin, currentIndex: IndexNumeric, array: Plugin[]) => Plugin,
         initialValue?: Plugin
     ): Plugin {
         return this.instance._plugins.reduce( callback, initialValue as Plugin );
     }
 
     reduceRight(
-        callback: (previousValue: Plugin, currentValue: Plugin, currentIndex: number, array: Plugin[]) => Plugin,
+        callback: (previousValue: Plugin, currentValue: Plugin, currentIndex: IndexNumeric, array: Plugin[]) => Plugin,
         initialValue?: Plugin
     ): Plugin {
         return this.instance._plugins.reduceRight( callback, initialValue as Plugin );
     }
 
-    find( callback: (value: Plugin, index: number, array: Plugin[]) => boolean, thisArg?: any ): Plugin | undefined {
+    find( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => boolean, thisArg?: any ): Plugin | undefined {
         return this.instance._plugins.find( callback, thisArg );
     }
 
-    findIndex( callback: (value: Plugin, index: number, array: Plugin[]) => boolean, thisArg?: any ): number {
+    findIndex( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => boolean, thisArg?: any ): IndexNumeric {
         return this.instance._plugins.findIndex( callback, thisArg );
     }
 
-    includes( searchElement: Plugin, fromIndex?: number ): boolean {
+    includes( searchElement: Plugin, fromIndex?: IndexNumeric ): boolean {
         return this.instance._plugins.includes( searchElement, fromIndex );
     }
 
-    keys(): IterableIterator<number> {
+    keys(): IterableIterator<IndexNumeric> {
         return this.instance._plugins.keys();
     }
 
@@ -813,7 +829,7 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
         return this.instance._plugins.values();
     }
 
-    entries(): IterableIterator<[number, Plugin]> {
+    entries(): IterableIterator<[IndexNumeric, Plugin]> {
         return this.instance._plugins.entries();
     }
 
@@ -829,23 +845,23 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
         return this.instance._plugins.sort( compareFn );
     }
 
-    fill( value: Plugin, start?: number, end?: number ): Plugin[] {
+    fill( value: Plugin, start?: IndexNumeric, end?: IndexNumeric ): Plugin[] {
         return this.instance._plugins.fill( value, start, end );
     }
 
-    copyWithin( target: number, start: number, end?: number ): Plugin[] {
+    copyWithin( target: IndexNumeric, start: IndexNumeric, end?: IndexNumeric ): Plugin[] {
         return this.instance._plugins.copyWithin( target, start, end );
     }
 
-    flatMap( callback: (value: Plugin, index: number, array: Plugin[]) => any, thisArg?: any ): any[] {
+    flatMap( callback: (value: Plugin, index: IndexNumeric, array: Plugin[]) => any, thisArg?: any ): any[] {
         return this.instance._plugins.flatMap( callback, thisArg );
     }
 
-    flat( depth?: number ): any[] {
+    flat( depth?: IterationCount ): any[] {
         return this.instance._plugins.flat( depth );
     }
 
-    at( index: number ): Plugin {
+    at( index: IndexNumeric ): Plugin {
         return this.instance._plugins[index];
     }
 
@@ -875,7 +891,7 @@ class Plugins extends Deserialized { // extends Array<Plugin> via typescript com
     }
 
     private _plugins: Plugin[] = [];
-    [key: number]: Plugin;
+    [key: IndexNumeric]: Plugin;
 }
 
 class Plugin {
