@@ -1,7 +1,14 @@
 // Usage is described at the bottom of this file.
 import './imports';
 
-const assign = Object.assign;
+const {
+    assign,
+    defineProperty,
+} = Object;
+
+const {
+    hasOwnProperty
+} = Object.prototype;
 
 const hasRequire = typeof (globalThis.require || (typeof window !== "undefined" && window.require) || require) === 'function';
 const isNode = !!(typeof process !== "undefined" && process.versions && process.release);
@@ -38,7 +45,7 @@ const safe_require: SafeRequire = hasRequire && typeof window === "undefined" ? 
             }
         }
 
-        if( !Object.prototype.hasOwnProperty.call( cache, module ) ){
+        if( !hasOwnProperty.call( cache, module ) ){
             const xhr = new XMLHttpRequest();
             xhr.open('get', module, false);
             try {    
@@ -89,7 +96,7 @@ export const polyfill: PolyfillUtility = (
 
 polyfill.check = () => hasRequire;
 polyfill.require = safe_require;
-Object.defineProperty(
+defineProperty(
     polyfill,
     'isNode',
     {
