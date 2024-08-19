@@ -15,7 +15,7 @@ import {
     EightBytes,
 } from "./bytebuffer";
 import { Deserialized, JSONPrimitive } from "./serde";
-import { Mutex } from "./mutex";
+import { PromiseSafeBufferCache } from "./buffercache";
 
 let {
     resolve
@@ -140,70 +140,8 @@ export class DBPF extends EventEmitter {
     private fullbuffer: Buffer | undefined;
     private headerbuffer: Buffer | undefined;
 
-    // this should never be public, and access should be wrapped in a buffermapmutex lock/unlock pair to prevent race conditions
-    private buffermap: Map<BufferOffset, Buffer> = new Map<BufferOffset, Buffer>();
-    private buffermapmutex: Mutex = new Mutex();
-
-    // this should never be public. It should only be accessed by the read method to prevent race conditions caused by parallel reads
-    private async buffer( offset: BufferOffset, length: BufferLength ): Promise<Buffer | undefined> {
-        // defrag
-        const unlock = await this.buffermapmutex.getLock();
-
-        const sortedEntries = Array.from( this.buffermap.entries() ).sort(( a, b ) => a[0] - b[0]);
-
-        const mergedBuffers: Map<BufferOffset, Buffer> = new Map<BufferOffset, Buffer>();
-        let currentOffset = sortedEntries[0][0];
-        let currentBuffer = sortedEntries[0][1];
-
-        for( let i = 1; i < sortedEntries.length; i++ ){
-            const [offset, buffer] = sortedEntries[i];
-
-            // Check if the current buffer overlaps with the next buffer
-            if( currentOffset + currentBuffer.length >= offset ){
-                // They overlap/are adjacent, so merge them
-                const overlap = offset - currentOffset;
-                const bufferToMerge = buffer.subarray( Math.max( 0, overlap ) );
-                if( bufferToMerge.length )
-                    currentBuffer = Buffer.concat([currentBuffer, bufferToMerge]);
-            } else {
-                // No overlap - store the current buffer and move to the next one
-                mergedBuffers.set( currentOffset, currentBuffer );
-                currentOffset = offset;
-                currentBuffer = buffer;
-            }
-        }
-
-        // Store the last buffer
-        mergedBuffers.set( currentOffset, currentBuffer );
-
-        // update the buffermap
-        this.buffermap = mergedBuffers;
-
-        // get the ranges from the buffermap
-        const ranges = Array.from( this.buffermap.entries() ).map(([ offset, buffer ]) => [
-            offset,
-            offset + buffer.length
-        ]);
-
-        // find the range that contains the requested offset
-        const range = ranges.find(([ start, end ]) => offset >= start && offset < end);
-
-        unlock();
-
-        if( !range )
-            return undefined;
-
-        const [ start, end ] = range;
-        // check that bytes from offset to offset + length are within the range
-        if( offset + length > end )
-            return undefined;
-
-        const buffer = this.buffermap.get( start );
-        if( !buffer )
-            return undefined;
-
-        return buffer.subarray( offset - start, offset - start + length );
-    }
+    // provides safe access to a defragged buffer cache via a mutex protected set method
+    private cache: PromiseSafeBufferCache = new PromiseSafeBufferCache();
 
     private _header: DBPFHeader | undefined;
     get header(): DBPFHeader {
@@ -346,7 +284,7 @@ export class DBPF extends EventEmitter {
                 out_resolve( buffer );
                 return;
             }
-            const existingbuffer = await this.buffer( offset, length );
+            const existingbuffer = await this.cache.get( offset, length );
             if( existingbuffer ){
                 this.emit( "read", existingbuffer );
                 out_resolve( existingbuffer );
@@ -367,9 +305,17 @@ export class DBPF extends EventEmitter {
                             blobRead_reject( new Error(`DBPF: Error reading file: ${err}`) );
                             return;
                         }
-                        const unlock = await this.buffermapmutex.getLock();
-                        this.buffermap.set( offset, out_buffer );
-                        unlock();
+                        await this.cache.set( offset, out_buffer );
+                        
+                        if(
+                            !this.fullbuffer &&
+                            this.cache.count === 1 &&
+                            this.cache.start === 0 &&
+                            this.cache.end  >= this.filesize
+                        ){
+                            this.fullbuffer = await this.cache.get( 0, this.filesize );
+                            this.emit( "load", this );
+                        }
                         this.emit( "read", out_buffer );
                         blobRead_resolve( out_buffer );
                     });
@@ -414,9 +360,16 @@ export class DBPF extends EventEmitter {
                                     read_reject( new Error(`DBPF: Error reading file: ${err}`) );
                                     return;
                                 }
-                                const unlock = await this.buffermapmutex.getLock();
-                                this.buffermap.set( offset, out_buffer );
-                                unlock();
+                                await this.cache.set( offset, out_buffer );
+                                if(
+                                    !this.fullbuffer &&
+                                    this.cache.count === 1 &&
+                                    this.cache.start === 0 &&
+                                    this.cache.end  >= this.filesize
+                                ){
+                                    this.fullbuffer = await this.cache.get( 0, this.filesize );
+                                    this.emit( "load", this );
+                                }
                                 this.emit( "read", out_buffer );
                                 read_resolve( out_buffer );
 
