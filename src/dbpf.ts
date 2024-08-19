@@ -434,7 +434,7 @@ export class DBPF extends EventEmitter {
                 .then(( buffer: Buffer ) => {
                     this._parseHeader( buffer, callback as ErrorOnlyCallback )
                         .then(()=>{
-                            this.emit( "load", this );
+                            this.emit( "init", this );
                             out_resolve( this );
                         }).catch( out_reject );
                 })
