@@ -118,7 +118,6 @@ export class DBPF extends EventEmitter {
 
         if( !filepath.trim().length )
             throw new Error("DBPF: Invalid file: Nil filepath");
-        // this.filepath = filepath;
         let filename = filepath.split('/').pop() as string;
         if( !filename.trim().length )
             throw new Error("DBPF: Invalid file: Cannot be a directory");
@@ -246,7 +245,7 @@ export class DBPF extends EventEmitter {
     }
 
     validate( callback?: DBPFCallback ){
-        if( !this.filepath.length ){
+        if( !this._filepath.length ){
             const error = new Error("DBPF: No file path provided");
             this.emit( "error", error );
             if( typeof callback !== "function" )
@@ -259,7 +258,7 @@ export class DBPF extends EventEmitter {
     }
 
     read(
-        length: BufferLength = this.filesize,
+        length: BufferLength = this._filesize,
         offset: BufferOffset = 0,
         callback?: ErrorOnlyCallback
     ): Promise<Buffer> {
@@ -294,12 +293,12 @@ export class DBPF extends EventEmitter {
                 return;
             }
 
-            if( this.file instanceof File ){
+            if( this._file instanceof File ){
                 const blobRead_promise = new Promise<Buffer>((
                     blobRead_resolve: (buffer: Buffer) => void,
                     blobRead_reject: (err: Error) => void
                 ) => {
-                    fs.read( this.file, out_buffer, 0, length, offset, async (
+                    fs.read( this._file, out_buffer, 0, length, offset, async (
                         err: NullableError,
                         bytesRead: Unused,
                         buffer: Unused
@@ -314,9 +313,9 @@ export class DBPF extends EventEmitter {
                             !this._fullbuffer &&
                             this._cache.count === 1 &&
                             this._cache.start === 0 &&
-                            this._cache.end  >= this.filesize
+                            this._cache.end  >= this._filesize
                         ){
-                            this._fullbuffer = await this._cache.get( 0, this.filesize );
+                            this._fullbuffer = await this._cache.get( 0, this._filesize );
                             this.emit( "load", this );
                         }
                         this.emit( "read", out_buffer );
@@ -332,7 +331,7 @@ export class DBPF extends EventEmitter {
                     open_resolve: (fd: FileDescriptor) => void,
                     open_reject: (err: Error) => void
                 ) => {
-                    fs.open( this.filepath, 'r', (
+                    fs.open( this._filepath, 'r', (
                         err: NullableError,
                         fd: FileDescriptor | undefined
                     )=>{
@@ -368,9 +367,9 @@ export class DBPF extends EventEmitter {
                                     !this._fullbuffer &&
                                     this._cache.count === 1 &&
                                     this._cache.start === 0 &&
-                                    this._cache.end  >= this.filesize
+                                    this._cache.end  >= this._filesize
                                 ){
-                                    this._fullbuffer = await this._cache.get( 0, this.filesize );
+                                    this._fullbuffer = await this._cache.get( 0, this._filesize );
                                     this.emit( "load", this );
                                 }
                                 this.emit( "read", out_buffer );
@@ -449,15 +448,7 @@ export class DBPF extends EventEmitter {
             out_resolve: (dbpf: DBPF) => void,
             out_reject: (err: Error) => void
         ) => {
-
-            let filesize: BufferLength;
-
-            if( this.file instanceof File )
-                filesize = (this.file as File).size;
-            else
-                filesize = fs.statSync( this.filepath ).size;
-
-            this.read( filesize, 0, callback as ErrorOnlyCallback )
+            this.read( this.filesize, 0, callback as ErrorOnlyCallback )
                 .then(( buffer: Buffer ) => {
                     this._fullbuffer = buffer;
                     this._parseHeader( buffer, callback as ErrorOnlyCallback )
