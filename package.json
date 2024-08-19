@@ -32,11 +32,11 @@
         "test":             "npm run build:test && npm run test:serve",
         "test:serve":       "cd ./test/serve && live-server --port=8080 --open=./index.html",
 
-        "prepack":          "npm run build && npm run prepack:man",
-        "prepack:man":      "node scripts/manifest.js",
+        "prepack":          "npm run build && npm run manifest:prepare",
+        "postpack":         "npm run manifest:restore",
 
-        "postpack":         "npm run postpack:man",
-        "postpack:man":     "node scripts/manifest.js --restore",
+        "manifest:prepare":         "node scripts/manifest.js",
+        "manifest:restore": "node scripts/manifest.js --restore",
 
         "prepublishOnly":   "rimraf ./scripts/manifest"
     },
