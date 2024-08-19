@@ -285,6 +285,7 @@ export class DBPF extends EventEmitter {
                 return;
             }
             const existingbuffer = await this.cache.get( offset, length );
+
             if( existingbuffer ){
                 this.emit( "read", existingbuffer );
                 out_resolve( existingbuffer );
@@ -397,7 +398,7 @@ export class DBPF extends EventEmitter {
                     .catch( emit_reject );
             }
         });
-        
+
         if( typeof callback === "function" )
             out.catch(( error: Error ) => {
                 callback( error );
@@ -418,8 +419,10 @@ export class DBPF extends EventEmitter {
             this.read( HEADERLENGTH, 0, callback as ErrorOnlyCallback )
                 .then(( buffer: Buffer ) => {
                     this.parseHeader( buffer, callback as ErrorOnlyCallback );
-                    this.emit( "init", this );
-                    out_resolve( this );
+                    this.table.init().then(()=>{
+                        this.emit( "load", this );
+                        out_resolve( this );
+                    }).catch( out_reject );
                 })
                 .catch( out_reject );
         })
@@ -427,7 +430,9 @@ export class DBPF extends EventEmitter {
         this._initializer = out;
 
         if( typeof callback === "function" )
-            out.catch(( error: Error ) => {
+            out.then(( dbpf: DBPF ) => {
+                callback( null, dbpf );
+            }).catch(( error: Error ) => {
                 callback( error );
             });
         else
@@ -454,18 +459,20 @@ export class DBPF extends EventEmitter {
                 .then(( buffer: Buffer ) => {
                     this.fullbuffer = buffer;
                     this.parseHeader( buffer, callback as ErrorOnlyCallback );
-                    this.emit( "init", this );
-                    this.emit( "load", this );
-                    if( typeof callback === "function" )
-                        callback( null, this );
-                    out_resolve( this );
+                    this.table.init().then(()=>{
+                        this.emit( "init", this );
+                        this.emit( "load", this );
+                        out_resolve( this );
+                    }).catch( out_reject );
                 })
         });
 
         this._initializer = out;
 
         if( typeof callback === "function" )
-            out.catch(( error: Error ) => {
+            out.then(( dbpf: DBPF ) => {
+                callback( null, dbpf );
+            }).catch(( error: Error ) => {
                 callback( error );
             });
         else
@@ -547,7 +554,7 @@ class DBPFIndexTable extends EventEmitter {
             ready_resolve: () => void,
             ready_reject: (err: Error) => void
         )=>{
-            file.read( table_size, table_offset + 4 ).then((
+            file.read( table_size - 4, table_offset + 4 ).then((
                 buffer: Buffer
             )=>{
                 this._buffer = buffer;
@@ -557,6 +564,7 @@ class DBPFIndexTable extends EventEmitter {
             this.emit( "init", this );
         }).catch(( error: Error )=>{
             this.emit( "error", error );
+            throw error;
         });
 
         const entries = new Map<IndexNumeric, DBPFEntry>();

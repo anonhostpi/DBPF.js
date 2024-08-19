@@ -37,7 +37,7 @@ export class BufferReader {
 
     // 1 byte
     getByte(): OneByte {
-        if( this._cursor + 1 >= this._buffer.length )
+        if( this._cursor + 1 > this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readUInt8( this._cursor );
@@ -47,7 +47,7 @@ export class BufferReader {
 
     // 2 bytes
     getShort(): TwoBytes {
-        if( this._cursor + 2 >= this._buffer.length )
+        if( this._cursor + 2 > this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readUInt16LE( this._cursor );
@@ -57,7 +57,7 @@ export class BufferReader {
 
     // 4 bytes
     getInt(): FourBytes {
-        if( this._cursor + 4 >= this._buffer.length )
+        if( this._cursor + 4 > this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readUInt32LE( this._cursor );
@@ -67,7 +67,7 @@ export class BufferReader {
 
     // 4 bytes
     getFloat(): FourBytes {
-        if( this._cursor + 4 >= this._buffer.length )
+        if( this._cursor + 4 > this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readFloatLE( this._cursor );
@@ -77,7 +77,7 @@ export class BufferReader {
 
     // 8 bytes
     getLong(): EightBytes {
-        if( this._cursor + 8 >= this._buffer.length )
+        if( this._cursor + 8 > this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.readBigInt64LE( this._cursor );
@@ -87,7 +87,7 @@ export class BufferReader {
 
     // 'n' bytes
     getSection( length: number ): Buffer {
-        if( this._cursor + length >= this._buffer.length )
+        if( this._cursor + length > this._buffer.length )
             throw new RangeError("BufferReader: Read out of range");
 
         let out = this._buffer.subarray( this._cursor, this._cursor + length );
