@@ -2,6 +2,14 @@
 
 This is a performant library for reading DBPF files in TypeScript/JavaScript. Currently, it only parses the header and index, but a plugin system is planned to allow for reading and handling of the actual data.
 
+## Playground/Interactive Testing (github.io)
+
+To see the library in action, you can visit the [playground](https://anonhostpi.github.io/DBPF.js/).
+
+You can also build and run the playground locally by following the instructions in [Building and Interactive Testing](#building-and-interactive-testing):
+
+![DBPF.js test environment](https://github.com/anonhostpi/DBPF.js/blob/main/docs/test.png)
+
 ## Usage
 
 This library is available on npm:
@@ -121,5 +129,3 @@ Built files:
 Source files:
 - `src/dbpf.ts` - The main library
 - `src/test.ts` - The test environment used by `npm run test`
-
-![DBPF.js test environment](https://github.com/anonhostpi/DBPF.js/blob/main/docs/test.png)
