@@ -3,6 +3,7 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 
 const restore = process.argv.includes('--restore');
+const backup = process.argv.includes('--backup');
 
 if( restore ){
 
@@ -22,7 +23,7 @@ if( restore ){
     });
 
 } else {
-    console.log( "Cleaning up package.json for packing/publishing" );
+    console.log( "Backing up package.json" );
     
     if (!fs.existsSync(__dirname + '/manifests')) {
         fs.mkdirSync(__dirname + '/manifests');
@@ -36,8 +37,13 @@ if( restore ){
 
     // backup the package.json via copy
     const filepath = `${__dirname}/manifests/package.${date}.bak.json`;
-
     fs.copyFileSync(__dirname + '/../package.json', filepath);
+
+    // exit early if only backing up
+    if( backup )
+        return;
+
+    console.log( "Cleaning up package.json for packing/publishing" );
     
     delete package.devDependencies["live-server"];
     delete package.scripts["make:test"];

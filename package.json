@@ -59,7 +59,10 @@
         "postpack":         "npm run manifest:restore",
 
         "manifest:prepare": "node scripts/manifest.js",
+        "manifest:backup":  "node scripts/manifest.js --backup",
         "manifest:restore": "node scripts/manifest.js --restore",
+
+        "safeinstall":      "npm run manifest:backup && npm install && npm run manifest:restore",
 
         "prepublishOnly":   "rimraf ./scripts/manifests"
     },
