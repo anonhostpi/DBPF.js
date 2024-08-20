@@ -7,7 +7,11 @@ type BufferLength = number;
 
 export type OneByte = number;
 export type TwoBytes = number;
+export type ThreeBytes = number;
 export type FourBytes = number;
+export type FiveBytes = bigint;
+export type SixBytes = bigint;
+export type SevenBytes = bigint;
 export type EightBytes = bigint;
 
 export class BufferReader {
@@ -33,6 +37,37 @@ export class BufferReader {
 
     move( position: Position ): void {
         this._cursor = position;
+    }
+
+    getBytes( length: BufferLength ):
+        OneByte | TwoBytes | ThreeBytes | FourBytes |
+        FiveBytes | SixBytes | SevenBytes | EightBytes
+    {
+        if( this._cursor + length > this._buffer.length )
+            throw new RangeError("BufferReader: Read out of range");
+        
+        let out;
+
+        // tries to use node's optimized/faster read functions for 1-4 and 8 bytes
+        if( length === 8 ){
+            out = this._buffer.readBigInt64LE( this._cursor );
+            this.advance(8);
+            return out;
+        }
+
+        const first = this._buffer.readUIntLE( this._cursor, Math.min( length, 4 ) );
+
+        if( length <= 4 ){
+            this.advance(length);
+            return first;
+        }
+
+        let shift = length - 4;
+        const second = this._buffer.readUIntLE( this._cursor + 4, shift );
+
+        this.advance(length);
+
+        return (BigInt(second) << BigInt(32)) | BigInt(first);
     }
 
     // 1 byte
