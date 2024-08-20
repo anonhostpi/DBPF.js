@@ -128,4 +128,4 @@ Built files:
 
 Source files:
 - `src/dbpf.ts` - The main library
-- `src/test.ts` - The test environment used by `npm run test`
+- `src/test.web.ts` - The script used by the interactive test environment
