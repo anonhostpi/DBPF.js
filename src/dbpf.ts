@@ -16,7 +16,7 @@ import {
     TwoBytes,
     FourBytes,
     EightBytes,
-} from "./bytebuffer";
+} from "./BufferReader";
 import { Deserialized, JSONPrimitive } from "./serde";
 import { PromiseSafeBufferCache } from "./buffercache";
 
