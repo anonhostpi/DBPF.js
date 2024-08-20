@@ -4,6 +4,7 @@ const { execSync } = require('child_process');
 
 const restore = process.argv.includes('--restore');
 const backup = process.argv.includes('--backup');
+const formatFlag = process.argv.includes('--format');
 
 if( restore ){
 
@@ -29,8 +30,6 @@ if( restore ){
         fs.mkdirSync(__dirname + '/manifests');
     }
     
-    const package = require(__dirname + '/../package.json');
-    
     // get date string for backup
     let date = new Date();
     date = date.toISOString().replace(/:/g, '.').replace('T', '.').replace('-', '.').replace('Z', '');
@@ -43,6 +42,75 @@ if( restore ){
     if( backup )
         return;
 
+    const {
+        alignJSON: format,
+        splitCommaDelimited: split
+    } = require('./indent.json.js');
+    let package = require(__dirname + '/../package.json');
+    const formatted = format(package);
+
+    const lastKeyword = package.keywords[package.keywords.length - 1];
+    // get all lines after "keywords" and before (but including) last keyword
+    let lines = formatted.split('\n');
+    const keywordStart = lines.findIndex( line => line.includes('"keywords":') ) + 1;
+    const keywordEnd = lines.findIndex( (line, i) => i > keywordStart && line.includes(lastKeyword) );
+    
+    lines = lines.map(
+        (line, i) => {
+            if( i >= keywordStart && i <= keywordEnd ){
+                values = split(line);
+                values = values.map( value => {
+                    let padding = /^ */.exec(value)[0];
+                    value = value
+                        .trim()
+                        .toLowerCase()
+                        .replace(/ /g, '-');
+                    return padding + value;
+                })
+                line = values.join(',');
+            }
+            return line;
+        }
+    );
+
+    const kwCorrected = lines.join('\n');
+
+    const addEmptyLineBefore = [
+        "homepage",
+        "main",
+        "scripts",
+            "make:imports",
+            "build",
+            "build:web",
+            "prebuild",
+            "prebuild:web",
+            "test",
+            "prepack",
+            "manifest:prepare",
+            "preinstall",
+            "prepublishOnly",
+        "devDependencies"
+    ].map( key => `"${key}":` );
+
+    lines = kwCorrected.split('\n');
+    for( let i = 0; i < lines.length; i++ ){
+        const line = lines[i];
+        const hasEmptyLineBefore = addEmptyLineBefore.some( key => line.includes(key) );
+        if( hasEmptyLineBefore ){
+            lines.splice(i, 0, '');
+            i++;
+        }
+    }
+    const finalDevFormat = lines.join('\n');
+
+    fs.writeFileSync(__dirname + '/../package.json', finalDevFormat);
+
+    // exit early if only formatting
+    if( formatFlag )
+        return;
+
+    package = JSON.parse(finalDevFormat);
+
     console.log( "Cleaning up package.json for packing/publishing" );
     
     delete package.devDependencies["live-server"];
@@ -51,8 +119,10 @@ if( restore ){
     delete package.scripts["prebuild:test"];
     delete package.scripts["test"];
     delete package.scripts["test:serve"];
+
+    const published = JSON.stringify(package, null, 2);
     
-    fs.writeFileSync(__dirname + '/../package.json', JSON.stringify(package, null, 2));
+    fs.writeFileSync(__dirname + '/../package.json', published);
 
     execSync('npm install', {
         cwd: __dirname + '/..',
