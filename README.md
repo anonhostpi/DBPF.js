@@ -107,7 +107,12 @@ git clone https://github.com/anonhostpi/DBPF.js
 cd DBPF.js
 
 # Install dependencies
-npm install
+npm run devinstall # wraps `npm install`
+
+# !!! TO ADD DEPS, PLEASE USE: !!!
+# npm run devinstall -- <npm-install-args>
+# ex: npm run devinstall -- @microsoft/tsdoc --save-dev
+# this helps with maintaining package.json's format
 
 # Build the library
 npm run build

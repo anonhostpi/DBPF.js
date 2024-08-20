@@ -87,6 +87,7 @@ if( restore ){
             "test",
             "prepack",
             "manifest:prepare",
+            "predevinstall",
             "preinstall",
             "prepublishOnly",
         "devDependencies"

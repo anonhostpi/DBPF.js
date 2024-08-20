@@ -62,6 +62,10 @@
         "manifest:restore": "node scripts/manifest.js --restore",
         "manifest:format":  "node scripts/manifest.js --format",
 
+        "predevinstall":    "npm run manifest:backup",
+        "devinstall":       "npm install",
+        "postdevinstall":   "npm run manifest:restore && npm run manifest:format",
+
         "prepublishOnly":   "rimraf ./scripts/manifests"
     },
 
