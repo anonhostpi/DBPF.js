@@ -58,10 +58,10 @@
         "prepack":          "npm run build && npm run manifest:prepare",
         "postpack":         "npm run manifest:restore",
 
-        "manifest:prepare":         "node scripts/manifest.js",
+        "manifest:prepare": "node scripts/manifest.js",
         "manifest:restore": "node scripts/manifest.js --restore",
 
-        "prepublishOnly":   "rimraf ./scripts/manifest"
+        "prepublishOnly":   "rimraf ./scripts/manifests"
     },
 
     "devDependencies": {
