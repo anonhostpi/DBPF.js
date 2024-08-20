@@ -7,5 +7,6 @@ node_modules
 # backups
 /scripts/manifests
 
-#build
+# build
 /dist/*.tgz
+dbpf-*.tgz
