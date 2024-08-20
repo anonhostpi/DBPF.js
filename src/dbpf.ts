@@ -496,6 +496,12 @@ type ResourceGroup = FourBytes;
 export class DBPFEntry {
     // These fields are not part of the DBPF file format
     file:       DBPF;
+    private _reader: BufferReader | undefined;
+    get reader(): BufferReader {
+        if( !this._reader )
+            throw new Error("DBPFEntry: No reader, try running read() first");
+        return this._reader;
+    }
 
     // DBPF file format fields:
     // - categorization:
@@ -536,6 +542,36 @@ export class DBPFEntry {
         this.offset = offset;
         this.size = size;
         this.unknown = unknown;
+    }
+
+    private _initializer: Promise<DBPFEntry> | undefined;
+    init(): Promise<DBPFEntry> {
+        return this._initializer ? this._initializer : new Promise<DBPFEntry>((
+            entry_resolve: (entry: DBPFEntry) => void,
+            entry_reject: (err: Error) => void
+        )=>{
+            this.read()
+                .then(()=>{
+                    entry_resolve( this );
+                })
+                .catch( entry_reject );
+        });
+    }
+
+    read(
+        cache: boolean = false,
+    ): Promise<BufferReader> {
+        return new Promise<BufferReader>((
+            entry_resolve: (reader: BufferReader) => void,
+            entry_reject: (err: Error) => void
+        )=>{
+            this.file.read( this.size.memory, this.offset, cache )
+                .then(( buffer: Buffer )=>{
+                    this._reader = new BufferReader( buffer );
+                    entry_resolve( this._reader );
+                })
+                .catch( entry_reject );
+        })
     }
 }
 
