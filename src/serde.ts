@@ -1,5 +1,24 @@
 import { polyfill, AggregateError } from './polyfill'; // see polyfill.ts for usage
 
+let polyfills: any[] = [
+    {
+        isAbsolute: (path: string) => /^[a-zA-Z]:[\\/]/.test(path),
+        resolve: (...paths: string[]) => {
+            paths = paths.map( path => path.replace(/\\/g, '/') ).filter( path => path.length );
+            return paths.join('/');
+        },
+        existsSync: () => true, 
+        writeFileSync: () => {}, // no-op
+        cwd: () => ""
+    }
+]
+
+if( polyfill.isNode )
+    polyfills.push("node:path","node:fs")
+
+if( globalThis.process )
+    polyfills.push( globalThis.process as any );
+
 const {
     // path
     isAbsolute: isAbsolutePath,
@@ -10,20 +29,8 @@ const {
     // process
     cwd
 } = polyfill(
-    {
-        isAbsolute: (path: string) => /^[a-zA-Z]:[\\/]/.test(path),
-        resolve: (...paths: string[]) => {
-            paths = paths.map( path => path.replace(/\\/g, '/') ).filter( path => path.length );
-            return paths.join('/');
-        },
-        existsSync: () => true, 
-        writeFileSync: () => {}, // no-op
-        cwd: () => ""
-    },
-    "path",
-    "fs",
-    globalThis.process as any || {}
-)
+    ...polyfills
+) as typeof import("path") & typeof import("fs") & { cwd: () => string };
 
 export type JSONPrimitive = string | number | boolean | undefined | null; // bigint is not supported by ECMAScript's JSON
 
