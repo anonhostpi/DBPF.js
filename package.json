@@ -66,6 +66,10 @@
         "devinstall":       "npm install",
         "postdevinstall":   "npm run manifest:format",
 
+        "predevuninstall":  "npm run manifest:backup",
+        "devuninstall":     "npm uninstall",
+        "postdevuninstall": "npm run manifest:format",
+
         "prepublishOnly":   "rimraf ./scripts/manifests"
     },
 
