@@ -64,7 +64,7 @@
 
         "predevinstall":    "npm run manifest:backup",
         "devinstall":       "npm install",
-        "postdevinstall":   "npm run manifest:restore && npm run manifest:format",
+        "postdevinstall":   "npm run manifest:format",
 
         "prepublishOnly":   "rimraf ./scripts/manifests"
     },
