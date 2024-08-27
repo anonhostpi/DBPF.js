@@ -1,27 +1,28 @@
 import { polyfill } from "./polyfill";
 
 export type EventListener = (...args: any[]) => void;
+export type EventEmitMethod = (event: string, ...args: any[]) => boolean;
 
 class _EventEmitter {
-    private events: { [key: string]: EventListener[] } = {};
+    private events?: { [key: string]: EventListener[] } = {}; // set as optional for the EventEmitter interface type
 
     on(event: string, listener: EventListener): this {
-        if (!this.events[event]) {
-            this.events[event] = [];
+        if (!this.events![event]) {
+            this.events![event] = [];
         }
-        this.events[event].push(listener);
+        this.events![event].push(listener);
         return this;
     }
 
     off(event: string, listener: EventListener): this {
-        if (!this.events[event]) return this;
-        this.events[event] = this.events[event].filter(l => l !== listener);
+        if (!this.events![event]) return this;
+        this.events![event] = this.events![event].filter(l => l !== listener);
         return this;
     }
 
-    protected emit(event: string, ...args: any[]): boolean {
-        if (!this.events[event]) return false;
-        this.events[event].forEach(listener => listener.apply(this, args));
+    readonly emit: EventEmitMethod = (event: string, ...args: any[]) => {
+        if (!this.events![event]) return false;
+        this.events![event].forEach(listener => listener.apply(this, args));
         return true;
     }
 
