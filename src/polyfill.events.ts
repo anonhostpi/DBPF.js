@@ -36,13 +36,17 @@ class _EventEmitter {
     }
 }
 
-const { EventEmitter } = polyfill(
-    {
-        EventEmitter: _EventEmitter
-    },
-    "events"
-)
+let polyfills: any[] = [
+    { EventEmitter: _EventEmitter }
+]
 
-const out: typeof _EventEmitter = EventEmitter;
+if( polyfill.isNode )
+    polyfills.push("node:events")
 
-export { out as EventEmitter };
+export const { EventEmitter } = polyfill(
+    ...polyfills
+) as {
+    EventEmitter: typeof _EventEmitter
+}
+export type EventEmitter = _EventEmitter;
+export type IEventEmitter = _EventEmitter;
