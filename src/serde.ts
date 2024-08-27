@@ -149,7 +149,7 @@ export class Deserialized {
         const self: any = this instanceof Deserialized ? this : new Deserialized();
         obj = JSON.parse( JSON.stringify( obj ) );
 
-        const keys = Object.keys( obj );
+        const keys = Object.keys( self );
 
         for( const key in obj ){
             if( typeof self[key] !== "function" ){
