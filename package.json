@@ -42,7 +42,7 @@
         "build":            "npm run make:node && npm run make:web",
 
         "build:web":        "npm run make:web",
-        "build:test":       "npm run make:test && copyfiles -f ./dist/dbpf.web.js ./test/serve && copyfiles -f ./test/index.html ./test/serve",
+        "build:test":       "npm run make:web && npm run make:test && copyfiles -f ./dist/dbpf.web.js ./test/serve && copyfiles -f ./test/index.html ./test/serve",
         "build:node":       "npm run make:node",
 
         "prebuild":         "npm run clean && npm run make:imports",
