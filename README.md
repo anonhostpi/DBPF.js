@@ -28,7 +28,7 @@ file = 'path/to/file.package';
 // Browser:
 file = input.files[0]; // where input is an <input type="file"> element
 
-let dbpf = new DBPF( file );
+let dbpf = await DBPF.create( file );
 
 // immediately available properties:
 console.log( dbpf.filename );
@@ -41,7 +41,7 @@ console.log( dbpf.fileext );
 console.log( dbpf.magic );
 
 // async properties:
-await dbpf.init();
+/* await dbpf.init(); */ // this is called automatically by DBPF.create
 // - header properties:
 // -- format headers:
 console.log( dbpf.header.dbpf.major );
@@ -57,12 +57,16 @@ console.log( dbpf.header.index.count );
 console.log( dbpf.header.index.size );
 console.log( dbpf.header.index.offset );
 console.log( dbpf.header.index.first );
-// -- hole table headers:
-console.log( dbpf.header.hole.count );
-console.log( dbpf.header.hole.size );
-console.log( dbpf.header.hole.offset );
+// -- trash table headers:
+console.log( dbpf.header.trash.count );
+console.log( dbpf.header.trash.size );
+console.log( dbpf.header.trash.offset );
 // - index table:
-let entry = dbpf.table[0];
+//   - header entry:
+console.log( dbpf.table.mode );
+console.log( dbpf.table.headerSegments );
+//   - full entries:
+let entry = await dbpf.table.get( 0 );
 console.log( entry.type );
 console.log( entry.group );
 console.log( entry.instance ); // NOTE: this is a bigint (128-bit) and not a number (64-bit)
@@ -71,32 +75,14 @@ console.log( entry.size.compressed );
 console.log( entry.size.memory );
 console.log( entry.size.file );
 
-/*
-The DBPF class has a cache that stores the read data from the file to avoid rereads.
-To save memory, a few apis are provided to clear/minimize the cache:
-*/
-// - clear the entire cache
-dbpf.clearCache();
-// - skip cache when reading (set 3rd argument to false)
-dbpf.read( size, offset, false /*, ( err, dbpf_self )={ ...optional... } */ )
+// to read the raw dbpf data, use:
+await dbpf.read( size, offset );
 
 ```
 
 ## Events
 
-The library is set up as a polyfilled event emitter. The following events are emitted:
-- they can be handled with .on, .once, and .off.
-
-- `DBPF`:
-  - `error` - emitted when an error occurs
-  - `read` - whenever data is successfully read from the file (or cache)
-  - `load` - whenever the file is fully read (this can happen multiple times if the cache is cleared)
-  - `init` - whenever the dbpf object is fully initialized
-    - this only happens once
-    - the dbpf object is fully initialized when the header is read and the index table is ready (index table emits its own `init` event)
-- `DBPFIndexTable`:
-  - `error` - emitted when an error occurs during initialization
-  - `init` - whenever the index table is buffered and ready (this only happens once)
+WIP
 
 ## Building and Interactive Testing
 
@@ -110,7 +96,7 @@ cd DBPF.js
 npm run devinstall # wraps `npm install`
 
 # !!! TO ADD DEPS, PLEASE USE: !!!
-# npm run devinstall -- <npm-install-args>
+# npm run devinstall/devuninstall -- <npm-install-args>
 # ex: npm run devinstall -- @microsoft/tsdoc --save-dev
 # this helps with maintaining package.json's format
 
