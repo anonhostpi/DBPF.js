@@ -266,6 +266,10 @@ export class DBPF extends EventEmitter {
         await dbpf.init()
         return dbpf
     }
+
+    async read( offset: BufferOffset, length: BufferLength ): Promise<IBufferReader>{
+        return this._store.get( offset, length )
+    }
 }
 
 type ResourceType = FourBytes
