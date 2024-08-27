@@ -88,7 +88,7 @@ if( restore ){
             "prepack",
             "manifest:prepare",
             "predevinstall",
-            "preinstall",
+            "predevuninstall",
             "prepublishOnly",
         "devDependencies"
     ].map( key => `"${key}":` );
