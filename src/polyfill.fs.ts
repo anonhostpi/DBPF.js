@@ -1,22 +1,12 @@
 import { polyfill } from "./polyfill";
 
 import {
-    Buffer as CommunityBuffer
-} from "buffer";
-
-export type BufferOffset = number;
-export type BufferLength = number;
+    Buffer,
+    BufferOffset,
+    BufferLength
+} from "./polyfill.buffer";
 
 export type FileDescriptor = number;
-
-const {
-    Buffer: PolyfillBuffer
-} = polyfill(
-    { Buffer: CommunityBuffer },
-    "node:buffer"
-)
-
-export const Buffer: typeof CommunityBuffer = PolyfillBuffer;
 
 function assert( name: string, value: any, types: (string | Function)[] ){
 
