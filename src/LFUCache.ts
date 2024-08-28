@@ -1,17 +1,41 @@
+/**
+ * LFUCache
+ * 
+ * A simple implementation of a Least Frequently Used Cache with TTL
+ */
+
+/**
+ * The entry as stored in the cache
+ */
 type CacheEntry<IndexType, CachedValueType> = {
+    /**
+     * The index of the entry
+     */
     index: IndexType,
+    /**
+     * The value of the entry
+     */
     value: CachedValueType,
+    /**
+     * The usage frequency of the entry
+     */
     freq: number,
+    /**
+     * The timer associated with the entry's TTL
+     */
     timer: ReturnType<typeof setTimeout>
 }
+
+/**
+ * LFUCache
+ * 
+ * A simple implementation of a Least Frequently Used Cache with TTL
+ */
 export class LFUCache<IndexType, CachedValueType>{
-
-    private _capacity: number;
-    private _ttl: number;
-    private _cache: Map<IndexType, CacheEntry<IndexType, CachedValueType>>;
-    private _freq: Map<number, Set<IndexType>>;
-    private _minFreq: number;
-
+    /**
+     * @param capacity The amount of entries the cache can store
+     * @param ttl The time-to-live of the cache entries
+     */
     constructor(
         capacity: number,
         ttl: number
@@ -23,6 +47,37 @@ export class LFUCache<IndexType, CachedValueType>{
         this._minFreq = 0;
     }
 
+    /**
+     * The capacity of the cache
+     * @internal
+     */
+    private _capacity: number;
+    /**
+     * The time-to-live of the cache entries
+     * @internal
+     */
+    private _ttl: number;
+    /**
+     * The underlying Map object used to store the cache entries
+     * @internal
+     */
+    private _cache: Map<IndexType, CacheEntry<IndexType, CachedValueType>>;
+    /**
+     * The frequency map used to track the usage frequency of the cache entries
+     * @internal
+     */
+    private _freq: Map<number, Set<IndexType>>;
+    /**
+     * The lowest usage frequency of the stored cache entries
+     * @internal
+     */
+    private _minFreq: number;
+
+    /**
+     * The function used to evict entries from the cache
+     * @param {CacheEntry<IndexType, CachedValueType>} [entry] If provided, evicts the provided entry, otherwise evicts the least recently used entry
+     * @internal
+     */
     private _evict( entry?: CacheEntry<IndexType, CachedValueType>): void {
         const frequency = entry?.freq || this._minFreq;
         const candidates = this._freq.get( frequency );
@@ -41,6 +96,11 @@ export class LFUCache<IndexType, CachedValueType>{
         this._cache.delete( index! );
     }
 
+    /**
+     * Increment the usage frequency of an entry
+     * @param {CacheEntry<IndexType, CachedValueType>} entry The entry to increment the usage frequency of
+     * @internal
+     */
     private _increment( entry: CacheEntry<IndexType, CachedValueType> ): void {
         const { index, freq } = entry;
 
@@ -59,11 +119,21 @@ export class LFUCache<IndexType, CachedValueType>{
             this._freq.set( new_freq, new Set([index]) );
     }
 
+    /**
+     * Refresh the TTL of an entry
+     * @param {CacheEntry<IndexType, CachedValueType>} entry The entry to refresh the TTL of
+     * @internal
+     */
     private _refresh( entry: CacheEntry<IndexType, CachedValueType> ): void {
         clearTimeout( entry.timer );
         entry.timer = setTimeout( () => this._evict( entry ), this._ttl );
     }
 
+    /**
+     * The getter function to retrieve an entry from the cache
+     * @param index The index of the entry to retrieve
+     * @returns {CachedValueType | undefined} The value of the entry if found, otherwise undefined
+     */
     public get( index: IndexType ): CachedValueType | undefined {
         const entry = this._cache.get( index );
         if( !entry ) return;
@@ -73,6 +143,12 @@ export class LFUCache<IndexType, CachedValueType>{
         return entry.value;
     }
 
+    /**
+     * The setter function to set an entry in the cache
+     * @param index The index of the entry to set
+     * @param value The value of the entry to set
+     * @returns {CachedValueType} The value of the entry
+     */
     public set( index: IndexType, value: CachedValueType ): CachedValueType {
         if( this._capacity <= 0 ) return value;
 
@@ -102,5 +178,4 @@ export class LFUCache<IndexType, CachedValueType>{
 
         return value;
     }
-
 }
