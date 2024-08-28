@@ -20,7 +20,7 @@ npm install dbpf.js
 ```
 
 ```typescript
-import { DBPF } from 'dbpf.js';
+import { DBPF } from 'dbpf';
 
 let file: string;
 // Node.js:
