@@ -72,7 +72,7 @@
 
         "prepublishOnly":          "rimraf ./scripts/manifests",
 
-        "docs":                    "typedoc --out ./docs ./src"
+        "docs":                    "typedoc --plugin typedoc-plugin-markdown --out ./docs ./src"
     },
 
     "devDependencies": {
