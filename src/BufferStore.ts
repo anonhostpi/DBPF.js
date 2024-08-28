@@ -1,10 +1,8 @@
-/*
-NOTE:
-- I would like for there to be a way to make these synchronous, but there are a few challenges:
-  - The Blob API is asynchronous. We can use blob urls and the XHR API to get around
-    this, but that isn't ideal, and as far as I know, there is no XHR API in node, and
-    no npm modules are designed to work with blob urls synchronously.
-*/
+/**
+ * BufferStore
+ * 
+ * A LFU+TTL cache for reading buffer segments from a file.
+ */
 
 'use strict';
 

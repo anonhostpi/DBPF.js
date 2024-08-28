@@ -1,5 +1,7 @@
 
 /**
+ * Polyfilled Buffer Types
+ * 
  * This module provides a polyfill for the Buffer class.
  * 
  * @remarks
