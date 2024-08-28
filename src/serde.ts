@@ -1,4 +1,13 @@
-import { polyfill, AggregateError } from './polyfill'; // see polyfill.ts for usage
+/**
+ * Serde
+ * 
+ * A TypeScript library for serializing and deserializing JSON files in a Rust-like manner.
+ */
+
+/**
+ * @ignore
+ */
+import { polyfill, AggregateError } from './polyfill';
 
 let polyfills: any[] = [
     {
