@@ -1,13 +1,13 @@
 {
-    "name":                 "dbpf",
+    "name":                        "dbpf",
     "author": {
-        "name":             "anonhostpi",
-        "email":            "anon@hostpi.onmicrosoft.com",
-        "url":              "https://github.com/anonhostpi"
+        "name":                    "anonhostpi",
+        "email":                   "anon@hostpi.onmicrosoft.com",
+        "url":                     "https://github.com/anonhostpi"
     },
-    "license":              "MIT",
-    "version":              "1.0.4",
-    "description":          "A library for reading and writing DBPF files.",
+    "license":                     "MIT",
+    "version":                     "1.0.4",
+    "description":                 "A library for reading and writing DBPF files.",
     "keywords": [
         "dbpf", "dbpf-reader", "dbpf-extractor", "dbpf-packs", ".package",
         ".save", ".trayitem", ".world", ".household", "the-sims-2",
@@ -18,76 +18,80 @@
         "file-formats", "file", "files", "file-system"
     ],
 
-    "homepage":             "https://anonhostpi.github.io/DBPF.js",
+    "homepage":                    "https://anonhostpi.github.io/DBPF.js",
     "repository": {
-        "type":             "git",
-        "url":              "https://github.com/anonhostpi/DBPF.js"
+        "type":                    "git",
+        "url":                     "https://github.com/anonhostpi/DBPF.js"
     },
     "bugs": {
-        "url":              "https://github.com/anonhostpi/DBPF.js/issues"
+        "url":                     "https://github.com/anonhostpi/DBPF.js/issues"
     },
 
-    "main":                 "./dist/DBPF.js",
-    "types":                "./dist/DBPF.d.ts",
-    "browser":              "./dist/DBPF.web.js",
+    "main":                        "./dist/DBPF.js",
+    "types":                       "./dist/DBPF.d.ts",
+    "browser":                     "./dist/DBPF.web.js",
 
     "scripts": {
-        "clean":            "rimraf ./dist && mkdirp ./dist",
+        "clean":                   "rimraf ./dist && mkdirp ./dist",
 
-        "make:imports":     "node scripts/imports.js",
-        "make:node":        "tsc --project ./tsconfig.json",
-        "make:web":         "webpack --config webpack.config.js",
-        "make:test":        "webpack --config webpack.test.config.js",
+        "make:imports":            "node scripts/imports.js",
+        "make:node":               "tsc --project ./tsconfig.json",
+        "make:web":                "webpack --config webpack.config.js",
+        "make:test":               "webpack --config webpack.test.config.js",
 
-        "build":            "npm run make:node && npm run make:web",
+        "build":                   "npm run make:node && npm run make:web",
 
-        "build:web":        "npm run make:web",
-        "build:test":       "npm run make:web && npm run make:test && copyfiles -f ./dist/DBPF.web.js ./test/serve && copyfiles -f ./test/index.html ./test/serve",
-        "build:node":       "npm run make:node",
+        "build:web":               "npm run make:web",
+        "build:test":              "npm run make:web && npm run make:test && copyfiles -f ./dist/DBPF.web.js ./test/serve && copyfiles -f ./test/index.html ./test/serve",
+        "build:node":              "npm run make:node",
 
-        "prebuild":         "npm run clean && npm run make:imports",
+        "prebuild":                "npm run clean && npm run make:imports",
 
-        "prebuild:web":     "npm run make:imports",
-        "prebuild:test":    "npm run build:web",
-        "prebuild:node":    "npm run make:imports",
+        "prebuild:web":            "npm run make:imports",
+        "prebuild:test":           "npm run build:web",
+        "prebuild:node":           "npm run make:imports",
 
-        "test":             "npm run build:test && npm run test:serve",
-        "test:serve":       "cd ./test/serve && live-server --port=8080 --open=./index.html",
+        "test":                    "npm run build:test && npm run test:serve",
+        "test:serve":              "cd ./test/serve && live-server --port=8080 --open=./index.html",
 
-        "prepack":          "npm run build && npm run manifest:prepare",
-        "postpack":         "npm run manifest:restore",
+        "prepack":                 "npm run build && npm run manifest:prepare",
+        "postpack":                "npm run manifest:restore",
 
-        "manifest:prepare": "node scripts/manifest.js",
-        "manifest:backup":  "node scripts/manifest.js --backup",
-        "manifest:restore": "node scripts/manifest.js --restore",
-        "manifest:format":  "node scripts/manifest.js --format",
+        "manifest:prepare":        "node scripts/manifest.js",
+        "manifest:backup":         "node scripts/manifest.js --backup",
+        "manifest:restore":        "node scripts/manifest.js --restore",
+        "manifest:format":         "node scripts/manifest.js --format",
 
-        "predevinstall":    "npm run manifest:backup",
-        "devinstall":       "npm install",
-        "postdevinstall":   "npm run manifest:format",
+        "predevinstall":           "npm run manifest:backup",
+        "devinstall":              "npm install",
+        "postdevinstall":          "npm run manifest:format",
 
-        "predevuninstall":  "npm run manifest:backup",
-        "devuninstall":     "npm uninstall",
-        "postdevuninstall": "npm run manifest:format",
+        "predevuninstall":         "npm run manifest:backup",
+        "devuninstall":            "npm uninstall",
+        "postdevuninstall":        "npm run manifest:format",
 
-        "prepublishOnly":   "rimraf ./scripts/manifests"
+        "prepublishOnly":          "rimraf ./scripts/manifests",
+
+        "docs":                    "typedoc --out ./docs ./src"
     },
 
     "devDependencies": {
-        "@microsoft/tsdoc": "^0.15.0",
-        "@types/node":      "^22.3.0",
-        "copyfiles":        "^2.4.1",
-        "live-server":      "^1.2.2",
-        "mkdirp":           "^3.0.1",
-        "rimraf":           "^6.0.1",
-        "ts-loader":        "^9.5.1",
-        "tslib":            "^2.4.0",
-        "typescript":       "~5.4.5",
-        "webpack":          "^5.93.0",
-        "webpack-cli":      "^5.1.4"
+        "@microsoft/tsdoc":        "^0.15.0",
+        "@types/node":             "^22.3.0",
+        "copyfiles":               "^2.4.1",
+        "live-server":             "^1.2.2",
+        "mkdirp":                  "^3.0.1",
+        "rimraf":                  "^6.0.1",
+        "ts-loader":               "^9.5.1",
+        "tslib":                   "^2.4.0",
+        "typedoc":                 "^0.26.6",
+        "typedoc-plugin-markdown": "^4.2.6",
+        "typescript":              "~5.4.5",
+        "webpack":                 "^5.93.0",
+        "webpack-cli":             "^5.1.4"
     },
     "dependencies": {
-        "buffer":           "^6.0.3",
-        "process":          "^0.11.10"
+        "buffer":                  "^6.0.3",
+        "process":                 "^0.11.10"
     }
 }
