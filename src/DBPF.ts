@@ -35,7 +35,7 @@ import {
     EightBytes,
 
     PathString
-} from "./bufferstore"
+} from "./BufferStore"
 
 import {
     Deserialized, 
