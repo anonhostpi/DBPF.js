@@ -113,10 +113,10 @@ Both the build and test build will use webpack to bundle the library for the bro
 The entry points are as follows:
 
 Built files:
-- `dist/dbpf.js` - The library for use in node.js
-- `dist/dbpf.web.js` - The library for use in the browser
+- `dist/DBPF.js` - The library for use in node.js
+- `dist/DBPF.web.js` - The library for use in the browser
 - `test/index.html` and `test/test.web.js` - The test environment for the browser
 
 Source files:
-- `src/dbpf.ts` - The main library
+- `src/DBPF.ts` - The main library
 - `src/test.web.ts` - The script used by the interactive test environment
