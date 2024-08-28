@@ -446,34 +446,34 @@ export type IBufferReader = BufferReader;
 class BufferReader {
     /**
      * The method for retrieving buffer segments from the cache, provided by said cache.
-     * @internal
+     * @private
      */
     private _getter: BufferStoreGetter;
     /**
      * The size of each segment in bytes.
-     * @internal
+     * @private
      */
     private _segment_size: BufferLength;
 
     /**
      * The prior segment in the buffer cache stored asynchronously.
-     * @internal
+     * @private
      */
     private _prior_segment: Promise<BufferStoreEntry> | undefined;
     /**
      * The current segment in the buffer cache stored asynchronously.
-     * @internal
+     * @private
      */
     private _current_segment: Promise<BufferStoreEntry>;
     /**
      * The next segment in the buffer cache stored asynchronously.
-     * @internal
+     * @private
      */
     private _next_segment: Promise<BufferStoreEntry> | undefined;
 
     /**
      * The number of segments readable by this BufferReader.
-     * @internal
+     * @private
      */
     private _count: number;
 
@@ -597,7 +597,7 @@ class BufferReader {
      * @param length The length (in bytes) of the buffer to retrieve from the cursor position.
      * @returns { Promise<Buffer> }
      * 
-     * @internal
+     * @private
      */
     private async _getBuffer( length: BufferLength ): Promise<Buffer> {
         if( this._cursor + length > this._length )

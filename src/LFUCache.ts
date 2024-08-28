@@ -49,34 +49,34 @@ export class LFUCache<IndexType, CachedValueType>{
 
     /**
      * The capacity of the cache
-     * @internal
+     * @private
      */
     private _capacity: number;
     /**
      * The time-to-live of the cache entries
-     * @internal
+     * @private
      */
     private _ttl: number;
     /**
      * The underlying Map object used to store the cache entries
-     * @internal
+     * @private
      */
     private _cache: Map<IndexType, CacheEntry<IndexType, CachedValueType>>;
     /**
      * The frequency map used to track the usage frequency of the cache entries
-     * @internal
+     * @private
      */
     private _freq: Map<number, Set<IndexType>>;
     /**
      * The lowest usage frequency of the stored cache entries
-     * @internal
+     * @private
      */
     private _minFreq: number;
 
     /**
      * The function used to evict entries from the cache
      * @param {CacheEntry<IndexType, CachedValueType>} [entry] If provided, evicts the provided entry, otherwise evicts the least recently used entry
-     * @internal
+     * @private
      */
     private _evict( entry?: CacheEntry<IndexType, CachedValueType>): void {
         const frequency = entry?.freq || this._minFreq;
@@ -99,7 +99,7 @@ export class LFUCache<IndexType, CachedValueType>{
     /**
      * Increment the usage frequency of an entry
      * @param {CacheEntry<IndexType, CachedValueType>} entry The entry to increment the usage frequency of
-     * @internal
+     * @private
      */
     private _increment( entry: CacheEntry<IndexType, CachedValueType> ): void {
         const { index, freq } = entry;
@@ -122,7 +122,7 @@ export class LFUCache<IndexType, CachedValueType>{
     /**
      * Refresh the TTL of an entry
      * @param {CacheEntry<IndexType, CachedValueType>} entry The entry to refresh the TTL of
-     * @internal
+     * @private
      */
     private _refresh( entry: CacheEntry<IndexType, CachedValueType> ): void {
         clearTimeout( entry.timer );
