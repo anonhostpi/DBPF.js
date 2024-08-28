@@ -1,4 +1,12 @@
-// Usage is described at the bottom of this file.
+/**
+ * Polyfill Utility
+ * 
+ * provides utilities for safely polyfilling modules and objects in JS
+ */
+
+/**
+ * Polyfill automatically loads the auto-generated imports file for Webpack.
+ */
 import './imports';
 
 const {
@@ -12,6 +20,12 @@ const {
     hasOwnProperty
 } = Object.prototype;
 
+/**
+ * A utility function to deep freeze an object.
+ * 
+ * @param object The object to freeze
+ * @returns The frozen object
+ */
 export function deepFreeze(object: any): any {
     // Retrieve the property names defined on object
     const propNames = getOwnPropertyNames(object);
@@ -90,13 +104,64 @@ if( hasRequire && typeof window !== "undefined" ){
     safe_require.original = (globalThis.require || window.require || require)
 }
 
+/**
+ * The additional methods for the polyfill utility.
+ */
 interface PolyfillUtility {
+    /**
+     * @ignore
+     */
     (...modules: (string | Record<any, any>)[]): Record<any, any>;
+    /**
+     * The check method returns a boolean indicating whether a `require()` is available.
+     * 
+     * This does not conclude that the environment is Node.js, only that `require()` is available. Webpack and other bundlers may provide a `require()` function.
+     * @returns {Boolean} Whether `require()` is available.
+     */
     check: () => boolean;
+    /**
+     * Provides a polyfilled require function
+     * 
+     * By default, it will try to use the existing `require()` function, if available.
+     * If no existing `require()` function is available, it will attempt to load the module via XHR.
+     * @param module The commonjs module to load
+     * @returns The module, if available
+     */
     require: (module: string) => any;
+    /**
+     * Whether the current environment is Node.js
+     */
     isNode?: boolean;
 }
 
+/**
+ * The primary polyfill utility.
+ * 
+ * It functions similarly to `Object.assign()`, but with the ability to load string arguments via `require()`.
+ * @param {string | Object} modules The modules to merge/polyfill
+ * @returns {Object} The merged/polyfilled object
+ * @example
+ * ```typescript
+ * // merge two objects into a new one, like Object.assign()
+ * const merged = polyfill( { a: 1, overwritten: 3 }, { b: 2, overwritten: 4 } );
+ * // - out: { a: 1, b: 2, overwritten: 4 }
+ * 
+ * // merge two modules into a new one
+ * const fs_path_merged = polyfill('fs', 'path');
+ * // - out: provides an fs-like module populated/overwritten with path's exports
+ * 
+ * // provide browser polyfills and overwrite them with Node.js APIs, if those APIs are available:
+ * const path = polyfill( 'path-browserify', 'path' );
+ * 
+ * // provide your own polyfills
+ * const { isAbsolute } = polyfill(
+ *     {
+ *         isAbsolute: (path: string) => /^[a-zA-Z]:[\\/]/.test(path)
+ *     },
+ *     "path"
+ * )
+ * ```
+ */
 export const polyfill: PolyfillUtility = (
     ...modules: (string | Record<any, any>)[]
 ) => {
@@ -126,8 +191,9 @@ defineProperty(
         value: isNode
     });
 
-// Base Polyfills:
-
+/**
+ * An AggregateError is an error that aggregates multiple errors into a single error.
+ */
 const {
     AggregateError
 } = polyfill(
@@ -144,43 +210,3 @@ const {
     (globalThis as any)
 )
 export { AggregateError };
-/*
-# Usage:
-
-## `polyfill( ...args )`
-
-`polyfill( ...args )` is a wrapper around `Object.assign({}, ...args)` that parses any string arguments as modules using `require()`.
-
-NOTE: Just like `Object.assign()`, later arguments will overwrite earlier ones.
-
-### Examples:
-
-```typescript
-// merge two objects into a new one, like Object.assign()
-const merged = polyfill( { a: 1, overwritten: 3 }, { b: 2, overwritten: 4 } );
-// - out: { a: 1, b: 2, overwritten: 4 }
-
-// merge two modules into a new one
-const fs_path_merged = polyfill('fs', 'path');
-// - out: provides an fs-like module populated/overwritten with path's exports
-
-// provide browser polyfills and overwrite them with Node.js APIs, if those APIs are available:
-const path = polyfill( 'path-browserify', 'path' );
-
-// provide your own polyfills
-const { isAbsolute } = polyfill(
-    {
-        isAbsolute: (path: string) => /^[a-zA-Z]:[\\/]/.test(path)
-    },
-    "path"
-)
-```
-
-## `polyfill.check()`
-
-`polyfill.check()` returns a boolean indicating whether `require()` is available.
-
-## `polyfill.require( module: string )`
-
-`polyfill.require( module: string )` is a safety wrapper around `require( module )` that logs a warning (and returns undefined) if `require()` is not available.
-*/
