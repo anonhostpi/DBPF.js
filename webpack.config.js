@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/dbpf.ts',  // Entry point for your application
+    entry: './src/DBPF.ts',  // Entry point for your application
     output: {
         filename: 'dbpf.web.js',  // Output bundle file
         path: path.resolve(__dirname, 'dist'),  // Output directory

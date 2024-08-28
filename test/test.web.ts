@@ -2,7 +2,7 @@ import {
     DBPF,
     DBPFEntry,
     IDBPFEntry,
-} from "../src/dbpf"
+} from "../src/DBPF"
 
 const input = document.getElementById('input');
 const files: File[] = (globalThis as any).files = [];

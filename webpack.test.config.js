@@ -8,5 +8,5 @@ module.exports.output = {
     path: path.resolve(__dirname, 'test', 'serve')
 }
 module.exports.externals = {
-    "../src/dbpf": "dbpf"
+    "../src/DBPF": "dbpf"
 }
