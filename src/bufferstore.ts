@@ -31,41 +31,137 @@ export {
 import {
     LFUCache
 } from "./LFUCache";
+/**
+ * This module provides a LFU+TTL cache implementation for reading file buffers.
+ * 
+ * It is optimized for use with Blobs and File objects, but is also designed to
+ * work file paths in Node.js.
+ * 
+ * It caches the buffers in segments, with each segment being a small, but fixed size.
+ */
 
-const DEFAULT_SEGMENT_SIZE = 1024 * 16 // 16KB
-const DEFAULT_SEGMENT_CAPACITY = 16; // 16 * 16KB = 256KB
-const DEFAULT_SEGMENT_TTL = 1000 * 60 * 0.5; // 30 seconds
+/**
+ * Default configuration for the buffer cache.
+ * 
+ * This object contains the default values for managing the cache, including
+ * the segment size, capacity, and time-to-live (TTL) for each segment.
+ * 
+ * These are used to populate the {@link SegmentOptions} object, if the user omits the values.
+ * 
+ * @internal
+ */
+const DEFAULTS = {
+    /**
+     * The size of each segment in bytes.
+     * 
+     * This value defines the size of individual segments in the buffer.
+     * 
+     * @defaultValue 16KB (1024 * 16)
+     */
+    SEGMENT_SIZE: 1024 * 16, // 16KB
 
+    /**
+     * The number of segments in a buffer.
+     * 
+     * This value defines how many segments can be stored in cache before
+     * cycling out least frequently used items (LFU).
+     * 
+     * @defaultValue 16 segments
+     * total default capacity of 256KB (when multiplied by the `SEGMENT_SIZE`)
+     */
+    SEGMENT_CAPACITY: 16, // 16 * 16KB = 256KB
+
+    /**
+     * The time-to-live (TTL) for each segment in milliseconds.
+     * 
+     * This value defines how long a segment remains in the buffer before
+     * it is considered stale and eligible for eviction. 
+     * 
+     * @defaultValue 30 seconds (1000 * 60 * 0.5)
+     */
+    SEGMENT_TTL: 1000 * 60 * 0.5 // 30 seconds
+};
+
+/**
+ * Options for configuring the buffer cache.
+ * 
+ * @see {@link DEFAULTS} for default values.
+ */
 type SegmentOptions = {
     size: BufferLength;
     capacity: number;
     ttl: number;
 }
 
+/**
+ * A string representing a file path.
+ */
 export type PathString = string;
+
+/**
+ * A number representing the index of a buffer segment.
+ * 
+ * @internal
+ */
 type StoreIndex = number;
 
-
+/**
+ * An abstraction of how the buffers are stored in the cache.
+ * 
+ * @internal
+ */
 type BufferStoreEntry = {
     index: StoreIndex;
     buffer: Buffer;
 }
 
+/**
+ * A function that retrieves a buffer segment from the cache.
+ * 
+ * This is for sharing the cache getter with the {@link BufferReader} class.
+ * 
+ * @internal
+ */
 type BufferStoreGetter = ( index: StoreIndex ) => Promise<BufferStoreEntry>;
 
+/**
+ * The parent class buffer store for both Node.js and browser environments.
+ * 
+ * This is the base buffer cache. It uses the file as a backing store.
+ * It is most performant when the file is a Blob or File object, but
+ * it can also work with file paths (in Node.js).
+ * 
+ * It is designed to be extended, then used
+ * 
+ * @internal
+ */
 abstract class BaseBufferStore {
+    /**
+     * Creates a new buffer store
+     * 
+     * Since the value of length will be calculated differently based on
+     * engine and environment, length is required as an argument, and is intended
+     * to be calculated by child classes.
+     * 
+     * This sets up an underlying LFU+TTL cache.
+     * 
+     * @param { File | Blob | string } file 
+     * @param { number } length
+     */
     constructor(
         file: File | Blob | PathString,
         length: BufferLength,
         {
-            size: segment_size = DEFAULT_SEGMENT_SIZE,
-            capacity: segment_capacity = DEFAULT_SEGMENT_CAPACITY,
-            ttl: segment_ttl = DEFAULT_SEGMENT_TTL
+            size: segment_size = DEFAULTS.SEGMENT_SIZE,
+            capacity: segment_capacity = DEFAULTS.SEGMENT_CAPACITY,
+            ttl: segment_ttl = DEFAULTS.SEGMENT_TTL
         }: Partial<SegmentOptions>
     ){
         if( segment_size < 8 )
             throw new Error("Segment size must be at least 8 bytes");
         (this as any)._file = file;
+        if( !length )
+            throw new Error("Invalid length");
         this.length = length;
         this.segment_size = segment_size;
         this.count = Math.ceil(length / segment_size);
@@ -73,25 +169,83 @@ abstract class BaseBufferStore {
         this._cache = new LFUCache<StoreIndex, BufferStoreEntry>( segment_capacity, segment_ttl );
     }
 
+    /**
+     * The length of the file in bytes.
+     * 
+     * @readonly
+     * @public
+     */
     readonly length: BufferLength;
+    /**
+     * The size of each segment in bytes.
+     * 
+     * @readonly
+     * @public
+     */
     readonly segment_size: BufferLength;
+    /**
+     * The number of segments in the cache.
+     * 
+     * @readonly
+     * @public
+     */
     readonly count: number;
 
+    /**
+     * The setter for the file property. Needs to be implemented by child classes.
+     * @see {@link NodeBufferStore._file} and {@link BrowserBufferStore._file}
+     */
     protected abstract set _file( file: File | Blob | PathString );
+    /**
+     * This is the cache fallthrough method for retrieving non-cached buffer segments.
+     * 
+     * It is implemented by child classes.
+     * @see {@link NodeBufferStore._read} and {@link BrowserBufferStore._read}
+     * @param index The index of the buffer segment to read from the file system.
+     * @returns { Promise<BufferStoreEntry> }
+     */
     protected abstract _read( index: StoreIndex ): Promise<BufferStoreEntry>;
 
+    /**
+     * The underlying LFU+TTL cache for storing and retrieving cached buffer segments.
+     */
     private _cache: LFUCache<StoreIndex, BufferStoreEntry>;
 
+    /**
+     * This is the primary method for retrieving buffer segments.
+     * 
+     * It first checks the cache, then falls back to the file system.
+     * @param index The index of the buffer segment to retrieve.
+     * @returns { Promise<BufferStoreEntry> }
+     */
     private readonly _get: BufferStoreGetter = async ( index: StoreIndex ): Promise<BufferStoreEntry> => {
         return this._cache.get( index ) || this._cache.set( index, await this._read( index ) );
     }
 
+    /**
+     * Retrieves a buffer by its offset and length and wraps it in a {@link BufferReader}.
+     * 
+     * @param offset 
+     * @param length 
+     * @returns { BufferReader }
+     * @public
+     */
     get( offset: BufferOffset, length: BufferLength ): BufferReader {
         return new BufferReader( this._get, this.segment_size, offset, length );
     }
 }
 
+/**
+ * A buffer store for Node.js environments.
+ * 
+ * @remarks
+ * This class is designed to work with both Blobs/File objects and file paths.
+ */
 export class NodeBufferStore extends BaseBufferStore {
+    /**
+     * @param file The Blob/File object or file path to read from. 
+     * @param { Partial<SegmentOptions> } segment_options @see {@link SegmentOptions} 
+     */
     constructor(
         file: File | Blob | PathString,
         segment_options: Partial<SegmentOptions> = {}
@@ -100,8 +254,18 @@ export class NodeBufferStore extends BaseBufferStore {
         super( file, size, segment_options );
     }
 
+    /**
+     * The file property for the Node.js backing store, if it is a Blob or File object.
+     */
     private _blob: File | Blob | undefined;
+    /**
+     * The file property for the Node.js backing store, if it is a file path.
+     */
     private _path: PathString | undefined;
+    /**
+     * The setter for the file property.
+     * @see {@link BaseBufferStore._file}
+     */
     protected set _file( file: File | Blob | PathString ){
         if( file instanceof Blob )
             this._blob = file;
@@ -115,6 +279,13 @@ export class NodeBufferStore extends BaseBufferStore {
         }
     }
 
+    /**
+     * The Node.js implementation of the cache fallthrough method for retrieving non-cached buffer segments.
+     * @see {@link BaseBufferStore._read}
+     * 
+     * @param index The index of the buffer segment to read from the file system.
+     * @returns { Promise<BufferStoreEntry> }
+     */
     protected async _read( index: StoreIndex ): Promise<BufferStoreEntry> {
         if( index < 0 || index >= this.count )
             throw new RangeError(`Read out of range`);
@@ -153,7 +324,17 @@ export class NodeBufferStore extends BaseBufferStore {
     }
 }
 
+/**
+ * A buffer store for browser environments.
+ * 
+ * @remarks
+ * This class is designed to work only with Blobs and File objects.
+ */
 export class BrowserBufferStore extends BaseBufferStore {
+    /**
+     * @param file The Blob/File object to read from.
+     * @param segment_options @see {@link SegmentOptions}
+     */
     constructor(
         file: File | Blob,
         segment_options: Partial<SegmentOptions> = {}
@@ -164,13 +345,27 @@ export class BrowserBufferStore extends BaseBufferStore {
         super( file, file.size, segment_options );
     }
 
+    /**
+     * The file property for the browser backing store.
+     */
     private _blob: File | Blob | undefined;
+    /**
+     * The setter for the file property.
+     * @see {@link BaseBufferStore._file}
+     */
     protected set _file( file: File | Blob ){
         if( !(file instanceof Blob) )
             throw new TypeError("Invalid argument for file, expected File or Blob"); 
         this._blob = file;
     }
 
+    /**
+     * The browser implementation of the cache fallthrough method for retrieving non-cached buffer segments.
+     * @see {@link BaseBufferStore._read}
+     * 
+     * @param index The index of the buffer segment to read from the file system.
+     * @returns { Promise<BufferStoreEntry> }
+     */
     protected async _read( index: StoreIndex ): Promise<BufferStoreEntry> {
         if( index < 0 || index >= this.count )
             throw new RangeError(`Read out of range`);
@@ -188,32 +383,99 @@ export class BrowserBufferStore extends BaseBufferStore {
     }
 }
 
+/**
+ * An abstraction for a series of bytes represented as a bigint
+ */
 export type MemoryAsBigInt = bigint;
+/**
+ * An abstraction for a series of bytes represented as a number
+ */
 export type MemoryAsNumber = number;
 
+/**
+ * A branded abstraction for a cursor position in a buffer.
+ */
 type Position = number & { __position: never };
 
+/**
+ * An abstraction for a single byte represented as a number
+ */
 export type OneByte = number;
+/**
+ * An abstraction for two bytes represented as a number
+ */
 export type TwoBytes = number;
+/**
+ * An abstraction for three bytes represented as a number
+ */
 export type ThreeBytes = number;
+/**
+ * An abstraction for four bytes represented as a number
+ */
 export type FourBytes = number;
 
+/**
+ * An abstraction for five bytes represented as a bigint
+ */
 export type FiveBytes = bigint;
+/**
+ * An abstraction for six bytes represented as a bigint
+ */
 export type SixBytes = bigint;
+/**
+ * An abstraction for seven bytes represented as a bigint
+ */
 export type SevenBytes = bigint;
+/**
+ * An abstraction for eight bytes represented as a bigint
+ */
 export type EightBytes = bigint;
 
+/**
+ * An interface for reading buffers based on {@link BufferReader}.
+ */
 export type IBufferReader = BufferReader;
+
+/**
+ * A wrapper for reading buffers from a {@link BufferStore}.
+ * 
+ * Provides quality of life methods for reading the data stored in the requested buffer.
+ * @see {@link BufferStore.get}
+ * @public
+ */
 class BufferReader {
+    /**
+     * The method for retrieving buffer segments from the cache, provided by said cache.
+     * @internal
+     */
     private _getter: BufferStoreGetter;
+    /**
+     * The size of each segment in bytes.
+     * @internal
+     */
     private _segment_size: BufferLength;
 
+    /**
+     * The prior segment in the buffer cache stored asynchronously.
+     * @internal
+     */
     private _prior_segment: Promise<BufferStoreEntry> | undefined;
+    /**
+     * The current segment in the buffer cache stored asynchronously.
+     * @internal
+     */
     private _current_segment: Promise<BufferStoreEntry>;
+    /**
+     * The next segment in the buffer cache stored asynchronously.
+     * @internal
+     */
     private _next_segment: Promise<BufferStoreEntry> | undefined;
 
+    /**
+     * The number of segments readable by this BufferReader.
+     * @internal
+     */
     private _count: number;
-    private _cursor: Position;
 
     private _offset: BufferOffset;
     private _length: BufferLength;
@@ -247,10 +509,24 @@ class BufferReader {
             this._next_segment = getter( this._first_index + 1 );
     }
 
+    private _cursor: Position;
+    /**
+     * The current position of the cursor in the buffer.
+     */
     get cursor(): Position {
         return this._cursor;
     }
 
+    /**
+     * Moves the cursor to the specified position
+     * 
+     * @param position The position to move the cursor to. 
+     * 
+     * @remarks
+     * If the position is out of range, it will wrap around to the beginning or end of the buffer.
+     * 
+     * This method also asynchronously polls the cache for the next segment if the cursor moves to a new segment.
+     */
     async move( position: number ): Promise<void> {
 
         while( position < 0 || position >= this._length ){
@@ -278,7 +554,7 @@ class BufferReader {
                 if( current_index < this._last_index )
                     this._next_segment = this._getter( current_index + 1 );
                 else
-                    this._next_segment = undefined;
+                    this._next_segment = this._getter( this._first_index );
                 break;
             case -1:
                 this._next_segment = this._current_segment;
@@ -286,7 +562,7 @@ class BufferReader {
                 if( current_index > this._first_index )
                     this._prior_segment = this._getter( current_index - 1 );
                 else
-                    this._prior_segment = undefined;
+                    this._prior_segment = this._getter( this._last_index );
                 break;
             default:
                 this._current_segment = this._getter( correct_index );
@@ -302,10 +578,27 @@ class BufferReader {
         }
     }
 
+    /**
+     * Advances the cursor by the specified length.
+     * 
+     * @param length The length to advance the cursor by.
+     * 
+     * @remarks
+     * {@link BufferReader.move} moves the cursor to an absolute position, while this method
+     * advances the cursor to a position relative to the current position.
+     */
     async advance( length: BufferLength = 1 ): Promise<void> {
         await this.move( this._cursor + length );
     }
 
+    /**
+     * This method is what actually retrieves the cached buffer.
+     * 
+     * @param length The length (in bytes) of the buffer to retrieve from the cursor position.
+     * @returns { Promise<Buffer> }
+     * 
+     * @internal
+     */
     private async _getBuffer( length: BufferLength ): Promise<Buffer> {
         if( this._cursor + length > this._length )
             throw new RangeError(`Read out of range`);
@@ -339,6 +632,14 @@ class BufferReader {
         return Buffer.concat( buffers )
     }
 
+    /**
+     * A method for retrieving an arbitrary number of bytes from the buffer as a number or bigint.
+     * 
+     * @param length 
+     * @returns { Promise<Number | BigInt> }
+     * 
+     * @remarks Maximum length is 8 bytes due to JavaScript's number precision.
+     */
     async getBytes( length: BufferLength ): Promise<MemoryAsNumber | MemoryAsBigInt> {
         const bytes = await this._getBuffer( length );
 
@@ -361,12 +662,18 @@ class BufferReader {
             return little_four_bytes as MemoryAsNumber;
     }
 
-    // 1 byte
+    /**
+     * Retrieves a single byte from the buffer as a number.
+     * @returns { Promise<Number> }
+     */
     async getByte(): Promise<OneByte> {
         return (await this._getBuffer( 1 )).readUInt8( 0 );
     }
 
-    // 2 bytes
+    /**
+     * Retrieves two bytes from the buffer as a number.
+     * @returns { Promise<Number> }
+     */
     async getTwoBytes(): Promise<TwoBytes> {
         return (await this._getBuffer( 2 )).readUInt16LE( 0 );
     }
@@ -374,26 +681,44 @@ class BufferReader {
         return this.getTwoBytes();
     }
 
-    // 4 bytes
+    /**
+     * Retrieves three bytes from the buffer as a number.
+     * @returns { Promise<Number> }
+     */
     async getFourBytes(): Promise<FourBytes> {
         return (await this._getBuffer( 4 )).readUInt32LE( 0 );
     }
+    /**
+     * Alias for {@link BufferReader.getFourBytes}
+     */
     async getInt(): Promise<FourBytes> {
         return this.getFourBytes();
     }
+    /**
+     * Alias for {@link BufferReader.getFourBytes}
+     */
     async getFloat(): Promise<FourBytes> {
         return (await this._getBuffer( 4 )).readFloatLE( 0 );
     }
 
-    // 8 bytes
+    /**
+     * Retrieves eight bytes from the buffer as a bigint.
+     * @returns { Promise<BigInt> }
+     */
     async getEightBytes(): Promise<MemoryAsBigInt> {
         return (await this._getBuffer( 8 )).readBigInt64LE( 0 );
     }
+    /**
+     * Alias for {@link BufferReader.getEightBytes}
+     */
     async getLong(): Promise<MemoryAsBigInt> {
         return this.getEightBytes();
     }
 
-    // LEB128 32-bit (1-4 bytes)
+    /**
+     * Retrieves a variable-length LEB128 encoded number from the buffer as a 32-bit unsigned number.
+     * @returns { Promise<Number> }
+     */
     async getUnsignedLEB128(): Promise<MemoryAsNumber> {
         let value = 0;
         let shift = 0;
@@ -413,6 +738,10 @@ class BufferReader {
 
         return value;
     }
+    /**
+     * Retrieves a variable-length LEB128 encoded number from the buffer as a 32-bit signed number.
+     * @returns { Promise<Number> }
+     */
     async getLEB128(): Promise<MemoryAsNumber> {
         let value = 0;
         let shift = 0;
@@ -438,7 +767,10 @@ class BufferReader {
         return value as FourBytes;
     }
 
-    // LEB128 64-bit (1-8 bytes)
+    /**
+     * Retrieves a variable-length LEB128 encoded number from the buffer as a 64-bit unsigned bigint.
+     * @returns { Promise<BigInt> }
+     */
     async getUnsignedLEB128BigInt(): Promise<MemoryAsBigInt> {
         let value = 0n;
         let shift = 0n;
@@ -457,6 +789,10 @@ class BufferReader {
 
         return value as EightBytes;
     }
+    /**
+     * Retrieves a variable-length LEB128 encoded number from the buffer as a 64-bit signed bigint.
+     * @returns { Promise<BigInt> }
+     */
     async getLEB128BigInt(): Promise<MemoryAsBigInt> {
         let value = 0n;
         let shift = 0n;
@@ -480,5 +816,12 @@ class BufferReader {
     }
 }
 
+/**
+ * The buffer store for the current environment.
+ * @see {@link NodeBufferStore} and {@link BrowserBufferStore}
+ */
 export const BufferStore = polyfill.isNode ? NodeBufferStore : BrowserBufferStore;
+/**
+ * The type definition for the exported {@link BufferStore}.
+ */
 export type BufferStore = NodeBufferStore | BrowserBufferStore;
