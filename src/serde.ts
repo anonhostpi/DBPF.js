@@ -32,6 +32,9 @@ const {
     ...polyfills
 ) as typeof import("path") & typeof import("fs") & { cwd: () => string };
 
+/**
+ * A primitive JSON type.
+ */
 export type JSONPrimitive = string | number | boolean | undefined | null; // bigint is not supported by ECMAScript's JSON
 
 function validateEnumerableTemplate<T>(obj: any, typeTemplate: T): boolean {
@@ -84,10 +87,15 @@ function sanitize_path(
     }
 }
 
+/**
+ * A class for deserializing JSON files.
+ * 
+ * Based on how deserialization is implemented in the Rust programming language.
+ */
 export class Deserialized {
-    private filepath: string;
-    private readonly log_name: string;
-
+    /**
+     * @param filepath - The file path of the JSON file.
+     */
     constructor( filepath?: string ){
         this.log_name = this.constructor.name === "Deserialized" ? "JSON" : this.constructor.name;
         this.filepath = sanitize_path( filepath, false, this.log_name );
@@ -101,10 +109,30 @@ export class Deserialized {
             this.load();
     }
 
+    /**
+     * The file path of the JSON file.
+     * @private
+     */
+    private filepath: string;
+    /**
+     * The name of the class (for logging purposes).
+     * @private
+     */
+    private readonly log_name: string;
+
+    /**
+     * The path to the underlying JSON file, if provided.
+     */
     get json(): string | undefined {
         return this.filepath   
     }
 
+    /**
+     * Load the JSON file.
+     * 
+     * @param new_path - The new file path to load, if different from the current file path.
+     * @returns {Boolean} Whether the file was successfully loaded.
+     */
     load( new_path?: string ): boolean {
         new_path = sanitize_path( new_path, false, this.log_name );
 
@@ -126,6 +154,12 @@ export class Deserialized {
         }
     }
 
+    /**
+     * Save the JSON file.
+     * 
+     * @param new_path - The new file path to save, if different from the current file path.
+     * @returns {Boolean} Whether the file was successfully saved.
+     */
     save( new_path?: string ): boolean {
         new_path = sanitize_path( new_path, false, this.log_name );
 
@@ -146,7 +180,17 @@ export class Deserialized {
         }
     }
 
-    // workaround to allow flexible overrides in subclasses
+    /**
+     * Transform an object into a Deserialized instance.
+     * 
+     * Commonly used by child classes to ensure that the object conforms to the class structure.
+     * 
+     * @param {any} [this] The instance of the class to transform the object onto, if bound.
+     * @param obj The object to transform.
+     * @param strict Whether to strictly enforce the class structure by key.
+     * @param typesafe Whether to strictly also enforce the class structure by type. Does nothing if `strict` is `false`.
+     * @returns {Deserialized} The transformed object.
+     */
     static from:(...args: any[]) => any = function(
         this: any,
         obj: any,
@@ -183,6 +227,12 @@ export class Deserialized {
         return self;
     }
 
+    /**
+     * A static method to create a new Deserialized instance from a path
+     * 
+     * @param filepath The file path of the JSON file.
+     * @returns {Deserialized} The Deserialized instance.
+     */
     static read( filepath?: string ): Deserialized | void {
         filepath = sanitize_path( filepath );
         if( !filepath.length ){
