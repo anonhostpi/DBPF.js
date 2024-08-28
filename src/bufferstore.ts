@@ -20,13 +20,13 @@ import {
     Buffer,
     BufferOffset,
     BufferLength
-} from "./polyfill.buffer";
+} from "./polyfill.Buffer";
 
 export {
     Buffer,
     BufferOffset,
     BufferLength
-} from "./polyfill.buffer";
+} from "./polyfill.Buffer";
 
 import {
     LFUCache

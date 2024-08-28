@@ -4,7 +4,7 @@ import {
     Buffer,
     BufferOffset,
     BufferLength
-} from "./polyfill.buffer";
+} from "./polyfill.Buffer";
 
 export type FileDescriptor = number;
 
