@@ -84,12 +84,14 @@ if( restore ){
             "build:web",
             "prebuild",
             "prebuild:web",
+            "postbuild",
             "test",
             "prepack",
             "manifest:prepare",
             "predevinstall",
             "predevuninstall",
             "prepublishOnly",
+            "docs",
         "devDependencies"
     ].map( key => `"${key}":` );
 
