@@ -3,7 +3,25 @@
 The purpose of these documents is to provide an updated, comprehensive, and detailed description of the DBPF file format.
 This is a community effort. The DBPF file format is a file format used in various games, including The Sims Series, SimCity, and Spore.
 
-Currently, the community spec is biased towards The Sims 4, but is compiled from various community resources across different games, including:
+Additionally, without official feedback from EA or Maxis, a lot of this information is speculative and based on prior and ongoing reverse-engineering efforts.
+
+# Table of Contents:
+- [The DBPF File Format](DBPF.md)
+  - [Introduction](DBPF.md#introduction)
+  - [Versions](DBPF.md#versions)
+    - [Known Versions](DBPF.md#known-versions)
+  - [Structure](DBPF.md#structure)
+    - [Header](DBPF.md#header)
+    - [The Tables](DBPF.md#the-tables)
+      - [Table Entries](DBPF.md#table-entries)
+        - [DBPF v1.0 - Table Version 7.0](DBPF.md#dbpf-v10---table-version-70)
+        - [DBPF v1.1 - Table Version 7.1](DBPF.md#dbpf-v11---table-version-71)
+        - [DBPF v2.0](DBPF.md#dbpf-v20)
+        - [DBPF v3.0](DBPF.md#dbpf-v30)
+
+# Background and Acknowledgements
+
+Currently, the community spec is biased towards The Sims 4, but it is compiled from various community resources across different games, including:
 - Wikis:
   - [SimCity 4 Devotion (SimCity 4 Encyclopaedia)](https://wiki.sc4devotion.com/index.php?title=DBPF)
   - [ModTheSims Wiki](https://modthesims.info/wiki.php?title=DBPF)
@@ -32,14 +50,26 @@ Currently, the community spec is biased towards The Sims 4, but is compiled from
       - Github: [0xC0000054/DBPFSharp](https://github.com/0xC0000054/DBPFSharp)
     - DBPF_Utils:
       - Github: [LeonPoon/DBPF_Utils](https://github.com/LeonPoon/DBPF_Utils)
+    - OpenTS2:
+      - Github: [LazyDuchess/OpenTS2](https://github.com/LazyDuchess/OpenTS2)
+    - Gibbed.Sims4:
+      - Github: [gibbed/Gibbed.Sims4](https://github.com/gibbed/Gibbed.Sims4)
+    - Gibbed.Sims3:
+      - Github: [gibbed/Gibbed.Sims3](https://github.com/gibbed/Gibbed.Sims3)
+    - Gibbed.Spore:
+      - Github: [gibbed/Gibbed.Spore](https://github.com/gibbed/Gibbed.Spore)
 
   - Python:
+    - s4py:
+      - Github: [thequux/s4py](https://github.com/thequux/s4py)
     - sims2py:
       - Github: [lingeringwillx/sims2py](https://github.com/lingeringwillx/sims2py)
     - dbpf:
       - Github: [fbstj/dbpf](https://github.com/fbstj/dbpf)
     - SimTools:
       - Github: [Dav1dde/simtools](https://github.com/Dav1dde/SimTools)
+    - preview-HighHeels:
+      - Github: [Oops19/preview-HighHeels](https://github.com/Oops19/preview-HighHeels)
   
   - Java:
     - jDBPFX:
@@ -52,3 +82,11 @@ Currently, the community spec is biased towards The Sims 4, but is compiled from
   - TypeScript:
     - SporeTools:
       - Github: [SporeCommunity/SporeTools](https://github.com/SporeCommunity/SporeTools)
+  
+  - C:
+    - dbpf_reader:
+      - Github: [ytaa/dbpf_reader](https://github.com/ytaa/dbpf_reader)
+  
+  - Tcl:
+    - HexFiend-templates-sims
+      - Github: [sw-uci/HexFiend-templates-Sims](https://github.com/sw-uci/HexFiend-templates-Sims)

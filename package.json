@@ -75,7 +75,8 @@
 
         "prepublishOnly":          "rimraf ./scripts/manifests",
 
-        "docs":                    "npm run make:docs"
+        "docs":                    "npm run make:docs",
+        "postdocs":                "copyfiles spec/*.md ./docs && copyfiles spec/**/*.md ./docs"
     },
 
     "devDependencies": {
