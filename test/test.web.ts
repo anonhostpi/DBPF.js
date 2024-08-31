@@ -4,6 +4,24 @@ import {
     IDBPFEntry,
 } from "../src/DBPF"
 
+const toast = document.getElementById('toast') as HTMLElement;
+function notify( message: string ){
+    const clone = toast.cloneNode(true) as HTMLElement;
+    clone.removeAttribute("id");
+    // set the message
+    clone.textContent = message;
+    // add the clone to the document
+    toast.parentElement?.appendChild( clone );
+    // add the show class
+    setTimeout(() => {
+        clone.style.visibility = "visible";
+        clone.classList.add("show");
+    }, 100);
+    // remove the show class after 3 seconds
+    setTimeout(() => clone.classList.remove("show"), 2500);
+    setTimeout(() => clone.remove(), 3100);
+}
+
 const input = document.getElementById('input');
 const files: File[] = (globalThis as any).files = [];
 const dbpfs: DBPF[] = (globalThis as any).dbpfs = [];
@@ -267,6 +285,7 @@ input?.addEventListener("change", async function( event ) {
 
             let removedLoading = false;const indeces = Array.from( dbpf.table.keys() )
             console.log( indeces.length, "entries found" );
+            notify( `${ indeces.length } entries found in ${ dbpf.filename }` );
             for( let index of indeces ){
                 const entry = await dbpf.table.get(index)
                 entries.push( entry );
@@ -379,6 +398,7 @@ input?.addEventListener("change", async function( event ) {
                 }
                 dbpfChildren["dbpf-contents"]?.appendChild( entryElement );
             }
+            notify( `${ indeces.length } entries loaded from ${ dbpf.filename }` );
         }
     }
     console.log( (event.target as any).files.length, "files added. Total:", files.length );

@@ -191,10 +191,37 @@ code {
 b {
     font-weight: bold;
 }
+
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    text-align: center;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    font-size: 17px;
+    transform: translate(-50%, 0%);
+    border: 5px black solid;
+    border-radius: 7px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #97e49d;
+    font-weight: bold;
+    font-style: italic;
+    opacity: 0;
+    bottom: -100px;
+    transition: bottom 0.5s ease, opacity 0.5s ease;
+}
+
+.toast.show {
+    bottom: 30px;
+    opacity: 1;
+}
     </style>
 </head>
 <body>
     <h1>Open Devtools for Further Testing</h1>
+    <div id="toast" class="toast"></div>
     <p style="text-align: center;">
         This page is for testing the browser's ability to parse files. 
         <br>
@@ -396,7 +423,7 @@ b {
                 <td class="resource-size-memory"></td>
             </tr>
             <tr>
-                <td>Compressed:</td>
+                <td>Compression&nbsp;Flag <i>(Type):</i></td>
                 <td class="resource-size-compressed"></td>
             </tr>
         </table>
