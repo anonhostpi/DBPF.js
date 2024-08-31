@@ -1,7 +1,7 @@
 {
     "name": "DBPF.js",
     "plugin": ["typedoc-plugin-markdown"],
-    "out": "./wiki",
+    "out": "./test/serve/wiki",
     "entryPoints": [
         "./src/BufferStore.ts",
         "./src/DBPF.ts",
