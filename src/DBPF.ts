@@ -773,7 +773,16 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
      * @override
      */
     override get( key: number ): EventedPromise<DBPFEntry> {
-        return new EventedPromise<DBPFEntry>(async ()=>{
+        return new EventedPromise<DBPFEntry>(async (
+            evented_resolve: (entry: DBPFEntry) => void,
+            evented_reject: ErrorOnlyCallback
+        )=>{
+            const await_wrap = async <T>(promise?: Promise<T>) => {
+                if( !promise )
+                    return
+                promise.catch(evented_reject)
+                return await promise
+            }
 
             // TODO: This (and .init()) needs to be adapted for DBPF v1.x, currently this only supports v2.0 logic
             /*
@@ -786,23 +795,23 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
             if( !this.has( key ) )
                 throw new RangeError("Index out of bounds")
     
-            await this._init
+            await await_wrap( this.init() )
     
-            let entry = await super.get( key )
+            let entry = await await_wrap( super.get( key ) )
             if( !entry ){
                 this._reader.move( 4 + (4 * (this._header_segments!.size)) )
                 this._reader.advance( this.entryLength * key )
                 
-                const type:             FourBytes & Resource.Type                       = this._header_segments!.get(0) || await this._reader.getInt()
-                const group:            FourBytes & Resource.Group                      = this._header_segments!.get(1) || await this._reader.getInt()
-                const instance_high:    FourBytes & Resource.Instance.Number            = this._header_segments!.get(2) || await this._reader.getInt()
-                const instance_low:     FourBytes & Resource.Instance.Number            = this._header_segments!.get(3) || await this._reader.getInt()
-                const offset:           FourBytes & Resource.Offset                     = await this._reader.getInt()
-                const size_file:        FourBytes & Resource.Compression.Compressed     = await this._reader.getInt()
-                const size_memory:      FourBytes & Resource.Compression.Uncompressed   = await this._reader.getInt()
+                const type:             FourBytes & Resource.Type                       = this._header_segments!.get(0) || (await await_wrap( this._reader.getInt() )) as number
+                const group:            FourBytes & Resource.Group                      = this._header_segments!.get(1) || (await await_wrap( this._reader.getInt() )) as number
+                const instance_high:    FourBytes & Resource.Instance.Number            = this._header_segments!.get(2) || (await await_wrap( this._reader.getInt() )) as number
+                const instance_low:     FourBytes & Resource.Instance.Number            = this._header_segments!.get(3) || (await await_wrap( this._reader.getInt() )) as number
+                const offset:           FourBytes & Resource.Offset                     = (await await_wrap( this._reader.getInt() )) as number
+                const size_file:        FourBytes & Resource.Compression.Compressed     = (await await_wrap( this._reader.getInt() )) as number
+                const size_memory:      FourBytes & Resource.Compression.Uncompressed   = (await await_wrap( this._reader.getInt() )) as number
     
-                const size_flag:        TwoBytes & Resource.Compression.Flag            = await this._reader.getShort()
-                const unknown:          TwoBytes & Unused                               = await this._reader.getShort()
+                const size_flag:        TwoBytes & Resource.Compression.Flag            = (await await_wrap( this._reader.getShort() )) as number
+                const unknown:          TwoBytes & Unused                               = (await await_wrap( this._reader.getShort() )) as number
     
                 const instance: EightBytes & Resource.Instance.BigInt = ( BigInt( instance_high ) << 32n ) | BigInt( instance_low )
     
@@ -823,7 +832,7 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
                 }).reduce(( entry, plugin ) => plugin.script( entry ) as DBPFEntry, entry )
                 super.set( key, Promise.resolve( entry ) )
             }
-            return entry
+            evented_resolve( entry )
         },{
             emit: this.emit,
             events: {
