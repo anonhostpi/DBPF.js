@@ -5,11 +5,19 @@ import {
 } from "../src/DBPF"
 
 const toast = document.getElementById('toast') as HTMLElement;
-function notify( message: string ){
+function notify( message: string, link?: string){
     const clone = toast.cloneNode(true) as HTMLElement;
     clone.removeAttribute("id");
     // set the message
     clone.textContent = message;
+    // set the link
+    if( link ){
+        const a = document.createElement("a");
+        a.href = link;
+        a.textContent = "Goto";
+        
+        clone.appendChild( a );
+    }
     // add the clone to the document
     toast.parentElement?.appendChild( clone );
     // add the show class
@@ -81,6 +89,7 @@ input?.addEventListener("change", async function( event ) {
             );
 
             dbpfChildren["filename"].textContent = dbpf.filename;
+            dbpfChildren["filename"].id = dbpf.filename;
             dbpfChildren["filepath"].textContent = dbpf.filepath;
             dbpfChildren["filesize"].textContent = `${ dbpf.filesize } bytes`;
             dbpfChildren["fileext"].textContent = dbpf.extension;
@@ -285,7 +294,7 @@ input?.addEventListener("change", async function( event ) {
 
             let removedLoading = false;const indeces = Array.from( dbpf.table.keys() )
             console.log( indeces.length, "entries found" );
-            notify( `${ indeces.length } entries found in ${ dbpf.filename }` );
+            notify( `${ indeces.length } entries found in ${ dbpf.filename }`, `#${ dbpf.filename }` );
             for( let index of indeces ){
                 const entry = await dbpf.table.get(index)
                 entries.push( entry );
@@ -398,7 +407,7 @@ input?.addEventListener("change", async function( event ) {
                 }
                 dbpfChildren["dbpf-contents"]?.appendChild( entryElement );
             }
-            notify( `${ indeces.length } entries loaded from ${ dbpf.filename }` );
+            notify( `${ indeces.length } entries loaded from ${ dbpf.filename }`, `#${ dbpf.filename }` );
         }
     }
     console.log( (event.target as any).files.length, "files added. Total:", files.length );
