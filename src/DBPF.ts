@@ -1,3 +1,15 @@
+/**
+ * DBPF Parser
+ * 
+ * DBPF is a file format used by Maxis in their games, including The Sims Series, SimCity, and Spore.
+ * The following reader is an implementation of a DBPF reader in TypeScript.
+ * 
+ * The community spec for DBPF can be found at [spec/README.md](spec/README.md).
+ */
+
+/**
+ * @ignore
+ */
 import {
     polyfill,
     deepFreeze,
@@ -61,6 +73,14 @@ const {
     getPrototypeOf: obj_prototype,
 } = Object
 
+/**
+ * A magic number generator for DBPF files.
+ * - used in the DBPF header.
+ * - see: [spec/DBPF.md - Header](spec/DBPF.md#header)
+ * 
+ * @param string The string to convert to a 4-byte magic number.
+ * @returns {Number} The magic number.
+ */
 export function MagicNumber( string: string ): FourBytes {
     string = string.padEnd( 4, '\0' )
     let out = 0;
@@ -73,93 +93,163 @@ export function MagicNumber( string: string ): FourBytes {
     return out
 }
 
+/**
+ * The magic number for DBPF files. DBBF files may use a different magic number.
+ * - used in the DBPF header.
+ * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+ */
 const MAGICNUMBER:  FourBytes = MagicNumber("DBPF")
+/**
+ * The length of the DBPF header. This may need to change for different versions of the DBPF format.
+ * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+ */
 const HEADERLENGTH: FourBytes & BufferLength = 0x60 // 96 bytes
 
-type NullableError = Error | null | undefined
 type Unused = any
 
-type DBPFHeader = {
+type NullableError = Error | null | undefined
+type ErrorOnlyCallback = ( error: NullableError ) => void
+
+/**
+ * The DBPF Header structure.
+ * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+ */
+export type DBPFHeader = {
+    /**
+     * Header information for the entire DBPF file.
+     */
     dbpf: DBPFInfoHeader,
+    /**
+     * Header information for the index table.
+     */
     index: DBPFIndexHeader,
+    /**
+     * Header information for the trash table (also referred to as the hole table).
+     */
     trash: DBPFTrashHeader
 }
 
-type ErrorOnlyCallback = ( error: NullableError ) => void
-type DBPFInfoHeader = {
+/**
+ * The DBPF Info Header structure.
+ * 
+ * This is a sub-structure of the parsed DBPF header.
+ * - @see {@link DBPFHeader}
+ */
+export type DBPFInfoHeader = {
+    /**
+     * The major version of the DBPF file format.
+     */
     major:      FourBytes,
+    /**
+     * The minor version of the DBPF file format.
+     */
     minor:      FourBytes,
+    /**
+     * The major version provided by the user (supposedly used for modding).
+     */
     usermajor:  FourBytes,
+    /**
+     * The minor version provided by the user (supposedly used for modding).
+     */
     userminor:  FourBytes,
 
+    /**
+     * The date the DBPF file was created as tracked by the DBPF file itself.
+     */
     created:    FourBytes,
+    /**
+     * The date the DBPF file was last modified as tracked by the DBPF file itself.
+     */
     modified:   FourBytes,
 }
-type DBPFIndexHeader = {
+/**
+ * The DBPF Index Header structure.
+ * 
+ * This is a sub-structure of the parsed DBPF header.
+ * - @see {@link DBPFHeader}
+ */
+export type DBPFIndexHeader = {
+    /**
+     * The major version of the index table.
+     */
     major:      FourBytes,
+    /**
+     * The minor version of the index table.
+     */
     minor:      FourBytes,
 
+    /**
+     * The number of entries in the index table.
+     */
     count:      FourBytes,
+    /**
+     * The offset of the first entry in the index table (v1.x).
+     */
     first:      FourBytes,
 
+    /**
+     * The size of the index table.
+     */
     size:       FourBytes & BufferLength,
+    /**
+     * The offset of the index table (v2.0).
+     */
     offset:     FourBytes & BufferOffset,
 }
-type DBPFTrashHeader = {
+/**
+ * The DBPF Trash Header structure.
+ * 
+ * This is a sub-structure of the parsed DBPF header.
+ * - @see {@link DBPFHeader}
+ */
+export type DBPFTrashHeader = {
+    /**
+     * The number of holes in the DBPF file.
+     */
     count:      FourBytes,
     offset:     FourBytes & BufferOffset,
     size:       FourBytes & BufferLength,
 }
 
+/**
+ * The DBPF reader class.
+ * 
+ * This is the main class for the project. It is derived from the [Community Spec](../spec/DBPF.md).
+ */
 export class DBPF extends EventEmitter {
-    protected static readonly HEADERLENGTH: BufferLength = HEADERLENGTH
-    protected static readonly MAGICNUMBER: FourBytes = MAGICNUMBER
-    get headerLength(): BufferLength {
-        // extension-class-proofing
-        const _proto: typeof DBPF = obj_prototype( this ).constructor
-        return _proto.HEADERLENGTH
+    /**
+     * Creates a new DBPF reader asynchronously, evented.
+     * @param { File | Blob | string } file The DBPF file to read.
+     * @public
+     */
+    static create( file: File | Blob | PathString ): EventedPromise<DBPF>{
+        const dbpf = new DBPF( file )
+        return new EventedPromise<DBPF>((
+            evented_resolve: (dbpf: DBPF) => void,
+            evented_reject: ErrorOnlyCallback
+        )=>{
+            dbpf.init()
+                .then(()=>evented_resolve( dbpf ))
+                .catch(evented_reject)
+        },{
+            emit: dbpf.emit,
+            events: {
+                resolve: DBPF.ON_CREATE,
+                reject: DBPF.ON_ERROR
+            }
+        })
     }
-    get magic(): FourBytes {
-        // extension-class-proofing
-        const _proto: typeof DBPF = obj_prototype( this ).constructor
-        return _proto.MAGICNUMBER
-    }
-
-    private _filepath: PathString;
-    get filepath(): PathString {
-        return this._filepath
-    }
-    get filename(): PathString {
-        return this._filepath.split(/[\/\\]/).pop() as PathString
-    }
-    get extension(): string {
-        const segments = this.filename.split('.')
-        if( segments.length < 2 )
-            return ""
-        return segments.pop() as string
-    }
-
-    private _filesize: BufferLength;
-    get filesize(): BufferLength {
-        return this._filesize
-    }
-
-    protected _header: DBPFHeader | undefined;
-    get header(): DBPFHeader {
-        if( !this._header )
-            throw new Error("DBPF not initialized. Try awaiting .init() first")
-        return this._header
-    }
-
-    protected _store: BufferStore
-    protected _table: DBPFIndexTable | undefined;
-    get table(): DBPFIndexTable {
-        if( !this._table )
-            throw new Error("DBPF not initialized. Try awaiting .init() first")
-        return this._table
-    }
-    readonly plugins: Plugins = new Plugins()
-    
+    /**
+     * The internal constructor for the DBPF reader.
+     * 
+     * In JS, the constructor is public, but it is not recommended to use it directly.
+     * Instead, use {@link DBPF.create}.
+     * 
+     * If you must use the constructor directly, ensure to await the {@link DBPF.init} method before using the instance.
+     * 
+     * @param { File | Blob | string } file The DBPF file to read.
+     * @internal @deprecated
+     */
     private constructor( file: File | Blob | PathString ){
         super()
         if( !polyfill.isNode && typeof file === "string" )
@@ -180,7 +270,15 @@ export class DBPF extends EventEmitter {
         this._store = new (BufferStore as typeof NodeBufferStore)( file ) as BufferStore
     }
 
-    protected _init: EventedPromise<void> | undefined;
+    /**
+     * Initializes the DBPF reader asynchronously, evented. Only intended for internal use, but is exposed for advanced users.
+     * 
+     * The body of this method contains the logic for reading the DBPF header and preparing the DBPF index table.
+     * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+     * - see: [../spec/DBPF.md - The Tables](../spec/DBPF.md#the-tables)
+     * @returns { EventedPromise<void> } An evented promise that resolves when the DBPF reader is initialized.
+     * @public @deprecated use {@link DBPF.create} instead
+     */
     init(): EventedPromise<void> {
         return this._init || (this._init = new EventedPromise<void>(async (
                 evented_resolve: () => void,
@@ -256,30 +354,123 @@ export class DBPF extends EventEmitter {
             {
                 emit: this.emit,
                 events: {
-                    resolve: "init",
-                    reject: "error"
+                    resolve: DBPF.ON_INIT,
+                    reject: DBPF.ON_ERROR
                 }
             }
         ))
     }
-    static create( file: File | Blob | PathString ): EventedPromise<DBPF>{
-        const dbpf = new DBPF( file )
-        return new EventedPromise<DBPF>((
-            evented_resolve: (dbpf: DBPF) => void,
-            evented_reject: ErrorOnlyCallback
-        )=>{
-            dbpf.init()
-                .then(()=>evented_resolve( dbpf ))
-                .catch(evented_reject)
-        },{
-            emit: dbpf.emit,
-            events: {
-                resolve: "create",
-                reject: "error"
-            }
-        })
+    protected _init: EventedPromise<void> | undefined;
+
+    /**
+     * The length of the DBPF header.
+     * - @see {@link HEADERLENGTH}
+     * @readonly
+     */
+    get headerLength(): BufferLength {
+        // extension-class-proofing
+        const _proto: typeof DBPF = obj_prototype( this ).constructor
+        return _proto.HEADERLENGTH
+    }
+    protected static readonly HEADERLENGTH: BufferLength = HEADERLENGTH
+    /**
+     * The magic number for DBPF files.
+     * - @see {@link MAGICNUMBER}
+     * @readonly
+     */
+    get magic(): FourBytes {
+        // extension-class-proofing
+        const _proto: typeof DBPF = obj_prototype( this ).constructor
+        return _proto.MAGICNUMBER
+    }
+    protected static readonly MAGICNUMBER: FourBytes = MAGICNUMBER
+
+    /**
+     * The path to the DBPF file.
+     * @remarks
+     * In the browser environment, this and {@link DBPF.filename} are the same.
+     * @readonly
+     */
+    get filepath(): PathString {
+        return this._filepath
+    }
+    private readonly _filepath: PathString;
+
+    /**
+     * The name of the DBPF file.
+     * @remarks
+     * In the browser environment, this and {@link DBPF.filepath} are the same.
+     * @readonly
+     */
+    get filename(): PathString {
+        return this._filepath.split(/[\/\\]/).pop() as PathString
+    }
+    /**
+     * The extension of the DBPF file.
+     * @readonly
+     */
+    get extension(): string {
+        const segments = this.filename.split('.')
+        if( segments.length < 2 )
+            return ""
+        return segments.pop() as string
     }
 
+    /**
+     * The size of the DBPF file.
+     * @readonly
+     */
+    get filesize(): BufferLength {
+        return this._filesize
+    }
+    private _filesize: BufferLength;
+
+    /**
+     * The DBPF header.
+     * - @see {@link DBPFHeader}
+     * - see [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+     * @readonly
+     */
+    protected _header: DBPFHeader | undefined;
+    get header(): DBPFHeader {
+        if( !this._header )
+            throw new Error("DBPF not initialized. Try awaiting .init() first")
+        return this._header
+    }
+
+    /**
+     * The LFU+TTL Buffer cache for the DBPF file.
+     * This is used to improve performance when reading large DBPF files.
+     * - @see {@link BufferStore}
+     * @readonly
+     */
+    protected _store: BufferStore
+    /**
+     * The DBPF Index Table.
+     * - @see {@link DBPFIndexTable}
+     * @readonly
+     */
+    get table(): DBPFIndexTable {
+        if( !this._table )
+            throw new Error("DBPF not initialized. Try awaiting .init() first")
+        return this._table
+    }
+    protected _table: DBPFIndexTable | undefined;
+
+    /**
+     * The DBPFEntry plugins to apply to the DBPF file.
+     * - @see {@link Plugins}
+     * @readonly
+     */
+    readonly plugins: Plugins = new Plugins()
+
+    /**
+     * Returns a {@link IBufferReader} from the DBPF file (using the LFU+TTL cache) at the specified offset and length.
+     * 
+     * @param offset The offset to read from.
+     * @param length The length to read.
+     * @returns { IBufferReader } The buffer reader.
+     */
     read( offset: BufferOffset, length: BufferLength ): IBufferReader{
         try {
             const out = this._store.get( offset, length )
@@ -290,23 +481,97 @@ export class DBPF extends EventEmitter {
             throw error
         }
     }
+
+    /**
+     * The event name for when the DBPF reader is created properly.
+     * @event
+     */
+    static readonly ON_CREATE = "create"
+    /**
+     * The event name for when the DBPF reader is initialized.
+     * @event
+     */
+    static readonly ON_INIT = "init"
+    /**
+     * The event name for when the DBPF reader reads data.
+     * @event
+     */
+    static readonly ON_READ = "read"
+    /**
+     * The event name for when the DBPF reader encounters an error.
+     * @event
+     */
+    static readonly ON_ERROR = "error"
 }
 
-type ResourceType = FourBytes
-type ResourceGroup = FourBytes
+/**
+ * This namespace provides types for the DBPF entry structure.
+ * - see: [../spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../spec/DBPF.md#table-entries-aka-dbpf-resources)
+ * - @see {@link DBPFEntry}
+ */
+export namespace Resource {
+    export type Type = FourBytes
+    export type Group = FourBytes
+    export namespace Instance {
+        export type Number = FourBytes
+        export type BigInt = EightBytes
+    }
+    export type Offset = FourBytes & BufferOffset
+    export namespace Compression {
+        export type Compressed = FourBytes & BufferLength
+        export type Uncompressed = FourBytes & BufferLength
+        export type Flag = TwoBytes
+    }
+}
 
+/**
+ * The DBPF Index Table class.
+ * 
+ * This class is a Map of DBPF entries.
+ * - @see {@link DBPFEntry}
+ * 
+ * It implements an EventEmitter interface.
+ * - @see {@link EventEmitter}
+ */
 export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements EventEmitter {
 
-    private _emitter: EventEmitter;
-    on: (event: string, listener: EventListener) => this
-    off: (event: string, listener: EventListener) => this;
-    emit: EventEmitMethod;
-    once: (event: string, listener: EventListener) => this;
+    /**
+     * Creates a new DBPF Index Table asynchronously, evented.
+     * @param DBPF The DBPF reader to read the index table from.
+     * @returns { EventedPromise<DBPFIndexTable> } An evented promise that resolves when the DBPF Index Table is created.
+     * @public
+     */
+    static create(
+        DBPF: DBPF
+    ): EventedPromise<DBPFIndexTable> {
+        const self = new DBPFIndexTable( DBPF )
+        return new EventedPromise<DBPFIndexTable>((
+            evented_resolve: (table: DBPFIndexTable) => void,
+            evented_reject: ErrorOnlyCallback
+        )=>{
+            self
+                .init()
+                .then(()=>evented_resolve( self ))
+                .catch(evented_reject)
+        },{
+            emit: self.emit,
+            events: {
+                resolve: DBPFIndexTable.ON_CREATE,
+                reject: DBPFIndexTable.ON_ERROR
+            }
+        })
+    }
 
     private _DBPF: DBPF;
     private _reader: IBufferReader;
 
     private _offset: FourBytes & BufferOffset;
+
+    /**
+     * The size of the DBPF Index Table.
+     * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+     * - @see {@link DBPFIndexHeader.size}
+     */
     readonly length: FourBytes & BufferLength;
 
     // tsc doesn't like override readonly, for some reason
@@ -315,6 +580,17 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
         return this._size
     }
 
+    /**
+     * The internal constructor for the DBPF Index Table.
+     * 
+     * Much like the DBPF reader, this constructor is public, but it is not recommended to use it directly.
+     * Instead, use {@link DBPF.create} which will create and await the DBPF Index Table for you.
+     * 
+     * If you must use the constructor directly, ensure to await the {@link DBPFIndexTable.init} method before using the instance.
+     * 
+     * @param DBPF The DBPF reader instance to read the index table from.
+     * @internal @deprecated
+     */
     private constructor(
         DBPF: DBPF
     ){
@@ -359,27 +635,49 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
         // the rest is done by init() (called by static create) to handle async
     }
 
-    
-    private _mode_flag: FourBytes | undefined;
+    /**
+     * The DBPF v2.0 mode flag (AKA the "Index Table Type").
+     * - see: [../spec/DBPF.md - DBPF v2.0](../spec/DBPF.md#dbpf-v20)
+     * 
+     * @readonly
+     */
     get mode(): FourBytes {
         if( this._mode_flag == null )
             throw new Error("DBPFIndexTable not initialized");
         return this._mode_flag
     }
-    private _header_segments: Map<number,FourBytes> | undefined;
+    private _mode_flag: FourBytes | undefined;
+    /**
+     * An array of indexes (in order) of where each header segment is reused in each entry.
+     * - see: [../spec/DBPF.md - DBPF v2.0](../spec/DBPF.md#dbpf-v20)
+     * - note: The header segments are shared segments between each entry, and are a way to save space in the DBPF file.
+     *   - this means that the amount of bytes used by each entry is reduced by the amount of bytes used for the header segments.
+     * 
+     * @readonly
+     */
     get headerSegments(): number[] {
         if( !this._header_segments )
             throw new Error("DBPFIndexTable not initialized")
         return Array.from( this._header_segments.keys() )
     }
-    private _entry_length: number | undefined;
+    private _header_segments: Map<number,FourBytes> | undefined;
+    /**
+     * The amount of memory used by each entry in the DBPF file.
+     * - see: [../spec/DBPF.md - DBPF v2.0](../spec/DBPF.md#dbpf-v20)
+     * - note: That this may not be the full 32 bytes, as the header segments are shared and reused in each entry.
+     */
     get entryLength(): number {
         if( !this._entry_length )
             throw new Error("DBPFIndexTable not initialized")
         return this._entry_length
     }
-    // async constructor helpers
-    private _init: EventedPromise<void> | undefined;
+    private _entry_length: number | undefined;
+
+    /**
+     * Initializes the DBPF Index Table asynchronously, evented.
+     * @returns { EventedPromise<void> } An evented promise that resolves when the DBPF Index Table is initialized.
+     * @public @deprecated use {@link DBPFIndexTable.create} instead
+     */
     init(): EventedPromise<void> {
         return this._init || (this._init = new EventedPromise<void>(async (
             evented_resolve: () => void,
@@ -443,43 +741,37 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
         },{
             emit: this.emit,
             events: {
-                resolve: "init",
-                reject: "error"
+                resolve: DBPFIndexTable.ON_INIT,
+                reject: DBPFIndexTable.ON_ERROR
             }
         }))
     }
-    static create(
-        DBPF: DBPF
-    ): EventedPromise<DBPFIndexTable> {
-        const self = new DBPFIndexTable( DBPF )
-        return new EventedPromise<DBPFIndexTable>((
-            evented_resolve: (table: DBPFIndexTable) => void,
-            evented_reject: ErrorOnlyCallback
-        )=>{
-            self
-                .init()
-                .then(()=>evented_resolve( self ))
-                .catch(evented_reject)
-        },{
-            emit: self.emit,
-            events: {
-                resolve: "create",
-                reject: "error"
-            }
-        })
-    }
+    private _init: EventedPromise<void> | undefined;
 
-    // read-only overrides for Map<number,DBPFEntry>
+    /**
+     * @override @deprecated No-ops. Implemented for Map interface.
+     */
     override set( key: number, value: Promise<DBPFEntry> ): this {
         throw new Error("DBPFIndexTable is read-only")
     }
+    /**
+     * @override @deprecated No-ops. Implemented for Map interface.
+     */
     override delete( key: number ): boolean {
         throw new Error("DBPFIndexTable is read-only")
     }
+    /**
+     * @override @deprecated No-ops. Implemented for Map interface.
+     */
     override clear(): void {
         throw new Error("DBPFIndexTable is read-only")
     }
-
+    /**
+     * Gets a DBPF entry from the DBPF Index Table by index
+     * @param key 
+     * @returns { EventedPromise<DBPFEntry> } An evented promise that resolves with the DBPF entry.
+     * @override
+     */
     override get( key: number ): EventedPromise<DBPFEntry> {
         return new EventedPromise<DBPFEntry>(async ()=>{
 
@@ -501,18 +793,18 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
                 this._reader.move( 4 + (4 * (this._header_segments!.size)) )
                 this._reader.advance( this.entryLength * key )
                 
-                const type:             FourBytes & ResourceType    = this._header_segments!.get(0) || await this._reader.getInt()
-                const group:            FourBytes & ResourceGroup   = this._header_segments!.get(1) || await this._reader.getInt()
-                const instance_high:    FourBytes                   = this._header_segments!.get(2) || await this._reader.getInt()
-                const instance_low:     FourBytes                   = this._header_segments!.get(3) || await this._reader.getInt()
-                const offset:           FourBytes & BufferOffset    = await this._reader.getInt()
-                const size_file:        FourBytes & BufferLength    = await this._reader.getInt()
-                const size_memory:      FourBytes & BufferLength    = await this._reader.getInt()
+                const type:             FourBytes & Resource.Type                       = this._header_segments!.get(0) || await this._reader.getInt()
+                const group:            FourBytes & Resource.Group                      = this._header_segments!.get(1) || await this._reader.getInt()
+                const instance_high:    FourBytes & Resource.Instance.Number            = this._header_segments!.get(2) || await this._reader.getInt()
+                const instance_low:     FourBytes & Resource.Instance.Number            = this._header_segments!.get(3) || await this._reader.getInt()
+                const offset:           FourBytes & Resource.Offset                     = await this._reader.getInt()
+                const size_file:        FourBytes & Resource.Compression.Compressed     = await this._reader.getInt()
+                const size_memory:      FourBytes & Resource.Compression.Uncompressed   = await this._reader.getInt()
     
-                const size_compressed:  TwoBytes & BufferLength     = await this._reader.getShort()
-                const unknown:          TwoBytes & Unused           = await this._reader.getShort()
+                const size_flag:        TwoBytes & Resource.Compression.Flag            = await this._reader.getShort()
+                const unknown:          TwoBytes & Unused                               = await this._reader.getShort()
     
-                const instance: EightBytes = ( BigInt( instance_high ) << 32n ) | BigInt( instance_low )
+                const instance: EightBytes & Resource.Instance.BigInt = ( BigInt( instance_high ) << 32n ) | BigInt( instance_low )
     
                 entry = new DBPFEntry(
                     this._DBPF,
@@ -523,7 +815,7 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
                     {
                         file: size_file,
                         memory: size_memory,
-                        compressed: size_compressed
+                        flag: size_flag
                     }
                 )
                 entry = this._DBPF.plugins.filter( plugin => {
@@ -535,12 +827,11 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
         },{
             emit: this.emit,
             events: {
-                resolve: "get",
-                reject: "error"
+                resolve: DBPFIndexTable.ON_GET,
+                reject: DBPFIndexTable.ON_ERROR
             }
         })
     }
-
     override has( key: number ): boolean {
         return key >= 0 && key < this.size
     }
@@ -577,33 +868,90 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
     override [Symbol.iterator](): IterableIterator<[number, Promise<DBPFEntry>]> {
         return this.entries()
     }
+
+    private _emitter: EventEmitter;
+    on: (event: string, listener: EventListener) => this
+    off: (event: string, listener: EventListener) => this;
+    emit: EventEmitMethod;
+    once: (event: string, listener: EventListener) => this;
+
+    /**
+     * The event name for when the DBPF Index Table is created properly.
+     * @event
+     */
+    static readonly ON_CREATE = "create"
+    /**
+     * The event name for when the DBPF Index Table is initialized.
+     * @event
+     */
+    static readonly ON_INIT = "init"
+    /**
+     * The event name for when the DBPF Index Table retrieves an entry.
+     */
+    static readonly ON_GET = "get"
+    /**
+     * The event name for when the DBPF Index Table encounters an error.
+     * @event
+     */
+    static readonly ON_ERROR = "error"
 }
 
+/**
+ * The DBPF Entry class.
+ * 
+ * It is a representation of a DBPF resource.
+ * - see: [../spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../spec/DBPF.md#table-entries-aka-dbpf-resources)
+ */
 export class DBPFEntry {
     private _DBPF: DBPF;
 
-    readonly type: FourBytes & ResourceType;
-    readonly group: FourBytes & ResourceGroup;
+    /**
+     * The type id of the DBPF resource.
+     */
+    readonly type: FourBytes & Resource.Type;
+    /**
+     * The group id of the DBPF resource.
+     */
+    readonly group: FourBytes & Resource.Group;
 
-    readonly instance: EightBytes;
-    readonly offset: FourBytes & BufferOffset;
+    /**
+     * The instance id of the DBPF resource.
+     */
+    readonly instance: EightBytes & Resource.Instance.BigInt | FourBytes & Resource.Instance.Number;
+    /**
+     * The offset of the DBPF resource in the DBPF file.
+     */
+    readonly offset: FourBytes & Resource.Offset;
 
+    /**
+     * The compression information about the DBPF resource.
+     */
     readonly size: {
-        file: FourBytes & BufferLength,
-        memory: FourBytes & BufferLength
-        compressed: FourBytes & BufferLength
+        /**
+         * The amount of bytes the DBPF resource takes up in the DBPF file.
+         */
+        file: FourBytes & Resource.Compression.Compressed,
+        /**
+         * The amount of bytes the DBPF resource takes up uncompressed in memory.
+         */
+        memory: FourBytes & Resource.Compression.Uncompressed,
+        /**
+         * The compression flag of the DBPF resource.
+         * - see: [../spec/DBPF.md - DBPF v2.0](../spec/DBPF.md#dbpf-v20)
+         */
+        flag: FourBytes & Resource.Compression.Flag
     };
 
     constructor(
         DBPF: DBPF,
-        type: FourBytes & ResourceType,
-        group: FourBytes & ResourceGroup,
-        instance: EightBytes,
-        offset: FourBytes & BufferOffset,
+        type: FourBytes & Resource.Type,
+        group: FourBytes & Resource.Group,
+        instance: EightBytes & Resource.Instance.BigInt | FourBytes & Resource.Instance.Number,
+        offset: FourBytes & Resource.Offset,
         size: {
-            file: FourBytes & BufferLength,
-            memory: FourBytes & BufferLength,
-            compressed: FourBytes & BufferLength
+            file: FourBytes & Resource.Compression.Compressed,
+            memory: FourBytes & Resource.Compression.Uncompressed,
+            flag: FourBytes & Resource.Compression.Flag
         }
     ){
         this._DBPF = DBPF;
@@ -616,8 +964,17 @@ export class DBPFEntry {
     }
 }
 
+/**
+ * @see {@link DBPFEntry}
+ */
 export interface IDBPFEntry extends Omit<DBPFEntry, 'constructor'> {}
 
+/**
+ * This is the planned structure for the plugin system.
+ * 
+ * This is a WIP and is not yet implemented.
+ * @experimental
+ */
 class Plugin extends Deserialized {
     filters!: Record<string, JSONPrimitive>; // set by super
     path: PathString;
@@ -650,6 +1007,10 @@ class Plugin extends Deserialized {
     }
 }
 
+/**
+ * @see {@link Plugin}
+ * @experimental
+ */
 class Plugins extends Array<Plugin> {
     override push( ...items: (Plugin | string)[] ): number {
         return super.push( ...items.map( item => {
@@ -688,7 +1049,9 @@ class Plugins extends Array<Plugin> {
     }
 }
 
-// umd export
+/**
+ * Constant export for UMD
+ */
 export const dbpf = {
     DBPF,
     DBPFEntry
