@@ -6,6 +6,8 @@ This is a community effort. The DBPF file format is a file format used in variou
 Additionally, without official feedback from EA or Maxis, a lot of this information is speculative and based on prior and ongoing reverse-engineering efforts.
 
 # Table of Contents:
+- [Pre: Background and Acknowledgements](#background-and-acknowledgements)
+  - This section lists the various community projects and resources that this project is based on. Useful for further research and development of this library.
 - [The DBPF File Format](DBPF.md)
   - [Introduction](DBPF.md#introduction)
   - [Versions](DBPF.md#versions)
