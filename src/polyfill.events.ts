@@ -1,8 +1,15 @@
 import { polyfill } from "./polyfill";
 
 export type EventListener = (...args: any[]) => void;
+/**
+ * @see {@link https://nodejs.org/api/events.html#emitteremiteventname-args}
+ */
 export type EventEmitMethod = (event: string, ...args: any[]) => boolean;
 
+/**
+ * A simple polyfill for the EventEmitter class from Node.js
+ * - see: https://nodejs.org/api/events.html#class-eventemitter
+ */
 class _EventEmitter {
     private events?: { [key: string]: EventListener[] } = {}; // set as optional for the EventEmitter interface type
 
@@ -47,7 +54,11 @@ export const { EventEmitter } = polyfill(
     ...polyfills
 ) as {
     EventEmitter: typeof _EventEmitter
-}
+} as typeof import("node:events");
+
+/**
+ * see: https://nodejs.org/api/events.html#events_class_eventemitter
+ */
 export type EventEmitter = _EventEmitter;
 export type IEventEmitter = _EventEmitter;
 
@@ -59,7 +70,16 @@ type EmitterOptions = {
     }
 }
 
+/**
+ * A Promise that emits events when resolved or rejected using a provided {@link EventEmitMethod} (EventEmitter.emit)
+ */
 export class EventedPromise<T> extends Promise<T> {
+    /**
+     * @param executor The executor function to be passed to the Promise constructor 
+     * @param emit An {@link EventEmitMethod} or an object with an emit method and events object or a set of options for emitting:
+     * - emit: The method to emit events. @see {@link EventEmitMethod}
+     * - events: An object with the keys `resolve` and `reject` that specify the event names to emit when resolving and rejecting. 
+     */
     constructor(
         executor: (
             resolve: (value: T | PromiseLike<T>) => void,
