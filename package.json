@@ -38,7 +38,7 @@
         "make:node":               "tsc --project ./tsconfig.json",
         "make:web":                "webpack --config webpack.config.js",
         "make:test":               "webpack --config webpack.test.config.js",
-        "make:docs":               "typedoc --plugin typedoc-plugin-markdown --out ./docs ./src --entryPoints ./src/DBPF.ts",
+        "make:docs":               "typedoc",
 
         "build":                   "npm run make:node && npm run make:web",
 
@@ -51,7 +51,7 @@
         "prebuild:web":            "npm run make:imports",
         "prebuild:test":           "npm run build:web",
         "prebuild:node":           "npm run make:imports",
-        
+
         "postbuild":               "npm run docs",
 
         "test":                    "npm run build:test && npm run test:serve",

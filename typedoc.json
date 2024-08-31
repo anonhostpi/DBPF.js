@@ -1,0 +1,22 @@
+{
+    "name": "DBPF.js",
+    "plugin": ["typedoc-plugin-markdown"],
+    "out": "./wiki",
+    "entryPoints": [
+        "./src/BufferStore.ts",
+        "./src/DBPF.ts",
+        "./src/LFUCache.ts",
+        "./src/polyfill.Buffer.ts",
+        "./src/polyfill.events.ts",
+        "./src/polyfill.fs.ts",
+        "./src/polyfill.ts",
+        "./src/serde.ts",
+    ],
+    "projectDocuments": ["./spec/**/*.md"],
+    "alwaysCreateEntryPointModule": false,
+    "readme": "none",
+    "includeVersion": true,
+    "excludePrivate": false,
+    "entryPointStrategy": "expand",
+}
+  
