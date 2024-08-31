@@ -307,10 +307,10 @@ input?.addEventListener("change", async function( event ) {
                 const offsetText = `0x${
                     offset.toString(16).padStart(8,"0").toUpperCase()
                 } (=${ offset })`;
-                const sizeCompressed = entry.size.compressed;
-                const sizeCompressedText = `0x${
-                    sizeCompressed.toString(16).padStart(8,"0").toUpperCase()
-                } (=${ sizeCompressed })`;
+                const sizeFlag = entry.size.flag;
+                const sizeFlagText = `0x${
+                    sizeFlag.toString(16).padStart(8,"0").toUpperCase()
+                } (=${ sizeFlag })`;
                 const sizeMemory = entry.size.memory;
                 const sizeMemoryText = `0x${
                     sizeMemory.toString(16).padStart(8,"0").toUpperCase()
@@ -351,8 +351,8 @@ input?.addEventListener("change", async function( event ) {
                 } else {
                     entryChildren["resource-offset"].style.fontWeight = "bold";
                 }
-                entryChildren["resource-size-compressed"].textContent = sizeCompressedText;
-                if( sizeCompressed === 0 ){
+                entryChildren["resource-size-compressed"].textContent = sizeFlagText;
+                if( sizeFlag === 0 ){
                     entryChildren["resource-size-compressed"].style.color = "grey";
                     entryChildren["resource-size-compressed"].style.fontStyle = "italic";
                 } else {
