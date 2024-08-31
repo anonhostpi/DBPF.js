@@ -34,8 +34,8 @@ file = input.files[0]; // where input is an <input type="file"> element
 let dbpf = await DBPF.create( file );
 ```
 
-For more advanced usage, see the [API documentation](docs/classes/DBPF.md).
-- For all exported members, see: [docs/globals.md](docs/globals.md).
+For more advanced usage, see the [API documentation](wiki/classes/DBPF.md).
+- For all exported members, see: [wiki/globals.md](wiki/globals.md).
 
 ## Building and Interactive Testing
 
