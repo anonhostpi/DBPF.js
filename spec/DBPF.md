@@ -59,7 +59,7 @@ The DBPF file format contains 3 types of tables that function as a table of cont
 - The Trash Table (also known as the Hole Table): This table was used as a way to mark entries as deleted without actually removing them from the file.
 - The DIR Table: This table is a subtable used when an entry for the index table is an archive. It is duplicative of the index table, but shows the uncompressed file size, instead of the compressed file size field of the entry.
 
-#### Table Entries
+#### Table Entries (AKA "DBPF Resources")
 Each table is a consecutive array of entries. Each entry is a fixed size and contains information about the file it represents.
 
 The size of the entries is determined by the version of the DBPF archive and the index table.
@@ -112,7 +112,7 @@ For example, a mode flag of 7 (`0b0111`) would mean that the Type, Group, and Lo
 | Offset            | 4     | The offset of the file in the DBPF file.
 | Size - File       | 4     | The number of bytes the resource takes up in the DBPF file.
 | Size - Memory     | 4     | The number of bytes the resource takes up uncompressed.
-| Compressed        | 2     | A the resource compression. Currently, ownly 3 values (other than 0 for no compression) are well defined: 0xFFFF for RefPack, 0xFFFE for streamable RefPack, and 0x5A42 for zlib. There's also a supposed 0xFFE0 for deleted entries.
+| Compression Flag  | 2     | A the resource compression. Currently, ownly 3 values (other than 0 for no compression) are well defined: 0xFFFF for RefPack, 0xFFFE for streamable RefPack, and 0x5A42 for zlib. There's also a supposed 0xFFE0 for deleted entries.
 | Unknown           | 2     | Unknown field.
 - see: https://github.com/ytaa/dbpf_reader/blob/d11782b19dd373b363648a54706a935d41ebb2e0/dbpf_reader/dbpf_reader.h#L68-L78
 - see: https://github.com/thequux/s4py/blob/892150e78cfd0b6ca51258d5e0d740eb9adffcd1/lib/s4py/package/dbpf.py#L204-L215
