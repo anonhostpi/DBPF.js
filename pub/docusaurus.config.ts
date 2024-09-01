@@ -83,6 +83,12 @@ const config: Config = {
         },
         // {to: '/blog', label: 'Blog', position: 'left'},
         {
+          href: 'playground',
+          target: '_blank',
+          label: 'Playground',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/anonhostpi/DBPF.js',
           label: 'GitHub',
           position: 'right',
