@@ -1,9 +1,14 @@
-# DBPF.js a performant dbpf file reader written in TypeScript
+# [DBPF.js](https://anonhostpi.github.io/DBPF.js) a performant dbpf file reader written in TypeScript
 
 This is a performant library for reading DBPF files in TypeScript/JavaScript. Currently, it only parses the header, index and index entries, but a plugin system is planned to allow for reading and handling of the actual data.
 
 **Community DBPF File Format Specification:**
 - see: [spec/README.md](spec/README.md).
+- see: [API Documentation > DBPF File Format](https://anonhostpi.github.io/DBPF.js/docs/spec)
+
+**API Documentation:**
+- see: [API Documentation](https://anonhostpi.github.io/DBPF.js/docs/API)
+- see: [wiki/README.md](wiki/README.md)
 
 ## Playground/Interactive Testing (github.io)
 
@@ -34,8 +39,8 @@ file = input.files[0]; // where input is an <input type="file"> element
 let dbpf = await DBPF.create( file );
 ```
 
-For more advanced usage, see the [API documentation](wiki/classes/DBPF.md).
-- For all exported members, see: [wiki/globals.md](wiki/globals.md).
+For more advanced usage, see the [API documentation](https://anonhostpi.github.io/DBPF.js/docs/API).
+- For all exported members, see: [the UMD export](https://anonhostpi.github.io/DBPF.js/docs/DBPF/variables/dbpf).
 
 ## Building and Interactive Testing
 
