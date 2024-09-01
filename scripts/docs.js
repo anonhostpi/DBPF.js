@@ -13,13 +13,13 @@ const files = glob.sync("wiki/**/*.md")
 files.forEach(file => {
     const path = file.split("/")
     const wikiIndex = path.indexOf("wiki") // wiki root
-    const depthFromRoot = path.length - wikiIndex - 1
+    const depthFromRoot = path.length - wikiIndex - 2
     const relativePathToRoot = "../".repeat(depthFromRoot)
     const correctDocumentPath = relativePathToRoot + "spec"
     const content = fs.readFileSync(file, "utf8")
     const newContent = content
-        .replace(/\(\.\.\/spec/g, `(${correctDocumentPath}`)
-        .replace(/\(\.\.\/documents/g, `(${correctDocumentPath}`)
+        .replace(/\((?:\.\.\/)+spec/g, `(${correctDocumentPath}`)
+        .replace(/\((?:\.\.\/)+documents/g, `(${correctDocumentPath}`)
     fs.writeFileSync(file, newContent)
 })
 const WIKI_README = "wiki/README.md"
