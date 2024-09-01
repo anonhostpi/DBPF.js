@@ -28,7 +28,7 @@ The group id of the DBPF resource.
 
 #### Defined in
 
-[src/DBPF.ts:924](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L924)
+[src/DBPF.ts:924](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L924)
 
 ***
 
@@ -44,7 +44,7 @@ The instance id of the DBPF resource.
 
 #### Defined in
 
-[src/DBPF.ts:929](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L929)
+[src/DBPF.ts:929](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L929)
 
 ***
 
@@ -60,7 +60,7 @@ The offset of the DBPF resource in the DBPF file.
 
 #### Defined in
 
-[src/DBPF.ts:933](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L933)
+[src/DBPF.ts:933](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L933)
 
 ***
 
@@ -95,7 +95,7 @@ The amount of bytes the DBPF resource takes up uncompressed in memory.
 
 #### Defined in
 
-[src/DBPF.ts:938](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L938)
+[src/DBPF.ts:938](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L938)
 
 ***
 
@@ -111,4 +111,4 @@ The type id of the DBPF resource.
 
 #### Defined in
 
-[src/DBPF.ts:920](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L920)
+[src/DBPF.ts:920](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L920)

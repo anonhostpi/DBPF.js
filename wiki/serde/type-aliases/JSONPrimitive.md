@@ -12,4 +12,4 @@ A primitive JSON type.
 
 ## Defined in
 
-[src/serde.ts:47](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L47)
+[src/serde.ts:47](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/serde.ts#L47)
