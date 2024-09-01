@@ -7,7 +7,7 @@ This is a performant library for reading DBPF files in TypeScript/JavaScript. Cu
 
 ## Playground/Interactive Testing (github.io)
 
-To see the library in action, you can visit the [playground](https://anonhostpi.github.io/DBPF.js/).
+To see the library in action, you can visit the [playground](https://anonhostpi.github.io/DBPF.js/playground).
 
 You can also build and run the playground locally by following the instructions in [Building and Interactive Testing](#building-and-interactive-testing):
 
