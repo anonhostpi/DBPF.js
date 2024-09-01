@@ -36,7 +36,7 @@ wikiFiles.forEach(file => {
                 // first replace the filename in the match
                 let newName = path.basename(path.dirname(resolved))
                 if( newName === "docs")
-                    newName = "Table of Contents"
+                    newName = "API"
                 newName = newName.replaceAll(" ", "%20")
                 const newMatch = match.replace(/^\(/, "").replace(/\)$/, "").replace("README", newName);
                 // then replace the match in the content
@@ -49,27 +49,52 @@ wikiFiles.forEach(file => {
         });
     }
 
-    const parent = path.basename(path.dirname(file))
-    const isToC = parent === "docs";
+    let parent = path.basename(path.dirname(file))
     const child = path.basename(file).replace(".md", "")
-    let title = isToC ? "Table of Contents" : child;
-    if( title.toUpperCase() === "README" || title.toUpperCase() === "INDEX" )
-        title = parent;
+    let title = child;
 
-    let position = isToC ? 1 : null;
-    if( title === "DBPF" )
-        position = 2;
+    if( parent === "docs" ){
+        title = "API";
+        content = content
+            .replace(/## Documents/g, "## DBPF File Format")
+            // [README](spec/spec.md) with [Overview](spec/spec.md)
+            .replace(/\[README\]\(([^)]+)\)/g, "[Overview]($1)")
+            .replace(/## Modules/g, "## Other Modules Defined in This Library")
+    }
+
+    const isIndex = title.toUpperCase() === "README" || title.toUpperCase() === "INDEX"
+    if( isIndex ){
+        title = parent;
+        parent = path.basename(path.dirname(path.dirname(file)))
+    }
+    let sidebar_label = title === "API" ? "Table of Contents" : null;
+
+    let position;
+
+    // Rename titles as needed
+    switch( title ){
+        case "spec":
+            if( parent === "docs" ){
+                title = "Overview"
+                position = 1;
+            }
+            break;
+        default: null;
+    }
 
     // add the header
     const header = (`
 ---
 title: "${ title }"
-last_update:
+${
+    sidebar_label ? `sidebar_label: "${ sidebar_label }"\n` : ""
+}${
+    position ? `sidebar_position: ${ position }\n` : ""
+}last_update:
   date: "${ new Date().toLocaleDateString() }"
   author: "Automation"
-${
-    position ? `sidebar_position: ${ position }\n` : ""
-}---
+displayed_sidebar: "wikiSidebar"
+---
     `).trim();
     
     content = header + "\n\n" + content;
@@ -90,7 +115,7 @@ ${
 readmeFiles.forEach(file => {
     let newPath;
     if( path.basename(path.dirname(file)) === "docs") {
-        newPath = path.join(path.dirname(file), "Table of Contents.md");
+        newPath = path.join(path.dirname(file), "API.md");
     } else {
         newPath = path.join(path.dirname(file), `${path.basename(path.dirname(file))}.md`);
     }
