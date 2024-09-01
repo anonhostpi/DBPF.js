@@ -7,3 +7,4 @@ dist
 dbpf-*.tgz
 #/src/imports.ts
 /scripts/manifests
+/pub/build
