@@ -44,7 +44,7 @@ SegmentOptions
 
 #### Defined in
 
-[src/BufferStore.ts:336](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/BufferStore.ts#L336)
+[src/BufferStore.ts:336](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/BufferStore.ts#L336)
 
 ## Properties
 
@@ -56,7 +56,7 @@ The file property for the browser backing store.
 
 #### Defined in
 
-[src/BufferStore.ts:349](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/BufferStore.ts#L349)
+[src/BufferStore.ts:349](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/BufferStore.ts#L349)
 
 ***
 
@@ -72,7 +72,7 @@ The number of segments in the cache.
 
 #### Defined in
 
-[src/BufferStore.ts:190](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/BufferStore.ts#L190)
+[src/BufferStore.ts:190](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/BufferStore.ts#L190)
 
 ***
 
@@ -88,7 +88,7 @@ The length of the file in bytes.
 
 #### Defined in
 
-[src/BufferStore.ts:176](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/BufferStore.ts#L176)
+[src/BufferStore.ts:176](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/BufferStore.ts#L176)
 
 ***
 
@@ -104,7 +104,7 @@ The size of each segment in bytes.
 
 #### Defined in
 
-[src/BufferStore.ts:183](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/BufferStore.ts#L183)
+[src/BufferStore.ts:183](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/BufferStore.ts#L183)
 
 ## Accessors
 
@@ -128,7 +128,7 @@ BaseBufferStore._file
 
 #### Defined in
 
-[src/BufferStore.ts:354](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/BufferStore.ts#L354)
+[src/BufferStore.ts:354](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/BufferStore.ts#L354)
 
 ## Methods
 
@@ -158,7 +158,7 @@ BaseBufferStore._read
 
 #### Defined in
 
-[src/BufferStore.ts:367](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/BufferStore.ts#L367)
+[src/BufferStore.ts:367](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/BufferStore.ts#L367)
 
 ***
 
@@ -184,4 +184,4 @@ Retrieves a buffer by its offset and length and wraps it in a BufferReader.
 
 #### Defined in
 
-[src/BufferStore.ts:231](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/BufferStore.ts#L231)
+[src/BufferStore.ts:231](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/BufferStore.ts#L231)

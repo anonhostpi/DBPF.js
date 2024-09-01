@@ -35,4 +35,4 @@ The number of holes in the DBPF file.
 
 ## Defined in
 
-[src/DBPF.ts:205](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L205)
+[src/DBPF.ts:205](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L205)

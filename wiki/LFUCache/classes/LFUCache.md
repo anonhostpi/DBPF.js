@@ -38,7 +38,7 @@ The time-to-live of the cache entries
 
 #### Defined in
 
-[src/LFUCache.ts:39](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L39)
+[src/LFUCache.ts:39](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L39)
 
 ## Properties
 
@@ -50,7 +50,7 @@ The underlying Map object used to store the cache entries
 
 #### Defined in
 
-[src/LFUCache.ts:64](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L64)
+[src/LFUCache.ts:64](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L64)
 
 ***
 
@@ -62,7 +62,7 @@ The capacity of the cache
 
 #### Defined in
 
-[src/LFUCache.ts:54](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L54)
+[src/LFUCache.ts:54](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L54)
 
 ***
 
@@ -74,7 +74,7 @@ The frequency map used to track the usage frequency of the cache entries
 
 #### Defined in
 
-[src/LFUCache.ts:69](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L69)
+[src/LFUCache.ts:69](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L69)
 
 ***
 
@@ -86,7 +86,7 @@ The lowest usage frequency of the stored cache entries
 
 #### Defined in
 
-[src/LFUCache.ts:74](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L74)
+[src/LFUCache.ts:74](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L74)
 
 ***
 
@@ -98,7 +98,7 @@ The time-to-live of the cache entries
 
 #### Defined in
 
-[src/LFUCache.ts:59](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L59)
+[src/LFUCache.ts:59](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L59)
 
 ## Methods
 
@@ -120,7 +120,7 @@ If provided, evicts the provided entry, otherwise evicts the least recently used
 
 #### Defined in
 
-[src/LFUCache.ts:81](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L81)
+[src/LFUCache.ts:81](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L81)
 
 ***
 
@@ -142,7 +142,7 @@ The entry to increment the usage frequency of
 
 #### Defined in
 
-[src/LFUCache.ts:104](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L104)
+[src/LFUCache.ts:104](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L104)
 
 ***
 
@@ -164,7 +164,7 @@ The entry to refresh the TTL of
 
 #### Defined in
 
-[src/LFUCache.ts:127](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L127)
+[src/LFUCache.ts:127](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L127)
 
 ***
 
@@ -188,7 +188,7 @@ The value of the entry if found, otherwise undefined
 
 #### Defined in
 
-[src/LFUCache.ts:137](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L137)
+[src/LFUCache.ts:137](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L137)
 
 ***
 
@@ -216,4 +216,4 @@ The value of the entry
 
 #### Defined in
 
-[src/LFUCache.ts:152](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/LFUCache.ts#L152)
+[src/LFUCache.ts:152](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/LFUCache.ts#L152)

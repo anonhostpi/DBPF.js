@@ -9,7 +9,7 @@
 > **DBPFHeader**: `object`
 
 The DBPF Header structure.
-- see: [../spec/DBPF.md - Header](../../../spec/DBPF.md#header)
+- see: [../spec/DBPF.md - Header](../../spec/DBPF.md#header)
 
 ## Type declaration
 
@@ -33,4 +33,4 @@ Header information for the trash table (also referred to as the hole table).
 
 ## Defined in
 
-[src/DBPF.ts:117](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L117)
+[src/DBPF.ts:117](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L117)

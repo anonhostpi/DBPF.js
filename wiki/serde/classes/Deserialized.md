@@ -28,7 +28,7 @@ The file path of the JSON file.
 
 #### Defined in
 
-[src/serde.ts:108](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/serde.ts#L108)
+[src/serde.ts:108](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L108)
 
 ## Properties
 
@@ -40,7 +40,7 @@ The file path of the JSON file.
 
 #### Defined in
 
-[src/serde.ts:125](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/serde.ts#L125)
+[src/serde.ts:125](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L125)
 
 ***
 
@@ -52,7 +52,7 @@ The name of the class (for logging purposes).
 
 #### Defined in
 
-[src/serde.ts:130](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/serde.ts#L130)
+[src/serde.ts:130](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L130)
 
 ***
 
@@ -76,7 +76,7 @@ The transformed object.
 
 #### Defined in
 
-[src/serde.ts:203](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/serde.ts#L203)
+[src/serde.ts:203](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L203)
 
 ## Accessors
 
@@ -92,7 +92,7 @@ The path to the underlying JSON file, if provided.
 
 #### Defined in
 
-[src/serde.ts:135](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/serde.ts#L135)
+[src/serde.ts:135](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L135)
 
 ## Methods
 
@@ -116,7 +116,7 @@ Whether the file was successfully loaded.
 
 #### Defined in
 
-[src/serde.ts:145](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/serde.ts#L145)
+[src/serde.ts:145](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L145)
 
 ***
 
@@ -140,7 +140,7 @@ Whether the file was successfully saved.
 
 #### Defined in
 
-[src/serde.ts:172](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/serde.ts#L172)
+[src/serde.ts:172](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L172)
 
 ***
 
@@ -164,4 +164,4 @@ The Deserialized instance.
 
 #### Defined in
 
-[src/serde.ts:245](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/serde.ts#L245)
+[src/serde.ts:245](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/serde.ts#L245)

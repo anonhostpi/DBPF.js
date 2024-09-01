@@ -8,7 +8,7 @@
 
 The DBPF reader class.
 
-This is the main class for the project. It is derived from the [Community Spec](../../documents/DBPF.md).
+This is the main class for the project. It is derived from the [Community Spec](../../spec/DBPF.md).
 
 ## Extends
 
@@ -47,7 +47,7 @@ The DBPF file to read.
 
 #### Defined in
 
-[src/DBPF.ts:253](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L253)
+[src/DBPF.ts:253](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L253)
 
 ## Properties
 
@@ -57,7 +57,7 @@ The DBPF file to read.
 
 #### Defined in
 
-[src/DBPF.ts:397](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L397)
+[src/DBPF.ts:397](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L397)
 
 ***
 
@@ -67,7 +67,7 @@ The DBPF file to read.
 
 #### Defined in
 
-[src/DBPF.ts:426](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L426)
+[src/DBPF.ts:426](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L426)
 
 ***
 
@@ -81,11 +81,11 @@ The DBPF header.
 #### See
 
 [DBPFHeader](../type-aliases/DBPFHeader.md)
-- see [../spec/DBPF.md - Header](../../../spec/DBPF.md#header)
+- see [../spec/DBPF.md - Header](../../spec/DBPF.md#header)
 
 #### Defined in
 
-[src/DBPF.ts:434](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L434)
+[src/DBPF.ts:434](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L434)
 
 ***
 
@@ -95,7 +95,7 @@ The DBPF header.
 
 #### Defined in
 
-[src/DBPF.ts:363](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L363)
+[src/DBPF.ts:363](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L363)
 
 ***
 
@@ -113,7 +113,7 @@ This is used to improve performance when reading large DBPF files.
 
 #### Defined in
 
-[src/DBPF.ts:447](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L447)
+[src/DBPF.ts:447](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L447)
 
 ***
 
@@ -123,7 +123,7 @@ This is used to improve performance when reading large DBPF files.
 
 #### Defined in
 
-[src/DBPF.ts:458](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L458)
+[src/DBPF.ts:458](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L458)
 
 ***
 
@@ -140,7 +140,7 @@ Plugins
 
 #### Defined in
 
-[src/DBPF.ts:465](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L465)
+[src/DBPF.ts:465](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L465)
 
 ***
 
@@ -150,7 +150,7 @@ Plugins
 
 #### Defined in
 
-[src/DBPF.ts:375](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L375)
+[src/DBPF.ts:375](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L375)
 
 ***
 
@@ -160,7 +160,7 @@ Plugins
 
 #### Defined in
 
-[src/DBPF.ts:386](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L386)
+[src/DBPF.ts:386](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L386)
 
 ***
 
@@ -297,7 +297,7 @@ The extension of the DBPF file.
 
 #### Defined in
 
-[src/DBPF.ts:412](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L412)
+[src/DBPF.ts:412](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L412)
 
 ***
 
@@ -317,7 +317,7 @@ In the browser environment, this and [DBPF.filepath](DBPF.md#filepath) are the s
 
 #### Defined in
 
-[src/DBPF.ts:405](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L405)
+[src/DBPF.ts:405](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L405)
 
 ***
 
@@ -337,7 +337,7 @@ In the browser environment, this and [DBPF.filename](DBPF.md#filename) are the s
 
 #### Defined in
 
-[src/DBPF.ts:394](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L394)
+[src/DBPF.ts:394](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L394)
 
 ***
 
@@ -353,7 +353,7 @@ The size of the DBPF file.
 
 #### Defined in
 
-[src/DBPF.ts:423](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L423)
+[src/DBPF.ts:423](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L423)
 
 ***
 
@@ -367,7 +367,7 @@ The size of the DBPF file.
 
 #### Defined in
 
-[src/DBPF.ts:435](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L435)
+[src/DBPF.ts:435](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L435)
 
 ***
 
@@ -388,7 +388,7 @@ The length of the DBPF header.
 
 #### Defined in
 
-[src/DBPF.ts:370](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L370)
+[src/DBPF.ts:370](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L370)
 
 ***
 
@@ -409,7 +409,7 @@ The magic number for DBPF files.
 
 #### Defined in
 
-[src/DBPF.ts:381](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L381)
+[src/DBPF.ts:381](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L381)
 
 ***
 
@@ -430,7 +430,7 @@ The DBPF Index Table.
 
 #### Defined in
 
-[src/DBPF.ts:453](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L453)
+[src/DBPF.ts:453](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L453)
 
 ## Methods
 
@@ -639,8 +639,8 @@ node\_modules/@types/node/events.d.ts:774
 Initializes the DBPF reader asynchronously, evented. Only intended for internal use, but is exposed for advanced users.
 
 The body of this method contains the logic for reading the DBPF header and preparing the DBPF index table.
-- see: [../spec/DBPF.md - Header](../../../spec/DBPF.md#header)
-- see: [../spec/DBPF.md - The Tables](../../../spec/DBPF.md#the-tables)
+- see: [../spec/DBPF.md - Header](../../spec/DBPF.md#header)
+- see: [../spec/DBPF.md - The Tables](../../spec/DBPF.md#the-tables)
 
 #### Returns
 
@@ -654,7 +654,7 @@ use [DBPF.create](DBPF.md#create) instead
 
 #### Defined in
 
-[src/DBPF.ts:282](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L282)
+[src/DBPF.ts:282](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L282)
 
 ***
 
@@ -1074,7 +1074,7 @@ The buffer reader.
 
 #### Defined in
 
-[src/DBPF.ts:474](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L474)
+[src/DBPF.ts:474](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L474)
 
 ***
 
@@ -1337,7 +1337,7 @@ The DBPF file to read.
 
 #### Defined in
 
-[src/DBPF.ts:225](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L225)
+[src/DBPF.ts:225](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L225)
 
 ***
 
@@ -1809,7 +1809,7 @@ The event name for when the DBPF reader is created properly.
 
 #### Defined in
 
-[src/DBPF.ts:489](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L489)
+[src/DBPF.ts:489](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L489)
 
 ***
 
@@ -1821,7 +1821,7 @@ The event name for when the DBPF reader encounters an error.
 
 #### Defined in
 
-[src/DBPF.ts:504](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L504)
+[src/DBPF.ts:504](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L504)
 
 ***
 
@@ -1833,7 +1833,7 @@ The event name for when the DBPF reader is initialized.
 
 #### Defined in
 
-[src/DBPF.ts:494](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L494)
+[src/DBPF.ts:494](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L494)
 
 ***
 
@@ -1845,4 +1845,4 @@ The event name for when the DBPF reader reads data.
 
 #### Defined in
 
-[src/DBPF.ts:499](https://github.com/anonhostpi/DBPF.js/blob/96bf3262c3e4b9863c3bc71ebc15b70d5c50d6d9/src/DBPF.ts#L499)
+[src/DBPF.ts:499](https://github.com/anonhostpi/DBPF.js/blob/5970b3db05862f3a4fc27886740f0325e027cf60/src/DBPF.ts#L499)
