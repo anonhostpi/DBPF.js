@@ -41,7 +41,7 @@
         "make:docs":                  "typedoc",
         "premake:docusaurus":         "rimraf ./pub/build",
         "make:docusaurus":            "npx create-docusaurus@latest pub/build classic --typescript --skip-install",
-        "postmake:docusaurus":        "rimraf ./pub/build/blog ./pub/build/docs ./pub/build/src",
+        "postmake:docusaurus":        "rimraf ./pub/build/blog ./pub/build/docs ./pub/build/src ./pub/build/static/img",
 
         "build":                      "npm run make:node && npm run make:web",
 
