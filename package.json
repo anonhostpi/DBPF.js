@@ -59,6 +59,7 @@
 
         "test":                       "npm run build:test && npm run test:serve",
         "test:serve":                 "cd ./test/serve && live-server --port=8080 --open=./index.html",
+        "test:pub":                   "npm run docs:pub && npm --prefix ./pub/build run serve",
 
         "prepack":                    "npm run build && npm run manifest:prepare",
         "postpack":                   "npm run manifest:restore",
@@ -81,6 +82,8 @@
         "docs":                       "npm run make:docs",
         "predocs":                    "rimraf ./wiki",
         "postdocs":                   "node scripts/docs.js",
+        "docs:pub":                   "node scripts/pub.js",
+        "predocs:pub":                "npm run build:test && npm run docs && npm run make:docusaurus"
     },
 
     "devDependencies": {
