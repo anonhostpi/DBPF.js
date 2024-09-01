@@ -36,14 +36,14 @@ The following is a table describing the first several bytes of the DBPF file for
 | User Minor    | 4     | 2.0      | The minor version specified by the user.
 | Date Created  | 4     | 1.0      | The date the file was created. This is a Unix timestamp.
 | Date Modified | 4     | 1.0      | The date the file was last modified. This is a Unix timestamp.
-| Index Major   | 4     | <2.0     | The major version of the index table format.
+| Index Major   | 4     | \<2.0    | The major version of the index table format.
 | Index Count   | 4     | All      | The number of entries in the index table.
-| Index First   | 4     | <2.0     | The first entry in the index table.
+| Index First   | 4     | \<2.0    | The first entry in the index table.
 | Index Size    | 4     | All      | The size of the index table in bytes.
-| Trash Count   | 4     | <2.0     | The number of entries in the trash table (also known as the "Hole" table).
-| Trash Offset  | 4     | <2.0     | The number of entries in the trash table.
-| Trash Size    | 4     | <2.0     | The size of the trash table in bytes.
-| Index Minor   | 4     | <2.0     | The minor version of the index table format.
+| Trash Count   | 4     | \<2.0    | The number of entries in the trash table (also known as the "Hole" table).
+| Trash Offset  | 4     | \<2.0    | The number of entries in the trash table.
+| Trash Size    | 4     | \<2.0    | The size of the trash table in bytes.
+| Index Minor   | 4     | \<2.0    | The minor version of the index table format.
 | Index Offset  | 4     | 2.0      | The offset of the index table in the file (also known as "Index Position").
 | Unknown       | 4     | 2.0      | Unknown field.
 | Reserved      | 32    | All      | Reserved space for future use.

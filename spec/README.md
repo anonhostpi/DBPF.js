@@ -5,7 +5,7 @@ This is a community effort. The DBPF file format is a file format used in variou
 
 Additionally, without official feedback from EA or Maxis, a lot of this information is speculative and based on prior and ongoing reverse-engineering efforts.
 
-# Table of Contents:
+## Table of Contents:
 - [Pre: Background and Acknowledgements](#background-and-acknowledgements)
   - This section lists the various community projects and resources that this project is based on. Useful for further research and development of this library.
 - [The DBPF File Format](DBPF.md)
@@ -15,13 +15,13 @@ Additionally, without official feedback from EA or Maxis, a lot of this informat
   - [Structure](DBPF.md#structure)
     - [Header](DBPF.md#header)
     - [The Tables](DBPF.md#the-tables)
-      - [Table Entries](DBPF.md#table-entries)
+      - [Table Entries](DBPF.md#table-entries-aka-dbpf-resources)
         - [DBPF v1.0 - Table Version 7.0](DBPF.md#dbpf-v10---table-version-70)
         - [DBPF v1.1 - Table Version 7.1](DBPF.md#dbpf-v11---table-version-71)
         - [DBPF v2.0](DBPF.md#dbpf-v20)
         - [DBPF v3.0](DBPF.md#dbpf-v30)
 
-# Background and Acknowledgements
+## Background and Acknowledgements
 
 Currently, the community spec is biased towards The Sims 4, but it is compiled from various community resources across different games, including:
 - Wikis:
@@ -42,7 +42,7 @@ Currently, the community spec is biased towards The Sims 4, but it is compiled f
       - Github: [SimTactics/SimPE](https://github.com/SimTactics/SimPE)
       - SourceForge: [projects/simpe](https://sourceforge.net/projects/simpe/)
     - scDBPF:
-      - Github: [noah-severyn/scdbpf](noah-severyn/csDBPF)
+      - Github: [noah-severyn/scdbpf](https://github.com/noah-severyn/csDBPF)
     - s3pi:
       - Github: [anonhostpi/s3piClone](https://github.com/anonhostpi/s3piClone)
       - SourceForge: [projects/s3pi](https://sourceforge.net/projects/s3pi/)
