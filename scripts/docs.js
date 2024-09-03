@@ -28,12 +28,21 @@ files.forEach(file => {
             content = header[0] + content
         }
     }
+    if( depthFromRoot === 0 && path[path.length -1 ] === "README.md" ){
+        // move [DBPF](DBPF/README.md) to its own section
+        content = content.replace(/\- \[DBPF\]\(DBPF\/README\.md\)\n/g, "")
+        const h1 = content.match(/^# .+$/m)
+        if( h1 ){
+            content = content.replace(/^# .+$/m, h1[0] + "\n\n## Primary Module\n\n\- [DBPF](DBPF/README.md)")
+        }
+    }
+
     const newContent = content
         .replace(/(\(|\[)(?:\.\.\/)+documents/g, `\$1${correctDocumentPath}`)
         .replace(/(\(|\[)documents/g, `\$1${correctDocumentPath}`)
         .replace(/(\(|\[)(?:\.\.\/)+docs/g, `\$1${correctDocumentPath}`)
         .replace(/(\(|\[)docs/g, `\$1${correctDocumentPath}`)
-        .replace(/(?<=\*\*\*\s*\[.*?\]\(.*?\).*)[\\\/]+/gm, " / ") // bug fix for project document paths
+        .replace(/(?<=\*\*\*\s*.*)(?<!\[[^\]]*\]\([^\)]*)\s*[\\\/]\s*/gm, " / ") // bug fix for project document paths
         .replace(/(?<=\*\*\*\s*\[.*?\]\(.*?\).*)\/ (?:README|index)/gmi, "") // remove /README or /index from paths (for docusaurus)
         .replace(/(?<=\*\*\*\s*\[.*?\]\(.*?\).*)guides/gm, "Guides") // styling
     fs.writeFileSync(file, newContent)

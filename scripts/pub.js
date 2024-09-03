@@ -57,7 +57,6 @@ wikiFiles.forEach(file => {
             .replace(/## Documents/g, "## Additional Documents")
             // [README](other/spec/spec.md) with [Overview](other/spec/spec.md)
             .replace(/(?<=\[.*)[\\](?=.*\])/g, "/")
-            .replace(/\[spec\/README\]\(([^)]+)\)/g, "[spec/Overview]($1)")
             .replace(/## Modules/g, "## Other Modules Defined in This Library")
     }
 
