@@ -100,7 +100,7 @@ const config: Config = {
         },
         {
           href: 'https://www.npmjs.com/package/dbpf',
-          label: 'npm Package',
+          label: 'npm',
           position: 'right',
         },
       ],
@@ -109,11 +109,23 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Wiki',
+          title: 'Documentation',
           items: [
             {
-              label: 'API Reference',
-              to: '/docs',
+              label: 'API',
+              to: '/docs/API',
+            },
+            {
+              label: 'DBPF File Format',
+              to: '/docs/other/spec/',
+            },
+            {
+              label: 'Readme',
+              href: 'https://github.com/anonhostpi/DBPF.js/blob/main/README.md',
+            },
+            {
+              label: 'License',
+              href: 'https://github.com/anonhostpi/DBPF.js/blob/main/LICENSE',
             },
           ],
         },
@@ -135,7 +147,7 @@ const config: Config = {
           ],
         }, */
         {
-          title: 'More',
+          title: 'Library',
           items: [
             /* {
               label: 'Blog',
@@ -144,6 +156,10 @@ const config: Config = {
             {
               label: 'GitHub',
               href: 'https://github.com/anonhostpi/DBPF.js',
+            },
+            {
+              label: 'npm',
+              href: 'https://www.npmjs.com/package/dbpf',
             },
           ],
         },
