@@ -10,3 +10,10 @@ node_modules
 # build
 /dist/*.tgz
 dbpf-*.tgz
+
+# doc build
+/pub
+/wiki
+
+# CI
+/.github

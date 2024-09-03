@@ -122,6 +122,16 @@ if( restore ){
     delete package.scripts["prebuild:test"];
     delete package.scripts["test"];
     delete package.scripts["test:serve"];
+    delete package.scripts["test:pub"];
+    delete package.scripts["make:docs"];
+    delete package.scripts["docs"];
+    delete package.scripts["predocs"];
+    delete package.scripts["postdocs"];
+    delete package.scripts["docs:pub"];
+    delete package.scripts["predocs:pub"];
+    delete package.scripts["premake:docusaurus"]
+    delete package.scripts["make:docusaurus"]
+    delete package.scripts["postmake:docusaurus"]
 
     const published = JSON.stringify(package, null, 2);
     
