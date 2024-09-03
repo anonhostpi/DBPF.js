@@ -82,19 +82,28 @@ wikiFiles.forEach(file => {
                 .replace(/## Modules/g, "## Other Modules Defined in This Library")
 
             // grab all non-empty lines between Documents and Modules
-            let match = oldContent.match(/## Additional Documents([\s\S]*?)## Other Modules Defined in This Library/);
+            let match = oldContent.match(/## Documents([\s\S]*?)## Modules/);
+            let newMatch = content.match(/## Additional Documents([\s\S]*?)## Other Modules Defined in This Library/);
             if( match ){
                 // split the match into lines
                 let lines = match[1].split("\n");
+                let newLines = newMatch[1].split("\n");
                 // split the link into the link text and the link
                 lines = lines.map(line => line.match(/\[(.*?)\]\((.*?)\)/));
+                newLines = newLines.map(line => line.match(/\[(.*?)\]\((.*?)\)/));
                 const links = lines.map(line => line ? {text: line[1], link: line[2]} : null).filter(Boolean);
+                const newLinks = newLines.map(line => line ? {text: line[1], link: line[2]} : null).filter(Boolean);
                 // resolve the links against `file`'s directory
                 links.forEach(link => {
                     link.resolved = path.resolve(path.dirname(file), link.link);
+                    // check if newLinks contains a link with the same text
+                    let newLink = newLinks.find(newLink => newLink.text === link.text.replace(/[\\\/]/g,"/"));
+                    if( newLink ){
+                        newLink.resolved = link.resolved;
+                    }
                 });
                 // get the titles from the yaml frontmatter of the resolved links
-                links.forEach(link => {
+                newLinks.forEach(link => {
                     let childContent = fs.readFileSync(link.resolved, "utf8");
                     if( childContent ){
                         let header = childContent.match(/^---[\r\n]+([\s\S]*?)[\r\n]+---/);
@@ -110,7 +119,7 @@ wikiFiles.forEach(file => {
                     }
                 });
                 
-                const newDocumentsContent = links.map(link => `[${link.text}](${link.link})`).join("\n");
+                const newDocumentsContent = newLinks.map(link => `- [${link.text}](${link.link})`).join("\n");
                 content = content.replace(/## Additional Documents([\s\S]*?)## Other Modules Defined in This Library/, `## Additional Documents\n\n${newDocumentsContent}\n\n## Other Modules Defined in This Library`);
             }
             break;
@@ -132,8 +141,6 @@ wikiFiles.forEach(file => {
         yaml.sidebar_label = sidebar_label;
     if( !yaml.sidebar_position && position )
         yaml.sidebar_position = position;
-
-    console.log( file, header, yaml )
 
     yaml.last_update = {
         date: new Date().toLocaleDateString(),
