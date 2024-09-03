@@ -27,6 +27,9 @@ files.forEach(file => {
         if( header ){
             content = header[0] + content
         }
+        // add edit link in footer
+        const editLink = `\n&nbsp;\n\n[_Edit this page_](https://github.com/anonhostpi/DBPF.js/tree/main/${originalDocPath})`
+        content = content + editLink
     }
     if( depthFromRoot === 0 && path[path.length -1 ] === "README.md" ){
         // move [DBPF](DBPF/README.md) to its own section
