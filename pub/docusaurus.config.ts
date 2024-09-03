@@ -83,7 +83,7 @@ const config: Config = {
         },
         // {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: '/docs/other/guides/install',
+          href: '/docs/other/guides/Install',
           label: 'Install',
           position: 'right',
         },
@@ -118,14 +118,6 @@ const config: Config = {
             {
               label: 'DBPF File Format',
               to: '/docs/other/spec/',
-            },
-            {
-              label: 'Readme',
-              href: 'https://github.com/anonhostpi/DBPF.js/blob/main/README.md',
-            },
-            {
-              label: 'License',
-              href: 'https://github.com/anonhostpi/DBPF.js/blob/main/LICENSE',
             },
           ],
         },
@@ -163,6 +155,19 @@ const config: Config = {
             },
           ],
         },
+        {
+          title: 'About',
+          items: [
+            {
+              label: 'Readme',
+              href: 'https://github.com/anonhostpi/DBPF.js/blob/main/README.md',
+            },
+            {
+              label: 'License',
+              href: 'https://github.com/anonhostpi/DBPF.js/blob/main/LICENSE',
+            },
+          ]
+        }
       ],
       copyright: `Copyright © ${new Date().getFullYear()} anonhostpi. Built with Github Actions.`,
     },
