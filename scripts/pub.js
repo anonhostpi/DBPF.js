@@ -56,9 +56,10 @@ wikiFiles.forEach(file => {
     if( parent === "docs" ){
         title = "API";
         content = content
-            .replace(/## Documents/g, "## DBPF File Format")
-            // [README](spec/spec.md) with [Overview](spec/spec.md)
-            .replace(/\[README\]\(([^)]+)\)/g, "[Overview]($1)")
+            .replace(/## Documents/g, "## Additional Documents")
+            // [README](other/spec/spec.md) with [Overview](other/spec/spec.md)
+            .replace(/(?<=\[.*)[\\](?=.*\])/g, "/")
+            .replace(/\[spec\/README\]\(([^)]+)\)/g, "[spec/Overview]($1)")
             .replace(/## Modules/g, "## Other Modules Defined in This Library")
     }
 
@@ -74,7 +75,7 @@ wikiFiles.forEach(file => {
     // Rename titles as needed
     switch( title ){
         case "spec":
-            if( parent === "docs" ){
+            if( parent === "other" ){
                 title = "Overview"
                 position = 1;
             }

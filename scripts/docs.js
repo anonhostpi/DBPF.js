@@ -22,6 +22,9 @@ files.forEach(file => {
         .replace(/(\(|\[)documents/g, `\$1${correctDocumentPath}`)
         .replace(/(\(|\[)(?:\.\.\/)+docs/g, `\$1${correctDocumentPath}`)
         .replace(/(\(|\[)docs/g, `\$1${correctDocumentPath}`)
+        .replace(/(?<=\*\*\*\s*\[.*?\]\(.*?\).*)\\+/gm, " / ") // bug fix for Windows paths
+        .replace(/(?<=\*\*\*\s*\[.*?\]\(.*?\).*)\/ (?:README|index)/gmi, "") // remove /README or /index from paths (for docusaurus)
+        .replace(/(?<=\*\*\*\s*\[.*?\]\(.*?\).*)guides/gm, "Guides") // styling
     fs.writeFileSync(file, newContent)
 })
 const WIKI_README = "wiki/README.md"
