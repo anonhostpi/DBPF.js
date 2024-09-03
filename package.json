@@ -55,8 +55,6 @@
         "prebuild:test":              "npm run build:web",
         "prebuild:node":              "npm run make:imports",
 
-        "postbuild":                  "npm run docs",
-
         "test":                       "npm run build:test && npm run test:serve",
         "test:serve":                 "cd ./test/serve && live-server --port=8080 --open=./index.html",
         "test:pub":                   "npm run docs:pub && npm --prefix ./pub/build run serve",

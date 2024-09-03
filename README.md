@@ -8,6 +8,13 @@ This is a performant library for reading DBPF files in TypeScript/JavaScript. Cu
 **API Documentation:**
 - see: [API Documentation](https://anonhostpi.github.io/DBPF.js/docs/API)
 
+To get the full set of docs locally, run either:
+- `npm run docs`: to build the typedoc documentation (./wiki)
+- `npm run test:pub`: to build the typedoc documentation and run docusaurus:serve (view the docs from your browser).
+  - _also runs some minor cleanup work before building with docusaurus_
+
+The full set of docs does not need to be built locally to be used or read. The typedocs are sourced from the comments in the ./src files and the project docs are sourced from ./docs. There are no other documentation sources in this repo other than this README and the LICENSE.
+
 ## Playground/Interactive Testing (github.io)
 
 To see the library in action, you can visit the [playground](https://anonhostpi.github.io/DBPF.js/playground).
@@ -58,7 +65,7 @@ npm run devinstall # wraps `npm install`
 # this helps with maintaining package.json's format
 
 # Build the library
-npm run build # Also rebuilds the docs!
+npm run build
 
 # Launch test environment
 npm run test
