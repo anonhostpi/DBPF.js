@@ -1,8 +1,8 @@
-[**DBPF.js v1.0.4**](../README.md) • **Docs**
+[**DBPF.js v1.0.4**](../../README.md) • **Docs**
 
 ***
 
-[DBPF.js v1.0.4](../README.md) / DBPF
+[DBPF.js v1.0.4](../../README.md) / spec / DBPF
 
 # The DBPF File Format
 ## Introduction

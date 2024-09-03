@@ -7,7 +7,7 @@
 # Resource
 
 This namespace provides types for the DBPF entry structure.
-- see: [../spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../../../spec/DBPF.md#table-entries-aka-dbpf-resources)
+- see: [../../../other/spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../../../other/spec/DBPF.md#table-entries-aka-dbpf-resources)
 -
 
 ## See

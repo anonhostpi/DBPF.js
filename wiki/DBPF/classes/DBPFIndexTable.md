@@ -60,7 +60,7 @@ The DBPF reader instance to read the index table from.
 
 #### Defined in
 
-[src/DBPF.ts:594](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L594)
+[src/DBPF.ts:594](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L594)
 
 ## Properties
 
@@ -84,7 +84,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:565](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L565)
+[src/DBPF.ts:565](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L565)
 
 ***
 
@@ -94,7 +94,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:881](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L881)
+[src/DBPF.ts:881](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L881)
 
 ***
 
@@ -104,7 +104,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:674](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L674)
+[src/DBPF.ts:674](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L674)
 
 ***
 
@@ -114,7 +114,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:663](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L663)
+[src/DBPF.ts:663](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L663)
 
 ***
 
@@ -124,7 +124,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:749](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L749)
+[src/DBPF.ts:749](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L749)
 
 ***
 
@@ -134,7 +134,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:649](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L649)
+[src/DBPF.ts:649](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L649)
 
 ***
 
@@ -144,7 +144,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:568](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L568)
+[src/DBPF.ts:568](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L568)
 
 ***
 
@@ -154,7 +154,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:566](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L566)
+[src/DBPF.ts:566](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L566)
 
 ***
 
@@ -164,7 +164,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:578](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L578)
+[src/DBPF.ts:578](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L578)
 
 ***
 
@@ -178,7 +178,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 
 #### Defined in
 
-[src/DBPF.ts:884](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L884)
+[src/DBPF.ts:884](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L884)
 
 ***
 
@@ -187,7 +187,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:137
 > `readonly` **length**: `number`
 
 The size of the DBPF Index Table.
-- see: [../spec/DBPF.md - Header](../../spec/DBPF.md#header)
+- see: [../../other/spec/DBPF.md - Header](../../other/spec/DBPF.md#header)
 -
 
 #### See
@@ -196,7 +196,7 @@ DBPFIndexHeader.size
 
 #### Defined in
 
-[src/DBPF.ts:575](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L575)
+[src/DBPF.ts:575](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L575)
 
 ***
 
@@ -220,7 +220,7 @@ DBPFIndexHeader.size
 
 #### Defined in
 
-[src/DBPF.ts:883](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L883)
+[src/DBPF.ts:883](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L883)
 
 ***
 
@@ -244,7 +244,7 @@ DBPFIndexHeader.size
 
 #### Defined in
 
-[src/DBPF.ts:882](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L882)
+[src/DBPF.ts:882](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L882)
 
 ***
 
@@ -268,7 +268,7 @@ DBPFIndexHeader.size
 
 #### Defined in
 
-[src/DBPF.ts:885](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L885)
+[src/DBPF.ts:885](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L885)
 
 ***
 
@@ -280,7 +280,7 @@ The event name for when the DBPF Index Table retrieves an entry.
 
 #### Defined in
 
-[src/DBPF.ts:900](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L900)
+[src/DBPF.ts:900](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L900)
 
 ***
 
@@ -303,7 +303,7 @@ node\_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts:319
 > `get` **entryLength**(): `number`
 
 The amount of memory used by each entry in the DBPF file.
-- see: [../spec/DBPF.md - DBPF v2.0](../../spec/DBPF.md#dbpf-v20)
+- see: [../../other/spec/DBPF.md - DBPF v2.0](../../other/spec/DBPF.md#dbpf-v20)
 - note: That this may not be the full 32 bytes, as the header segments are shared and reused in each entry.
 
 #### Returns
@@ -312,7 +312,7 @@ The amount of memory used by each entry in the DBPF file.
 
 #### Defined in
 
-[src/DBPF.ts:669](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L669)
+[src/DBPF.ts:669](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L669)
 
 ***
 
@@ -321,7 +321,7 @@ The amount of memory used by each entry in the DBPF file.
 > `get` **headerSegments**(): `number`[]
 
 An array of indexes (in order) of where each header segment is reused in each entry.
-- see: [../spec/DBPF.md - DBPF v2.0](../../spec/DBPF.md#dbpf-v20)
+- see: [../../other/spec/DBPF.md - DBPF v2.0](../../other/spec/DBPF.md#dbpf-v20)
 - note: The header segments are shared segments between each entry, and are a way to save space in the DBPF file.
   - this means that the amount of bytes used by each entry is reduced by the amount of bytes used for the header segments.
 
@@ -331,7 +331,7 @@ An array of indexes (in order) of where each header segment is reused in each en
 
 #### Defined in
 
-[src/DBPF.ts:658](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L658)
+[src/DBPF.ts:658](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L658)
 
 ***
 
@@ -340,7 +340,7 @@ An array of indexes (in order) of where each header segment is reused in each en
 > `get` **mode**(): `number`
 
 The DBPF v2.0 mode flag (AKA the "Index Table Type").
-- see: [../spec/DBPF.md - DBPF v2.0](../../spec/DBPF.md#dbpf-v20)
+- see: [../../other/spec/DBPF.md - DBPF v2.0](../../other/spec/DBPF.md#dbpf-v20)
 
 #### Returns
 
@@ -348,7 +348,7 @@ The DBPF v2.0 mode flag (AKA the "Index Table Type").
 
 #### Defined in
 
-[src/DBPF.ts:644](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L644)
+[src/DBPF.ts:644](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L644)
 
 ***
 
@@ -368,7 +368,7 @@ the number of elements in the Map.
 
 #### Defined in
 
-[src/DBPF.ts:579](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L579)
+[src/DBPF.ts:579](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L579)
 
 ## Methods
 
@@ -386,7 +386,7 @@ the number of elements in the Map.
 
 #### Defined in
 
-[src/DBPF.ts:877](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L877)
+[src/DBPF.ts:877](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L877)
 
 ***
 
@@ -408,7 +408,7 @@ No-ops. Implemented for Map interface.
 
 #### Defined in
 
-[src/DBPF.ts:766](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L766)
+[src/DBPF.ts:766](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L766)
 
 ***
 
@@ -434,7 +434,7 @@ No-ops. Implemented for Map interface.
 
 #### Defined in
 
-[src/DBPF.ts:760](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L760)
+[src/DBPF.ts:760](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L760)
 
 ***
 
@@ -454,7 +454,7 @@ Returns an iterable of key, value pairs for every entry in the map.
 
 #### Defined in
 
-[src/DBPF.ts:856](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L856)
+[src/DBPF.ts:856](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L856)
 
 ***
 
@@ -480,7 +480,7 @@ Executes a provided function once per each key/value pair in the Map, in inserti
 
 #### Defined in
 
-[src/DBPF.ts:865](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L865)
+[src/DBPF.ts:865](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L865)
 
 ***
 
@@ -506,7 +506,7 @@ An evented promise that resolves with the DBPF entry.
 
 #### Defined in
 
-[src/DBPF.ts:775](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L775)
+[src/DBPF.ts:775](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L775)
 
 ***
 
@@ -530,7 +530,7 @@ boolean indicating whether an element with the specified key exists or not.
 
 #### Defined in
 
-[src/DBPF.ts:844](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L844)
+[src/DBPF.ts:844](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L844)
 
 ***
 
@@ -552,7 +552,7 @@ use [DBPFIndexTable.create](DBPFIndexTable.md#create) instead
 
 #### Defined in
 
-[src/DBPF.ts:681](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L681)
+[src/DBPF.ts:681](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L681)
 
 ***
 
@@ -572,7 +572,7 @@ Returns an iterable of keys in the map
 
 #### Defined in
 
-[src/DBPF.ts:848](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L848)
+[src/DBPF.ts:848](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L848)
 
 ***
 
@@ -600,7 +600,7 @@ No-ops. Implemented for Map interface.
 
 #### Defined in
 
-[src/DBPF.ts:754](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L754)
+[src/DBPF.ts:754](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L754)
 
 ***
 
@@ -620,7 +620,7 @@ Returns an iterable of values in the map
 
 #### Defined in
 
-[src/DBPF.ts:852](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L852)
+[src/DBPF.ts:852](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L852)
 
 ***
 
@@ -644,7 +644,7 @@ An evented promise that resolves when the DBPF Index Table is created.
 
 #### Defined in
 
-[src/DBPF.ts:544](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L544)
+[src/DBPF.ts:544](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L544)
 
 ## Events
 
@@ -656,7 +656,7 @@ The event name for when the DBPF Index Table is created properly.
 
 #### Defined in
 
-[src/DBPF.ts:891](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L891)
+[src/DBPF.ts:891](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L891)
 
 ***
 
@@ -668,7 +668,7 @@ The event name for when the DBPF Index Table encounters an error.
 
 #### Defined in
 
-[src/DBPF.ts:905](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L905)
+[src/DBPF.ts:905](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L905)
 
 ***
 
@@ -680,4 +680,4 @@ The event name for when the DBPF Index Table is initialized.
 
 #### Defined in
 
-[src/DBPF.ts:896](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L896)
+[src/DBPF.ts:896](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L896)

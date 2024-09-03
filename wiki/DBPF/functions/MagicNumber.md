@@ -10,7 +10,7 @@
 
 A magic number generator for DBPF files.
 - used in the DBPF header.
-- see: [spec/DBPF.md - Header](spec/DBPF.md#header)
+- see: [../../other/spec/DBPF.md - Header](../../other/spec/DBPF.md#header)
 
 ## Parameters
 
@@ -26,4 +26,4 @@ The magic number.
 
 ## Defined in
 
-[src/DBPF.ts:84](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/DBPF.ts#L84)
+[src/DBPF.ts:84](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/DBPF.ts#L84)

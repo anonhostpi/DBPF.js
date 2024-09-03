@@ -10,4 +10,4 @@
 
 ## Defined in
 
-[src/polyfill.ts:198](https://github.com/anonhostpi/DBPF.js/blob/bec1c7f946ae1882f8cb333f8c038d29cc8e75d8/src/polyfill.ts#L198)
+[src/polyfill.ts:198](https://github.com/anonhostpi/DBPF.js/blob/e569a7b6dd4749dd61bb4dc9869d762307968221/src/polyfill.ts#L198)

@@ -6,8 +6,9 @@
 
 ## Documents
 
-- [DBPF](spec/DBPF.md)
-- [README](spec/README.md)
+- [guides\hello](other/guides/hello.md)
+- [spec\DBPF](other/spec/DBPF.md)
+- [spec\README](other/spec/README.md)
 
 ## Modules
 
