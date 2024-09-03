@@ -35,6 +35,7 @@ Currently, the community spec is biased towards The Sims 4, but it is compiled f
   - [Niotso Wiki](http://wiki.niotso.org/DBPF)
   - [Sims Wiki](https://simswiki.info/wiki.php?title=DatabasePackedFile)
   - [Nraas Wiki](https://www.nraas.net/community/home)
+  - [Sims4Group](https://github.com/Sims4Group/Sims4Group.github.io)
 
 - Projects:
   - C#
@@ -67,6 +68,8 @@ Currently, the community spec is biased towards The Sims 4, but it is compiled f
       - Github: [gibbed/Gibbed.Spore](https://github.com/gibbed/Gibbed.Spore)
     - LlamaLogic:
       - Github: [Llama-Logic/LlamaLogic](https://github.com/Llama-Logic/LlamaLogic)
+    - EchoWeaver/Sims3Game:
+      - Github: [EchoWeaver/Sims3Game](https://github.com/Echoweaver/Sims3Game)
 
   - Python:
     - s4py:
@@ -87,6 +90,8 @@ Currently, the community spec is biased towards The Sims 4, but it is compiled f
   - Rust:
     - dbpf:
       - Github: [chieltbest/dbpf](https://github.com/chieltbest/dbpf)
+    - sims3-rs:
+      - Github: [kitlith/sims3-rs](https://github.com/kitlith/sims3-rs)
   
   - TypeScript:
     - SporeTools:
