@@ -83,7 +83,7 @@ const config: Config = {
         },
         // {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'playground',
+          href: '/playground',
           target: '_blank',
           label: 'Playground',
           position: 'right',
