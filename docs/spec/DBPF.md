@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # The DBPF File Format
 ## Introduction
 The DBPF file format is a file format used in various games, including The Sims Series, SimCity, and Spore.
@@ -72,7 +76,7 @@ It is only 20 bytes long and contains the following fields:
 
 | Field       | Bytes | Description |
 |-------------|-------|-------------|
-| Type ID     | 4     | The type ID of the file. This is commonly rendered as a hex string.
+| Type ID     | 4     | The type ID of the file. This is commonly rendered as a hex string. See: [Resource Types](sections/ResourceTypes.md)
 | Group ID    | 4     | The group ID of the file. This is commonly rendered as a hex string.
 | Instance ID | 4     | The instance ID associated with the file. This is commonly rendered as a hex string.
 | Offset      | 4     | The offset of the file in the DBPF file.
@@ -84,7 +88,7 @@ This revision is 24 bytes long
 
 | Field            | Bytes | Description |
 |------------------|-------|-------------|
-| Type ID          | 4     | The type ID of the file. This is commonly rendered as a hex string.
+| Type ID          | 4     | The type ID of the file. This is commonly rendered as a hex string. See: [Resource Types](sections/ResourceTypes.md)
 | Group ID         | 4     | The group ID of the file. This is commonly rendered as a hex string.
 | Instance ID High | 4     | The high 32 bits of the instance ID associated with the file. This is commonly rendered as a hex string.
 | Instance ID Low  | 4     | The low 32 bits of the instance ID associated with the file. This is commonly rendered as a hex string.
@@ -105,7 +109,7 @@ For example, a mode flag of 7 (`0b0111`) would mean that the Type, Group, and Lo
 
 | Field             | Bytes | Description |
 |-------------------|-------|-------------|
-| Type ID           | 4     | The type ID of the file. This is commonly rendered as a hex string.
+| Type ID           | 4     | The type ID of the file. This is commonly rendered as a hex string. See: [Resource Types](sections/ResourceTypes.md)
 | Group ID          | 4     | The group ID of the file. This is commonly rendered as a hex string.
 | Instance ID High  | 4     | The high 32 bits of the instance ID associated with the file. This is commonly rendered as a hex string.
 | Instance ID Low   | 4     | The low 32 bits of the instance ID associated with the file. This is commonly rendered as a hex string.

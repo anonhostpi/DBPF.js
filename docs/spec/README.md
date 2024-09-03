@@ -25,6 +25,9 @@ Additionally, without official feedback from EA or Maxis, a lot of this informat
         - [DBPF v1.1 - Table Version 7.1](DBPF.md#dbpf-v11---table-version-71)
         - [DBPF v2.0](DBPF.md#dbpf-v20)
         - [DBPF v3.0](DBPF.md#dbpf-v30)
+  - [Resource Types](sections/ResourceTypes.md)
+    - [THUM - Thumbnail](sections/ResourceTypes.md#thum-thumbnail)
+    
 
 ## Background and Acknowledgements
 
