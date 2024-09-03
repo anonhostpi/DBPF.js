@@ -159,6 +159,10 @@ const config: Config = {
           title: 'About',
           items: [
             {
+              label: 'Home',
+              to: '/',
+            },
+            {
               label: 'Readme',
               href: 'https://github.com/anonhostpi/DBPF.js/blob/main/README.md',
             },
