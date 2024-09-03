@@ -12,7 +12,7 @@
         "./src/polyfill.ts",
         "./src/serde.ts"
     ],
-    "projectDocuments": ["./spec/**/*.md"],
+    "projectDocuments": ["./docs/**/*.md"],
     "alwaysCreateEntryPointModule": false,
     "readme": "none",
     "includeVersion": true,

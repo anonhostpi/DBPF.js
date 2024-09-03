@@ -4,7 +4,7 @@
  * DBPF is a file format used by Maxis in their games, including The Sims Series, SimCity, and Spore.
  * The following reader is an implementation of a DBPF reader in TypeScript.
  * 
- * The community spec for DBPF can be found at [spec/README.md](spec/README.md).
+ * The community spec for DBPF can be found at [docs/spec/README.md](docs/spec/README.md).
  */
 
 /**
@@ -76,7 +76,7 @@ const {
 /**
  * A magic number generator for DBPF files.
  * - used in the DBPF header.
- * - see: [spec/DBPF.md - Header](spec/DBPF.md#header)
+ * - see: [docs/spec/DBPF.md - Header](docs/spec/DBPF.md#header)
  * 
  * @param string The string to convert to a 4-byte magic number.
  * @returns {Number} The magic number.
@@ -96,12 +96,12 @@ export function MagicNumber( string: string ): FourBytes {
 /**
  * The magic number for DBPF files. DBBF files may use a different magic number.
  * - used in the DBPF header.
- * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+ * - see: [../docs/spec/DBPF.md - Header](../docs/spec/DBPF.md#header)
  */
 const MAGICNUMBER:  FourBytes = MagicNumber("DBPF")
 /**
  * The length of the DBPF header. This may need to change for different versions of the DBPF format.
- * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+ * - see: [../docs/spec/DBPF.md - Header](../docs/spec/DBPF.md#header)
  */
 const HEADERLENGTH: FourBytes & BufferLength = 0x60 // 96 bytes
 
@@ -112,7 +112,7 @@ type ErrorOnlyCallback = ( error: NullableError ) => void
 
 /**
  * The DBPF Header structure.
- * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+ * - see: [../docs/spec/DBPF.md - Header](../docs/spec/DBPF.md#header)
  */
 export type DBPFHeader = {
     /**
@@ -214,7 +214,7 @@ export type DBPFTrashHeader = {
 /**
  * The DBPF reader class.
  * 
- * This is the main class for the project. It is derived from the [Community Spec](../spec/DBPF.md).
+ * This is the main class for the project. It is derived from the [Community Spec](../docs/spec/DBPF.md).
  */
 export class DBPF extends EventEmitter {
     /**
@@ -274,8 +274,8 @@ export class DBPF extends EventEmitter {
      * Initializes the DBPF reader asynchronously, evented. Only intended for internal use, but is exposed for advanced users.
      * 
      * The body of this method contains the logic for reading the DBPF header and preparing the DBPF index table.
-     * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
-     * - see: [../spec/DBPF.md - The Tables](../spec/DBPF.md#the-tables)
+     * - see: [../docs/spec/DBPF.md - Header](../docs/spec/DBPF.md#header)
+     * - see: [../docs/spec/DBPF.md - The Tables](../docs/spec/DBPF.md#the-tables)
      * @returns { EventedPromise<void> } An evented promise that resolves when the DBPF reader is initialized.
      * @public @deprecated use {@link DBPF.create} instead
      */
@@ -428,7 +428,7 @@ export class DBPF extends EventEmitter {
     /**
      * The DBPF header.
      * - @see {@link DBPFHeader}
-     * - see [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+     * - see [../docs/spec/DBPF.md - Header](../docs/spec/DBPF.md#header)
      * @readonly
      */
     protected _header: DBPFHeader | undefined;
@@ -506,7 +506,7 @@ export class DBPF extends EventEmitter {
 
 /**
  * This namespace provides types for the DBPF entry structure.
- * - see: [../spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../spec/DBPF.md#table-entries-aka-dbpf-resources)
+ * - see: [../docs/spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../docs/spec/DBPF.md#table-entries-aka-dbpf-resources)
  * - @see {@link DBPFEntry}
  */
 export namespace Resource {
@@ -569,7 +569,7 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
 
     /**
      * The size of the DBPF Index Table.
-     * - see: [../spec/DBPF.md - Header](../spec/DBPF.md#header)
+     * - see: [../docs/spec/DBPF.md - Header](../docs/spec/DBPF.md#header)
      * - @see {@link DBPFIndexHeader.size}
      */
     readonly length: FourBytes & BufferLength;
@@ -637,7 +637,7 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
 
     /**
      * The DBPF v2.0 mode flag (AKA the "Index Table Type").
-     * - see: [../spec/DBPF.md - DBPF v2.0](../spec/DBPF.md#dbpf-v20)
+     * - see: [../docs/spec/DBPF.md - DBPF v2.0](../docs/spec/DBPF.md#dbpf-v20)
      * 
      * @readonly
      */
@@ -649,7 +649,7 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
     private _mode_flag: FourBytes | undefined;
     /**
      * An array of indexes (in order) of where each header segment is reused in each entry.
-     * - see: [../spec/DBPF.md - DBPF v2.0](../spec/DBPF.md#dbpf-v20)
+     * - see: [../docs/spec/DBPF.md - DBPF v2.0](../docs/spec/DBPF.md#dbpf-v20)
      * - note: The header segments are shared segments between each entry, and are a way to save space in the DBPF file.
      *   - this means that the amount of bytes used by each entry is reduced by the amount of bytes used for the header segments.
      * 
@@ -663,7 +663,7 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
     private _header_segments: Map<number,FourBytes> | undefined;
     /**
      * The amount of memory used by each entry in the DBPF file.
-     * - see: [../spec/DBPF.md - DBPF v2.0](../spec/DBPF.md#dbpf-v20)
+     * - see: [../docs/spec/DBPF.md - DBPF v2.0](../docs/spec/DBPF.md#dbpf-v20)
      * - note: That this may not be the full 32 bytes, as the header segments are shared and reused in each entry.
      */
     get entryLength(): number {
@@ -909,7 +909,7 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
  * The DBPF Entry class.
  * 
  * It is a representation of a DBPF resource.
- * - see: [../spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../spec/DBPF.md#table-entries-aka-dbpf-resources)
+ * - see: [../docs/spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../docs/spec/DBPF.md#table-entries-aka-dbpf-resources)
  */
 export class DBPFEntry {
     private _DBPF: DBPF;
@@ -946,7 +946,7 @@ export class DBPFEntry {
         memory: FourBytes & Resource.Compression.Uncompressed,
         /**
          * The compression flag of the DBPF resource.
-         * - see: [../spec/DBPF.md - DBPF v2.0](../spec/DBPF.md#dbpf-v20)
+         * - see: [../docs/spec/DBPF.md - DBPF v2.0](../docs/spec/DBPF.md#dbpf-v20)
          */
         flag: FourBytes & Resource.Compression.Flag
     };

@@ -3,8 +3,8 @@
 This is a performant library for reading DBPF files in TypeScript/JavaScript. Currently, it only parses the header, index and index entries, but a plugin system is planned to allow for reading and handling of the actual data.
 
 **Community DBPF File Format Specification:**
-- see: [spec/README.md](spec/README.md).
-- see: [API Documentation > DBPF File Format](https://anonhostpi.github.io/DBPF.js/docs/spec)
+- see: [docs/spec/README.md](docs/spec/README.md).
+- see: [API Documentation > DBPF File Format](https://anonhostpi.github.io/DBPF.js/docs/other/spec)
 
 **API Documentation:**
 - see: [API Documentation](https://anonhostpi.github.io/DBPF.js/docs/API)
