@@ -1,3 +1,8 @@
+---
+pub_title: "Overview"
+sidebar_position: 1
+---
+
 # The DBPF File Format Community Specification
 
 The purpose of these documents is to provide an updated, comprehensive, and detailed description of the DBPF file format.

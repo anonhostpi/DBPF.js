@@ -16,7 +16,18 @@ files.forEach(file => {
     const depthFromRoot = path.length - wikiIndex - 2
     const relativePathToRoot = "../".repeat(depthFromRoot)
     const correctDocumentPath = relativePathToRoot + "other"
-    const content = fs.readFileSync(file, "utf8")
+    let content = fs.readFileSync(file, "utf8")
+    // re-add the header to the project documents
+    if( file.includes("wiki/other") ){
+        const depthFromDoc = depthFromRoot - 1
+        const docPath = path.slice(wikiIndex + 2, wikiIndex + 2 + depthFromDoc).join("/")
+        const originalDocPath = `docs/${docPath}/${path[path.length - 1]}`
+        const originalContent = fs.readFileSync(originalDocPath, "utf8")
+        const header = originalContent.match(/^---[\r\n]+[\s\S]*?[\r\n]+---[\r\n]+/)
+        if( header ){
+            content = header[0] + content
+        }
+    }
     const newContent = content
         .replace(/(\(|\[)(?:\.\.\/)+documents/g, `\$1${correctDocumentPath}`)
         .replace(/(\(|\[)documents/g, `\$1${correctDocumentPath}`)
