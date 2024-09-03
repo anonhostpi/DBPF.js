@@ -65,6 +65,8 @@ Currently, the community spec is biased towards The Sims 4, but it is compiled f
       - Github: [gibbed/Gibbed.Sims3](https://github.com/gibbed/Gibbed.Sims3)
     - Gibbed.Spore:
       - Github: [gibbed/Gibbed.Spore](https://github.com/gibbed/Gibbed.Spore)
+    - LlamaLogic:
+      - Github: [Llama-Logic/LlamaLogic](https://github.com/Llama-Logic/LlamaLogic)
 
   - Python:
     - s4py:
@@ -89,6 +91,8 @@ Currently, the community spec is biased towards The Sims 4, but it is compiled f
   - TypeScript:
     - SporeTools:
       - Github: [SporeCommunity/SporeTools](https://github.com/SporeCommunity/SporeTools)
+    - sims4toolkit:
+      - Github: [sims4toolkit/models](https://github.com/sims4toolkit/models)
   
   - C:
     - dbpf_reader:
