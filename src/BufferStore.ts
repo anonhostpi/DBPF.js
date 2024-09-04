@@ -498,13 +498,14 @@ class BufferReader {
         this._offset = offset;
         this._length = length;
 
-        this._count = Math.ceil( (offset + length) / segment_size );
         this._cursor = 0 as Position;
 
 
         this._current_index = this._first_index = Math.floor( offset / segment_size );
         // last index inclusive
         this._last_index = Math.floor( (offset + length - 1) / segment_size );
+
+        this._count = this._last_index - this._first_index + 1;
 
         this._current_segment = getter( this._first_index );
         if( this._count > 1 )
