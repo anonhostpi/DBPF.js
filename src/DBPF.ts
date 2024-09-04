@@ -55,14 +55,18 @@ import {
 } from "./serde"
 
 let polyfills: any[] = [
-    { resolve: (...paths: string[]) => paths.join("/") }
+    {
+        resolve: (...paths: string[]) => paths.join("/"),
+        isAbsolute: (path: string) => /^[a-zA-Z]:[\\/]/.test(path)
+    }
 ]
 
 if( polyfill.isNode )
     polyfills.push("node:path")
 
 let {
-    resolve
+    resolve,
+    isAbsolute
 } = polyfill(
     ...polyfills
 ) as typeof import("path")
@@ -460,10 +464,16 @@ export class DBPF extends EventEmitter {
 
     /**
      * The DBPFEntry plugins to apply to the DBPF file.
+     * 
+     * These are applied in order to each entry in the DBPF file.
      * - @see {@link Plugins}
      * @readonly
      */
-    readonly plugins: Plugins = new Plugins()
+    readonly plugins: PluginsList = (()=>{
+        const list = new PluginsList()
+        list.push( ...PluginsList.default )
+        return list
+    })()
 
     /**
      * Returns a {@link IBufferReader} from the DBPF file (using the LFU+TTL cache) at the specified offset and length.
@@ -806,9 +816,6 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
     
             let entry = await await_wrap( super.get( key ) )
             if( !entry ){
-                entry = this._DBPF.plugins.filter( plugin => {
-                    // WIP: implement plugin.filter logic
-                }).reduce(( entry, plugin ) => plugin.script( entry ) as DBPFEntry, entry )
                 const v2_base_offset = this._DBPF.header.dbpf.major === 1 ? 0 : 4 // v1.x doesn't have a mode flag, and the offset is pulled from DBPF.header.index.first instead of DBPF.header.index.offset
                 const v2_header_offset = 4 * (this._header_segments?.size || 0) // skip the header segments, since we already read them in init()
                 this._reader.move( v2_base_offset + v2_header_offset ) // move to the start of the first entry
@@ -861,6 +868,7 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
                         }
                     )
                 }
+                entry = this._DBPF.plugins.reduce(( entry, plugin ) => plugin.parse( entry ) as DBPFEntry, entry )
                 super.set( key, Promise.resolve( entry ) )
             }
             evented_resolve( entry )
@@ -1008,17 +1016,47 @@ export class DBPFEntry {
  * @see {@link DBPFEntry}
  */
 export interface IDBPFEntry extends Omit<DBPFEntry, 'constructor'> {}
+export type TaggedEntry = IDBPFEntry & {
+    tag: string
+    details?: any
+};
+
+// Plugins
+import * as THUM from "./Plugins/ResourceTypes/THUM/plugin"
 
 /**
  * This is the planned structure for the plugin system.
  * 
- * This is a WIP and is not yet implemented.
+ * This is a WIP.
  * @experimental
  */
 class Plugin extends Deserialized {
-    filters!: Record<string, JSONPrimitive>; // set by super
+    /**
+     * The THUM Resource Type plugin.
+     */
+    static readonly THUM = (()=>{
+        const plugin = new Plugin()
+        plugin.parse = THUM.parse
+        plugin.path = "[internal] Plugins/ResourceTypes/THUM"
+        Object.freeze( plugin )
+        return plugin
+    })()
+    /**
+     * The path to the plugin file.
+     */
     path: PathString;
-    script: (entry: IDBPFEntry) => IDBPFEntry = (entry: IDBPFEntry) => entry;
+    /**
+     * The function to parse the DBPF entry.
+     * 
+     * When set, the provided function will automatically be bound to the plugin instance.
+     */
+    get parse(): (entry: IDBPFEntry, detailed?: boolean) => IDBPFEntry {
+        return this._parse
+    }
+    set parse( value: (entry: IDBPFEntry, detailed?: boolean) => IDBPFEntry ){
+        this._parse = value.bind( this )
+    }
+    private _parse: (entry: IDBPFEntry, detailed?: boolean) => IDBPFEntry = (entry: IDBPFEntry) => entry;
 
     static override from(
         this: any,
@@ -1043,15 +1081,42 @@ class Plugin extends Deserialized {
     constructor( filepath?: string ){
         super( filepath );
 
-        this.path = filepath as PathString;
+        let script: string = filepath || "";
+        if( polyfill.isNode && filepath ){
+            script = isAbsolute( filepath ) ? filepath : resolve( filepath ); 
+        }
+
+        this.parse = polyfill.require( script ).plugin || this.parse;
+
+        this.path = script as PathString;
     }
 }
 
 /**
+ * An array of {@link Plugin} instances.
+ * 
+ * In addition to the [standard array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array),
+ * this class provides additional methods for convenience.
+ * 
+ * Additionally, this class overrides and wraps some of the standard array methods to allow for string paths to be used in place of {@link Plugin} instances.
+ * 
  * @see {@link Plugin}
  * @experimental
  */
-class Plugins extends Array<Plugin> {
+class PluginsList extends Array<Plugin> {
+    /**
+     * The default list of plugins to apply to DBPF files. To control the default list, a {@link Plugins} export is provided.
+     * 
+     * Instances of the DBPF class contain a copy of this list, and can be modified separately. With that said, modifying this list will not propagate to existing DBPF instances.
+     * However, note that the copy is shallow, so modifying the plugins themselves _will_ affect all instances.
+     */
+    static default: PluginsList = new PluginsList();
+    /**
+     * Adds a plugin to the list. Accepts either a {@link Plugin} instance or a string path to a plugin file.
+     * 
+     * @see [Array.push](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push)
+     * @override
+     */
     override push( ...items: (Plugin | string)[] ): number {
         return super.push( ...items.map( item => {
             if( typeof item === "string" )
@@ -1059,6 +1124,18 @@ class Plugins extends Array<Plugin> {
             return item;
         }));
     }
+    /**
+     * Alias for {@link PluginsList.push}
+     */
+    register( ...items: (Plugin | string)[] ): number {
+        return this.push( ...items );
+    }
+    /**
+     * Adds a plugin to the beginning of the list. Accepts either a {@link Plugin} instance or a string path to a plugin file.
+     * 
+     * @see [Array.unshift](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift)
+     * @override
+     */
     override unshift( ...items: (Plugin | string)[] ): number {
         return super.unshift( ...items.map( item => {
             if( typeof item === "string" )
@@ -1066,11 +1143,65 @@ class Plugins extends Array<Plugin> {
             return item;
         }));
     }
+    /**
+     * Alias for {@link PluginsList.unshift}
+     */
+    prioritize( ...items: (Plugin | string)[] ): number {
+        return this.unshift( ...items );
+    }
+    /**
+     * Override for [Array.splice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) to allow for string paths to be used in place of {@link Plugin} instances.
+     * 
+     * @see [Array.splice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice)
+     * @override
+     */
+    override splice(start: unknown, deleteCount?: unknown, ...rest: any[]): Plugin[] {
+        rest = rest.map( item => {
+            if( typeof item === "string" )
+                return Plugin.read( item ) as Plugin;
+            return item;
+        })
+        return super.splice( start as number, deleteCount as number, ...rest );
+    }
+    /**
+     * Inserts a plugin at the specified index. Accepts either a {@link Plugin} instance or a string path to a plugin file.
+     * 
+     * @param index The index to insert the plugin at.
+     * @param plugins The plugins to insert.
+     */
+    insert( index: number, ...plugins: (Plugin | string)[] ): void {
+        this.splice( index, 0, ...plugins );
+    }
+    /**
+     * Removes a plugin from the list. Accepts either a {@link Plugin} instance, a string path to a plugin file, or the index of the plugin to remove.
+     * 
+     * @param plugins The plugins to remove. Can be a {@link Plugin} instance, a string path to a plugin file, or the index of the plugin to remove.
+     */
+    remove( ...plugins: (Plugin | string | number)[] ): void {
+        const indeces: number[] = plugins.map( plugin => {
+            if( typeof plugin === "number" )
+                return plugin;
+            return this.indexOf( plugin );
+        }).filter( index => index >= 0 );
+        indeces.forEach( index => this.splice( index, 1 ) );
+    }
+    /**
+     * Override for [Array.indexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf) to allow for string paths to be used in place of {@link Plugin} instances.
+     * 
+     * @see [Array.indexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf)
+     * @override
+     */
     override indexOf( item: Plugin | string, fromIndex?: number ): number {
         if( typeof item === "string" )
             super.slice( fromIndex ).findIndex( plugin => plugin.path === item );
         return super.indexOf( item as Plugin, fromIndex );
     }
+    /**
+     * Override for [Array.lastIndexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf) to allow for string paths to be used in place of {@link Plugin} instances.
+     * 
+     * @see [Array.lastIndexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf)
+     * @override
+     */
     override lastIndexOf( item: Plugin | string, fromIndex?: number): number {
         if( typeof item === "string" )
             super.slice( 0, fromIndex )
@@ -1079,20 +1210,36 @@ class Plugins extends Array<Plugin> {
                 .find(([plugin]) => (plugin as Plugin).path === item )?.[1] || -1;
         return super.lastIndexOf( item as Plugin, fromIndex );
     }
+    /**
+     * Override for [Array.includes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes) to allow for string paths to be used in place of {@link Plugin} instances.
+     * 
+     * @see [Array.includes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes)
+     * @override
+     */
     override includes( item: Plugin | string, fromIndex?: number ): boolean {
         if( typeof item === "string" )
             super.slice( fromIndex ).some( plugin => plugin.path === item );
         return super.includes( item as Plugin, fromIndex );
     }
+    /**
+     * @deprecated Throws. Do not use. Implemented for Array interface.
+     */
     override fill( value: Plugin | string, start?: number, end?: number ): this {
         throw new Error("Do not mass-overwrite plugins");
     }
 }
+/**
+ * @see {@link PluginsList.default}
+ */
+export const Plugins = PluginsList.default;
 
 /**
  * Constant export for UMD
  */
 export const dbpf = {
+    Plugins,
     DBPF,
     DBPFEntry
 }
+
+Plugins.push( Plugin.THUM )
