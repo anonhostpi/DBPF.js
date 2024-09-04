@@ -78,17 +78,37 @@ const {
 } = Object
 
 /**
- * A magic number generator for DBPF files.
+ * A magic number generator for DBPF files in little-endian byte order.
  * - used in the DBPF header.
  * - see: [docs/spec/DBPF.md - Header](docs/spec/DBPF.md#header)
  * 
  * @param string The string to convert to a 4-byte magic number.
  * @returns {Number} The magic number.
  */
-export function MagicNumber( string: string ): FourBytes {
+export function MagicNumberLE( string: string ): FourBytes {
     string = string.padEnd( 4, '\0' )
     let out = 0;
     string.split('').forEach((
+        char,
+        index
+    )=>{
+        out |= char.charCodeAt(0) << (index * 8)
+    })
+    return out
+}
+
+/**
+ * A magic number generator for DBPF files in big-endian byte order.
+ * - used in the DBPF header.
+ * - see: [docs/spec/DBPF.md - Header](docs/spec/DBPF.md#header)
+ * 
+ * @param string The string to convert to a 4-byte magic number.
+ * @returns {Number} The magic number.
+ */
+export function MagicNumberBE( string: string ): FourBytes {
+    string = string.padEnd( 4, '\0' )
+    let out = 0;
+    string.split('').reverse().forEach((
         char,
         index
     )=>{
@@ -102,7 +122,7 @@ export function MagicNumber( string: string ): FourBytes {
  * - used in the DBPF header.
  * - see: [../docs/spec/DBPF.md - Header](../docs/spec/DBPF.md#header)
  */
-const MAGICNUMBER:  FourBytes = MagicNumber("DBPF")
+const MAGICNUMBER:  FourBytes = MagicNumberLE("DBPF")
 /**
  * The length of the DBPF header. This may need to change for different versions of the DBPF format.
  * - see: [../docs/spec/DBPF.md - Header](../docs/spec/DBPF.md#header)
