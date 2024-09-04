@@ -93,6 +93,7 @@
         "copy-folder-util":           "^1.1.4",
         "copyfiles":                  "^2.4.1",
         "live-server":                "^1.2.2",
+        "mime":                       "^4.0.4",
         "mkdirp":                     "^3.0.1",
         "prism-react-renderer":       "^2.4.0",
         "rimraf":                     "^6.0.1",
@@ -107,7 +108,6 @@
     },
     "dependencies": {
         "buffer":                     "^6.0.3",
-        "mime":                       "^4.0.4",
         "process":                    "^0.11.10"
     }
 }
