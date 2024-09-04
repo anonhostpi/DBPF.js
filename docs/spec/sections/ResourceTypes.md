@@ -7,6 +7,8 @@ Each entry in a DBPF file has a type ID that determines what kind of resource it
 There are quite a few of these, and not all are well known. This document will attempt
 to list all known resource types and their meanings.
 
+**NOTE:** This document follows a strict structure. Try not to deviate from it. It is used by scripts/resources.js to help generate plugin code.
+
 ## THUM - Thumbnail
 | Value      | Type | Description | Source  |
 |------------|------|-------------|---------|
