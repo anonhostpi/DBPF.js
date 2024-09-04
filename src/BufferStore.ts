@@ -217,7 +217,11 @@ abstract class BaseBufferStore {
      * @returns { Promise<BufferStoreEntry> }
      */
     private readonly _get: BufferStoreGetter = async ( index: StoreIndex ): Promise<BufferStoreEntry> => {
-        return this._cache.get( index ) || this._cache.set( index, await this._read( index ) );
+        let out = this._cache.get( index );
+        if( !out )
+            out = await this._read( index );
+        this._cache.set( index, out );
+        return out;
     }
 
     /**
