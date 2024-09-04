@@ -290,7 +290,7 @@ export class NodeBufferStore extends BaseBufferStore {
      */
     protected async _read( index: StoreIndex ): Promise<BufferStoreEntry> {
         if( index < 0 || index >= this.count )
-            throw new RangeError(`Read out of range`);
+            throw new RangeError(`Read out of range (by index): ${ index }/${ this.count }`);
 
         const offset = index * this.segment_size;
         const length = Math.min( this.segment_size, this.length - offset );
@@ -370,7 +370,7 @@ export class BrowserBufferStore extends BaseBufferStore {
      */
     protected async _read( index: StoreIndex ): Promise<BufferStoreEntry> {
         if( index < 0 || index >= this.count )
-            throw new RangeError(`Read out of range`);
+            throw new RangeError(`Read out of range (by index): ${ index }/${ this.count }`);
 
         const offset = index * this.segment_size;
         const length = Math.min( this.segment_size, this.length - offset );
@@ -601,22 +601,23 @@ class BufferReader {
      * 
      * @private
      */
-    private async _getBuffer( length: BufferLength ): Promise<Buffer> {
-        if( this._cursor + length > this._length )
-            throw new RangeError(`Read out of range`);
+    private async _getBuffer( length: BufferLength, offset: BufferOffset = this._cursor, moving:boolean = true ): Promise<Buffer> {
+        if( offset + length > this._length )
+            throw new RangeError(`Read out of range (by length): ${ offset }/${ this._length }`);
 
         if( length > 8 )
             throw new Error(`Read length too large`);
 
         // snapshot current state
-        const current_offset_cursor = this._cursor + this._offset;
+        const current_offset_cursor = offset + this._offset;
         const current_index = this._current_index;
 
         const current_segment = await this._current_segment;
         const _next_segment = this._next_segment;
 
         // immediately advance cursor
-        this.advance( length );
+        if( moving )
+            this.advance( length );
 
         let buffers: Buffer[] = [];
 
