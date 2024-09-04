@@ -203,6 +203,7 @@ abstract class BaseBufferStore {
      * @returns { Promise<BufferStoreEntry> }
      */
     protected abstract _read( index: StoreIndex ): Promise<BufferStoreEntry>;
+    protected abstract _direct( offset: BufferOffset, length: BufferLength ): Promise<Buffer>;
 
     /**
      * The underlying LFU+TTL cache for storing and retrieving cached buffer segments.
@@ -233,7 +234,7 @@ abstract class BaseBufferStore {
      * @public
      */
     get( offset: BufferOffset, length: BufferLength ): BufferReader {
-        return new BufferReader( this._get, this.segment_size, offset, length );
+        return new BufferReader( this._get, this._direct, this.segment_size, offset, length );
     }
 }
 
@@ -299,13 +300,27 @@ export class NodeBufferStore extends BaseBufferStore {
             read_resolve: ( value: BufferStoreEntry ) => void,
             read_reject: ( reason: any ) => void
         )=>{
+            this._direct( offset, length ).then(( buffer: Buffer ) => {
+                read_resolve({
+                    index,
+                    buffer
+                });
+            }).catch( read_reject );
+        })
+    }
+
+    protected async _direct( offset: BufferOffset, length: BufferLength ): Promise<Buffer> {
+        if( offset < 0 || offset + length > this.length )
+            throw new RangeError(`Read out of range (by length): ${ offset } + ${ length }/${ this.length }`);
+
+        return new Promise<Buffer>((
+            read_resolve: ( value: Buffer ) => void,
+            read_reject: ( reason: any ) => void
+        )=>{
             if( this._blob ){
                 const subblob = this._blob.slice( offset, offset + length );
                 subblob.arrayBuffer().then(( buffer: ArrayBuffer ) => {
-                    read_resolve({
-                        index,
-                        buffer: Buffer.from( buffer )
-                    });
+                    read_resolve( Buffer.from( buffer ) );
                 }).catch( read_reject );
             } else {
                 fs.open( this._path as string, "r", ( err, fd ) => {
@@ -315,10 +330,7 @@ export class NodeBufferStore extends BaseBufferStore {
                         if( err ) return read_reject( err );
                         if( !buffer || bytesRead !== buffer.length )
                             return read_reject( new Error("Read failed") );
-                        read_resolve({
-                            index,
-                            buffer: outbuffer
-                        });
+                        read_resolve( outbuffer );
                     });
                 });
             }
@@ -382,6 +394,14 @@ export class BrowserBufferStore extends BaseBufferStore {
             index,
             buffer
         };
+    }
+
+    protected async _direct( offset: BufferOffset, length: BufferLength ): Promise<Buffer> {
+        if( offset < 0 || offset + length > this.length )
+            throw new RangeError(`Read out of range (by length): ${ offset } + ${ length }/${ this.length }`);
+
+        const subblob = this._blob!.slice( offset, offset + length );
+        return Buffer.from( await subblob.arrayBuffer() );
     }
 }
 
@@ -452,6 +472,11 @@ class BufferReader {
      */
     private _getter: BufferStoreGetter;
     /**
+     * The method for retrieving buffer segments directly, provided by the buffer store.
+     * @private
+     */
+    private _direct: ( offset: BufferOffset, length: BufferLength ) => Promise<Buffer>;
+    /**
      * The size of each segment in bytes.
      * @private
      */
@@ -488,11 +513,13 @@ class BufferReader {
 
     constructor(
         getter: BufferStoreGetter,
+        direct: ( offset: BufferOffset, length: BufferLength ) => Promise<Buffer>,
         segment_size: BufferLength,
         offset: BufferOffset,
         length: BufferLength
     ){
         this._getter = getter;
+        this._direct = direct;
         this._segment_size = segment_size;
 
         this._offset = offset;
@@ -595,7 +622,7 @@ class BufferReader {
     }
 
     /**
-     * This method is what actually retrieves the cached buffer.
+     * This is the primary method for retrieving from the cached buffer.
      * 
      * @param length The length (in bytes) of the buffer to retrieve from the cursor position.
      * @returns { Promise<Buffer> }
@@ -638,6 +665,19 @@ class BufferReader {
 
     /**
      * A method for retrieving an arbitrary number of bytes from the buffer as a number or bigint.
+     * Retrieves a buffer from the buffer cache directly. Can be used for reading large segments.
+     * 
+     * @param offset The offset in the buffer to start reading from.
+     * @param length The length of the buffer to read.
+     * @returns { Promise<Buffer> }
+     * 
+     * @deprecated This method should be avoided and used sparingly, as it bypasses any memory optimizations.
+     */
+    async get( offset: BufferOffset = 0, length: BufferLength = this._length ): Promise<Buffer> {
+        return await this._direct( offset, length );
+    }
+
+    /**
      * 
      * @param length 
      * @returns { Promise<Number | BigInt> }
