@@ -22,14 +22,14 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: 'Use on DBPF Files of Any Kind (WIP)',
+    title: 'Use on DBPF Files of Any Kind',
     Image: require('@site/static/img/dbpf_games.png').default,
     description: (
       <>
         DBPF.js is designed to work many revisions of the DBPF format.
         Currently, it is tailored towards The Sims 4, but it should work with other Maxis games as well.
-        Some more work needs to be done to fully support DBPF v1.0, but this will be added in the future.
-        Work is also being done to support parsing the entries with a plugin system.
+        (WIP) While support for all DBPF revisions should be guaranteed, not all DBPF entry features are necessarily built in.
+        Currently, a plugin system is in the works to allow for extending DBPF.js to support more entry types.
       </>
     ),
   },

@@ -440,6 +440,7 @@ export class DBPF extends EventEmitter {
 
     /**
      * The LFU+TTL Buffer cache for the DBPF file.
+     * 
      * This is used to improve performance when reading large DBPF files.
      * - @see {@link BufferStore}
      * @readonly
@@ -594,12 +595,11 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
     private constructor(
         DBPF: DBPF
     ){
-        // WIP - ensure this acceptably extends Map
         super()
 
         this._DBPF = DBPF
 
-        this._offset = DBPF.header.index.offset
+        this._offset = DBPF.header.dbpf.major === 1 ? DBPF.header.index.first : DBPF.header.index.offset
 
         // prevent collision with `extends Map` properties
         this.length = DBPF.header.index.size
@@ -683,58 +683,65 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
             evented_resolve: () => void,
             evented_reject: ErrorOnlyCallback
         )=>{
-            try {
-                this._mode_flag = await this._reader.getInt() // also referred to as type by other tools like SimPE and s4pi
-
-                // according to s4pi, the size of the header entry is determined by the number of set bits
-                // ... in the 4 least significant bits in the mode flag
-                // - the size is variable from 0 to 4 4-byte segments
-                // - see: https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi/Package/PackageIndex.cs#L38-L46
-                
-                /*
-                    According to s4pi, the resultant entries are of the same *total* size.
-                    The amount of memory used by the entries (in the file) varies based on the above math.
+            if( this._DBPF.header.dbpf.major === 1 ){
+                if( this._DBPF.header.dbpf.minor === 1 )
+                    this._entry_length = 24   
+                else 
+                    this._entry_length = 20
+            } else {
+                try {
+                    this._mode_flag = await this._reader.getInt() // also referred to as type by other tools like SimPE and s4pi
+    
+                    // according to s4pi, the size of the header entry is determined by the number of set bits
+                    // ... in the 4 least significant bits in the mode flag
+                    // - the size is variable from 0 to 4 4-byte segments
+                    // - see: https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi/Package/PackageIndex.cs#L38-L46
                     
-                    The first chunk of data after the mode flag is the header entry. This is a partial entry that
-                        all full entries are based on.
-    
-                    The amount of 4-byte segments in the header entry is determined by the number of set bits in
-                        the 4 least significant bits of the mode flag (note that the mode flag is 8 bytes or 32 bits long)
-    
-                    The bits for binary nums 8, 4, 2, and 1 (bit indexes 3, 2, 1, and 0 respectively) determine what parts of
-                        each full entry are pulled from the partial header entry.
-    
-                    For example, for mode flag '3' (0b0011), 2 bits are set, so the header entry is only 2 4-byte segments long.
-                    Since, the set bits are in bits 1 and 2 ("right-to-left" order),
-                        the placement of the first and second header segments are the 1st and 2nd 4-byte
-                        segments of each entry respectively.
+                    /*
+                        According to s4pi, the resultant entries are of the same *total* size.
+                        The amount of memory used by the entries (in the file) varies based on the above math.
+                        
+                        The first chunk of data after the mode flag is the header entry. This is a partial entry that
+                            all full entries are based on.
+        
+                        The amount of 4-byte segments in the header entry is determined by the number of set bits in
+                            the 4 least significant bits of the mode flag (note that the mode flag is 8 bytes or 32 bits long)
+        
+                        The bits for binary nums 8, 4, 2, and 1 (bit indexes 3, 2, 1, and 0 respectively) determine what parts of
+                            each full entry are pulled from the partial header entry.
+        
+                        For example, for mode flag '3' (0b0011), 2 bits are set, so the header entry is only 2 4-byte segments long.
+                        Since, the set bits are in bits 1 and 2 ("right-to-left" order),
+                            the placement of the first and second header segments are the 1st and 2nd 4-byte
+                            segments of each entry respectively.
+                        
+                        For mode flag '6' (0b0110), 2 bits are also set, so the header is 2 still just 4-byte segments long.
+                        However, the set bits are in bits 2 and 3, so the placement of the first and second
+                            shared header segments are in the 2nd and 3rd 4-byte segments of each entry respectively.
+                            The first 4-byte segment is read normally from each entry iteration.
+                    */
                     
-                    For mode flag '6' (0b0110), 2 bits are also set, so the header is 2 still just 4-byte segments long.
-                    However, the set bits are in bits 2 and 3, so the placement of the first and second
-                        shared header segments are in the 2nd and 3rd 4-byte segments of each entry respectively.
-                        The first 4-byte segment is read normally from each entry iteration.
-                */
-                
-                // binary math (based on s4pi):
-                const set_bits = Array
-                    .from({length: Uint32Array.BYTES_PER_ELEMENT }) // form an undefined[] array with a length based on sizeof(uint)
-                    .map((unused, index) => index) // convert to an incrementing number array [0,1,2,...sizeof(uint)]
-                    .filter(index => ((this._mode_flag as FourBytes) >> index) & 1) // filter the 4 least significant bits for set bits
-                    // return their indexes
-                
-                this._header_segments = new Map<number,FourBytes>()
-                for( let bit of set_bits ){
-                    const value = await this._reader.getInt()
-                    this._header_segments.set( bit, value )
+                    // binary math (based on s4pi):
+                    const set_bits = Array
+                        .from({length: Uint32Array.BYTES_PER_ELEMENT }) // form an undefined[] array with a length based on sizeof(uint)
+                        .map((unused, index) => index) // convert to an incrementing number array [0,1,2,...sizeof(uint)]
+                        .filter(index => ((this._mode_flag as FourBytes) >> index) & 1) // filter the 4 least significant bits for set bits
+                        // return their indexes
+                    
+                    this._header_segments = new Map<number,FourBytes>()
+                    for( let bit of set_bits ){
+                        const value = await this._reader.getInt()
+                        this._header_segments.set( bit, value )
+                    }
+                    const total_header_length = 4 + (4 * set_bits.length) // 4 bytes for mode flag integer + 4 for each header segment
+                    this._entry_length = ( this.length - total_header_length ) / this.size
+        
+                    // ensure my math is right:
+                    if( this._entry_length % 4 )
+                        throw new Error(`Invalid entry length: ${this._entry_length}`)
+                } catch ( error ){
+                    evented_reject( error as Error )
                 }
-                const total_header_length = 4 + (4 * set_bits.length) // 4 bytes for mode flag integer + 4 for each header segment
-                this._entry_length = ( this.length - total_header_length ) / this.size
-    
-                // ensure my math is right:
-                if( this._entry_length % 4 )
-                    throw new Error(`Invalid entry length: ${this._entry_length}`)
-            } catch ( error ){
-                evented_reject( error as Error )
             }
 
             evented_resolve()
@@ -799,37 +806,61 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
     
             let entry = await await_wrap( super.get( key ) )
             if( !entry ){
-                this._reader.move( 4 + (4 * (this._header_segments!.size)) )
-                this._reader.advance( this.entryLength * key )
-                
-                const type:             FourBytes & Resource.Type                       = this._header_segments!.get(0) || (await await_wrap( this._reader.getInt() )) as number
-                const group:            FourBytes & Resource.Group                      = this._header_segments!.get(1) || (await await_wrap( this._reader.getInt() )) as number
-                const instance_high:    FourBytes & Resource.Instance.Number            = this._header_segments!.get(2) || (await await_wrap( this._reader.getInt() )) as number
-                const instance_low:     FourBytes & Resource.Instance.Number            = this._header_segments!.get(3) || (await await_wrap( this._reader.getInt() )) as number
-                const offset:           FourBytes & Resource.Offset                     = (await await_wrap( this._reader.getInt() )) as number
-                const size_file:        FourBytes & Resource.Compression.Compressed     = (await await_wrap( this._reader.getInt() )) as number
-                const size_memory:      FourBytes & Resource.Compression.Uncompressed   = (await await_wrap( this._reader.getInt() )) as number
-    
-                const size_flag:        TwoBytes & Resource.Compression.Flag            = (await await_wrap( this._reader.getShort() )) as number
-                const unknown:          TwoBytes & Unused                               = (await await_wrap( this._reader.getShort() )) as number
-    
-                const instance: EightBytes & Resource.Instance.BigInt = ( BigInt( instance_high ) << 32n ) | BigInt( instance_low )
-    
-                entry = new DBPFEntry(
-                    this._DBPF,
-                    type,
-                    group,
-                    instance,
-                    offset,
-                    {
-                        file: size_file,
-                        memory: size_memory,
-                        flag: size_flag
-                    }
-                )
                 entry = this._DBPF.plugins.filter( plugin => {
                     // WIP: implement plugin.filter logic
                 }).reduce(( entry, plugin ) => plugin.script( entry ) as DBPFEntry, entry )
+                const v2_base_offset = this._DBPF.header.dbpf.major === 1 ? 0 : 4 // v1.x doesn't have a mode flag, and the offset is pulled from DBPF.header.index.first instead of DBPF.header.index.offset
+                const v2_header_offset = 4 * (this._header_segments?.size || 0) // skip the header segments, since we already read them in init()
+                this._reader.move( v2_base_offset + v2_header_offset ) // move to the start of the first entry
+                this._reader.advance( this.entryLength * key ) // move to the start of the requested entry
+
+                const type:             FourBytes & Resource.Type                       = this._header_segments?.get(0) || (await await_wrap( this._reader.getInt() )) as number
+                const group:            FourBytes & Resource.Group                      = this._header_segments?.get(1) || (await await_wrap( this._reader.getInt() )) as number
+                const instance_high:    FourBytes & Resource.Instance.Number            = this._header_segments?.get(2) || (await await_wrap( this._reader.getInt() )) as number
+
+                if( this._DBPF.header.dbpf.major === 1 ){
+                    let instance_low:       FourBytes & Resource.Instance.Number | undefined;
+                    if( this._DBPF.header.dbpf.minor === 1 )
+                        instance_low = (await await_wrap( this._reader.getInt() )) as number
+                    const offset:           FourBytes & Resource.Offset                     = (await await_wrap( this._reader.getInt() )) as number
+                    const size_file:        FourBytes & Resource.Compression.Uncompressed   = (await await_wrap( this._reader.getInt() )) as number
+
+                    const instance: (FourBytes & Resource.Instance.Number) | (EightBytes & Resource.Instance.BigInt) = instance_low != null ? ( BigInt( instance_high ) << 32n ) | BigInt( instance_low ) : instance_high
+
+                    entry = new DBPFEntry(
+                        this._DBPF,
+                        type,
+                        group,
+                        instance,
+                        offset,
+                        {
+                            file: size_file,
+                        }
+                    )
+                } else {
+                    const instance_low:     FourBytes & Resource.Instance.Number            = this._header_segments!.get(3) || (await await_wrap( this._reader.getInt() )) as number
+                    const offset:           FourBytes & Resource.Offset                     = (await await_wrap( this._reader.getInt() )) as number
+                    const size_file:        FourBytes & Resource.Compression.Compressed     = (await await_wrap( this._reader.getInt() )) as number
+                    const size_memory:      FourBytes & Resource.Compression.Uncompressed   = (await await_wrap( this._reader.getInt() )) as number
+        
+                    const size_flag:        TwoBytes & Resource.Compression.Flag            = (await await_wrap( this._reader.getShort() )) as number
+                    const unknown:          TwoBytes & Unused                               = (await await_wrap( this._reader.getShort() )) as number
+        
+                    const instance: EightBytes & Resource.Instance.BigInt = ( BigInt( instance_high ) << 32n ) | BigInt( instance_low )
+        
+                    entry = new DBPFEntry(
+                        this._DBPF,
+                        type,
+                        group,
+                        instance,
+                        offset,
+                        {
+                            file: size_file,
+                            memory: size_memory,
+                            flag: size_flag
+                        }
+                    )
+                }
                 super.set( key, Promise.resolve( entry ) )
             }
             evented_resolve( entry )
@@ -943,12 +974,12 @@ export class DBPFEntry {
         /**
          * The amount of bytes the DBPF resource takes up uncompressed in memory.
          */
-        memory: FourBytes & Resource.Compression.Uncompressed,
+        memory?: FourBytes & Resource.Compression.Uncompressed,
         /**
          * The compression flag of the DBPF resource.
          * - see: [../docs/spec/DBPF.md - DBPF v2.0](../docs/spec/DBPF.md#dbpf-v20)
          */
-        flag: FourBytes & Resource.Compression.Flag
+        flag?: FourBytes & Resource.Compression.Flag
     };
 
     constructor(
@@ -959,8 +990,8 @@ export class DBPFEntry {
         offset: FourBytes & Resource.Offset,
         size: {
             file: FourBytes & Resource.Compression.Compressed,
-            memory: FourBytes & Resource.Compression.Uncompressed,
-            flag: FourBytes & Resource.Compression.Flag
+            memory?: FourBytes & Resource.Compression.Uncompressed,
+            flag?: FourBytes & Resource.Compression.Flag
         }
     ){
         this._DBPF = DBPF;
