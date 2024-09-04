@@ -39,11 +39,12 @@
         "make:web":                   "webpack --config webpack.config.js",
         "make:test":                  "webpack --config webpack.test.config.js",
         "make:docs":                  "typedoc",
+        "make:resources":             "node scripts/resources.js",
         "premake:docusaurus":         "rimraf ./pub/build",
         "make:docusaurus":            "npx create-docusaurus@latest pub/build classic --typescript --skip-install",
         "postmake:docusaurus":        "rimraf ./pub/build/blog ./pub/build/docs ./pub/build/src ./pub/build/static/img",
 
-        "build":                      "npm run make:node && npm run make:web",
+        "build":                      "npm run make:resources && npm run make:node && npm run make:web",
 
         "build:web":                  "npm run make:web",
         "build:test":                 "npm run make:web && npm run make:test && copyfiles -f ./dist/dbpf.web.js ./test/serve && copyfiles -f ./test/index.html ./test/serve",
@@ -77,7 +78,7 @@
 
         "prepublishOnly":             "rimraf ./scripts/manifests",
 
-        "docs":                       "npm run make:docs",
+        "docs":                       "npm run make:resources && npm run make:docs",
         "predocs":                    "rimraf ./wiki",
         "postdocs":                   "node scripts/docs.js",
         "docs:pub":                   "node scripts/pub.js",
