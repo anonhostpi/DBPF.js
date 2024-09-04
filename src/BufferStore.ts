@@ -664,7 +664,6 @@ class BufferReader {
     }
 
     /**
-     * A method for retrieving an arbitrary number of bytes from the buffer as a number or bigint.
      * Retrieves a buffer from the buffer cache directly. Can be used for reading large segments.
      * 
      * @param offset The offset in the buffer to start reading from.
@@ -678,26 +677,56 @@ class BufferReader {
     }
 
     /**
+     * A method for retrieving an arbitrary number of bytes from the buffer as a number or bigint in little-endian order (least significant BYTE first).
      * 
      * @param length 
      * @returns { Promise<Number | BigInt> }
      * 
      * @remarks Maximum length is 8 bytes due to JavaScript's number precision.
      */
-    async getBytes( length: BufferLength ): Promise<MemoryAsNumber | MemoryAsBigInt> {
+    async getBytesLE( length: BufferLength ): Promise<MemoryAsNumber | MemoryAsBigInt> {
         const bytes = await this._getBuffer( length );
 
-        let little_four_bytes: FourBytes;
-        let big_three_bytes: ThreeBytes | undefined;
+        let little_three_bytes: FourBytes | undefined;
+        let big_four_bytes: ThreeBytes;
 
         switch( length ){
             case 8: return bytes.readBigInt64LE( 0 ) as MemoryAsBigInt;
             case 7:
             case 6:
             case 5:
-                big_three_bytes = bytes.readUIntLE( 3, length - 4 ) as ThreeBytes;
+                little_three_bytes = bytes.readUIntLE( 3, length - 4 ) as ThreeBytes;
             default:
-                little_four_bytes = bytes.readUIntLE( 0, Math.min( length, 4 ) ) as FourBytes;
+                big_four_bytes = bytes.readUIntLE( 0, Math.min( length, 4 ) ) as FourBytes;
+        }
+
+        if( little_three_bytes !== undefined )
+            return BigInt( big_four_bytes ) << 32n | BigInt( little_three_bytes ) as MemoryAsBigInt;
+        else
+            return big_four_bytes as MemoryAsNumber;
+    }
+
+    /**
+     * A method for retrieving an arbitrary number of bytes from the buffer as a number or bigint in big-endian order (most significant BYTE (and BIT) first).
+     * 
+     * @param length 
+     * @returns { Promise<Number | BigInt> }
+     * 
+     * @remarks Maximum length is 8 bytes due to JavaScript's number precision.
+     */
+    async getBytesBE( length: BufferLength ): Promise<MemoryAsNumber | MemoryAsBigInt> {
+        const bytes = await this._getBuffer( length );
+
+        let little_four_bytes: FourBytes;
+        let big_three_bytes: ThreeBytes | undefined;
+        switch( length ){
+            case 8: return bytes.readBigInt64BE( 0 ) as MemoryAsBigInt;
+            case 7:
+            case 6:
+            case 5:
+                big_three_bytes = bytes.readUIntBE( 0, length - 4 ) as ThreeBytes;
+            default:
+                little_four_bytes = bytes.readUIntBE( 0, Math.min( length, 4 ) ) as FourBytes;
         }
 
         if( big_three_bytes !== undefined )
