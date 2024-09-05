@@ -29,6 +29,7 @@ Additionally, without official feedback from EA or Maxis, a lot of this informat
     - [THUM - Thumbnail](sections/ResourceTypes.md#thum---thumbnail)
     - [COBJ - Catalog Object](sections/ResourceTypes.md#cobj---catalog-object)
     - [GEOM - Body Geometry](sections/ResourceTypes.md#geom---body-geometry)
+    - [BGEO - Blend Geometry](sections/ResourceTypes.md#bgeo---blend-geometry)
     
 
 ## Background and Acknowledgements

@@ -89,6 +89,11 @@ to list all known resource types and their meanings.
 |------------|------|-------------|---------|
 | 0x015A1849 | geom | Body Geometry | [Gibbed.Sims4 \> 'package types.xml'#L4]
 
+## BGEO - Blend Geometry
+| Value      | Type      | Description | Source  |
+|------------|-----------|-------------|---------|
+| 0x067CAA11 | blendgeom | Blend Geometry | [Sims4Tools \> Extensions.txt#L87], [Gibbed.Sims4 \> 'package types.xml'#L23]
+
 [Sims4Tools \> ImageResources.txt#L1]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L1
 [Sims4Tools \> ImageResources.txt#L2]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L2
 [Sims4Tools \> ImageResources.txt#L3]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L3
@@ -122,6 +127,7 @@ to list all known resource types and their meanings.
 [Sims4Tools \> ImageResources.txt#L44]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L44
 [Sims4Tools \> ImageResources.txt#L48]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L48
 [Sims4Tools \> Extensions.txt#L7]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L7
+[Sims4Tools \> Extensions.txt#L87]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L87
 [Sims4Tools \> Extensions.txt#L97]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L97
 [Sims4Tools \> Extensions.txt#L99]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L99
 [Sims4Tools \> Extensions.txt#L118]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L118
@@ -184,5 +190,6 @@ to list all known resource types and their meanings.
 [Gibbed.Sims3 \> types.xml#L835-L841]:https://github.com/gibbed/Gibbed.Sims3/blob/060cffb249ed8497324d1f1b9783754b443e2571/bin/lists/types.xml#L835-L841
 
 [Gibbed.Sims4 \> 'package types.xml'#L4]:https://github.com/gibbed/Gibbed.Sims4/blob/8e4042af4b5f780cb294cf9d8d95120f1f619210/bin/projects/The%20Sims%204/package%20types.xml#L4
+[Gibbed.Sims4 \> 'package types.xml'#L23]:https://github.com/gibbed/Gibbed.Sims4/blob/8e4042af4b5f780cb294cf9d8d95120f1f619210/bin/projects/The%20Sims%204/package%20types.xml#L23
 
 [sims3-rs \> filetypes.rs#L99]:https://github.com/kitlith/sims3-rs/blob/c841e7ac71f7f9a01e7e828b2501b243371ff752/src/dbpf/filetypes.rs#L99
