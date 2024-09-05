@@ -904,30 +904,32 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
                     )
                 }
 
-                const init = new EventedPromise<void>(
-                    async (
-                        evented_resolve: () => void,
-                        evented_reject: ErrorOnlyCallback
-                    )=>{
-                        try {    
-                            for( let [index, plugin] of this._DBPF.plugins.entries() ){
-                                entry = await plugin.parse( entry as IDBPFEntry )
-                            }
-                        } catch( error ){
-                            evented_reject( error as NullableError )
-                        }
-                        evented_resolve()
-                    },
-                    {
-                        emit: entry.emit,
-                        events: {
-                            resolve: DBPFEntry.ON_INIT,
-                            reject: DBPFEntry.ON_ERROR
-                        }
-                    }
-                )
+                let init: EventedPromise<void>;
 
-                entry.init = () => init
+                entry.init = () => {
+                    return init! || (init = new EventedPromise<void>(
+                        async (
+                            evented_resolve: () => void,
+                            evented_reject: ErrorOnlyCallback
+                        )=>{
+                            try {    
+                                for( let [index, plugin] of this._DBPF.plugins.entries() ){
+                                    entry = await plugin.parse( entry as IDBPFEntry )
+                                }
+                            } catch( error ){
+                                evented_reject( error as NullableError )
+                            }
+                            evented_resolve()
+                        },
+                        {
+                            emit: entry!.emit,
+                            events: {
+                                resolve: DBPFEntry.ON_INIT,
+                                reject: DBPFEntry.ON_ERROR
+                            }
+                        })
+                    )
+                }
 
                 super.set( key, Promise.resolve( entry as DBPFEntry ) )
             }
