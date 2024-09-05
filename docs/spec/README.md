@@ -27,6 +27,8 @@ Additionally, without official feedback from EA or Maxis, a lot of this informat
         - [DBPF v3.0](DBPF.md#dbpf-v30)
   - [Resource Types](sections/ResourceTypes.md)
     - [THUM - Thumbnail](sections/ResourceTypes.md#thum---thumbnail)
+    - [COBJ - Catalog Object](sections/ResourceTypes.md#cobj---catalog-object)
+    - [GEOM - Body Geometry](sections/ResourceTypes.md#geom---body-geometry)
     
 
 ## Background and Acknowledgements
