@@ -708,7 +708,7 @@ class BufferReader {
      * 
      * @deprecated This method should be avoided and used sparingly, as it bypasses any memory optimizations.
      */
-    async get( offset: BufferOffset = 0, length: BufferLength = this._length ): Promise<Buffer> {
+    async get( offset: BufferOffset = this._offset, length: BufferLength = this._length ): Promise<Buffer> {
         return await this._direct( offset, length );
     }
 
