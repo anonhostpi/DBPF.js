@@ -676,7 +676,7 @@ input?.addEventListener("change", async function( event ) {
                     blobElement.removeAttribute("id");
                     blobElement.removeAttribute("style");
 
-                    const name = `0x${ instance.toString(16) }`;
+                    const name = `0x${ instance.toString(16).padStart(16,"0") }`;
 
                     if( entry.mimetype ){
                         
