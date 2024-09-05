@@ -69,6 +69,16 @@ to list all known resource types and their meanings.
 - Catalog Roof Pattern
 - Possibly also Wall/Floor Color
 
+## COBJ - Catalog Object
+- also tagged as `OBJD` (likely short for Object Data) in some tools like Nraas, Gibbed.Sims3, sims3-rs
+  - [NRaas \> Extensions.txt#L106]
+  - [Gibbed.Sims3 \> types.xml#L835-L841]
+  - [sims3-rs \> filetypes.rs#L99]
+
+| Value      | Type | Description | Source  |
+|------------|------|-------------|---------|
+| 0x319E4F1D | cobj | Catalog Object | [Sims4Tools \> Extensions.txt#L118]
+
 [Sims4Tools \> ImageResources.txt#L1]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L1
 [Sims4Tools \> ImageResources.txt#L2]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L2
 [Sims4Tools \> ImageResources.txt#L3]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L3
@@ -103,6 +113,7 @@ to list all known resource types and their meanings.
 [Sims4Tools \> ImageResources.txt#L48]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L48
 [Sims4Tools \> Extensions.txt#L97]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L97
 [Sims4Tools \> Extensions.txt#L99]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L99
+[Sims4Tools \> Extensions.txt#L118]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L118
 [Sims4Tools \> Extensions.txt#L123]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L123
 [Sims4Tools \> Extensions.txt#L125]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L125
 [Sims4Tools \> Extensions.txt#L160]:https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L160
@@ -154,3 +165,7 @@ to list all known resource types and their meanings.
 
 [EchoWeaver/Sims3Game \> MentorMedicine.cs#L89-90]:https://github.com/Echoweaver/Sims3Game/blob/ac087794c787d33c953688f13cf490b543b3ecd8/WarriorCats/Apprentice/MentorMedicine.cs#L89-L90
 [EchoWeaver/Sims3Game \> EWPetSuccombToWounds.cs#L31-48]:https://github.com/Echoweaver/Sims3Game/blob/ac087794c787d33c953688f13cf490b543b3ecd8/Echoweaver.Sims3Game.PetFighting/EWPetSuccumbToWounds.cs#L31-L48
+
+[NRaas \> Extensions.txt#L106]:https://github.com/Chain-Reaction/NRaas/blob/40dadea64faa18c2806534826bd8a913cf229668/NRaasPacker/Extensions.txt#L106
+[Gibbed.Sims3 \> types.xml#L835-L841]:https://github.com/gibbed/Gibbed.Sims3/blob/060cffb249ed8497324d1f1b9783754b443e2571/bin/lists/types.xml#L835-L841
+[sims3-rs \> filetypes.rs#L99]:https://github.com/kitlith/sims3-rs/blob/c841e7ac71f7f9a01e7e828b2501b243371ff752/src/dbpf/filetypes.rs#L99
