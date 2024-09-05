@@ -10,7 +10,8 @@
         "./src/polyfill.events.ts",
         "./src/polyfill.fs.ts",
         "./src/polyfill.ts",
-        "./src/serde.ts"
+        "./src/serde.ts",
+        "./src/Plugins/**/*.ts"
     ],
     "projectDocuments": ["./docs/**/*.md"],
     "alwaysCreateEntryPointModule": false,

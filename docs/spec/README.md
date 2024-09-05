@@ -26,7 +26,7 @@ Additionally, without official feedback from EA or Maxis, a lot of this informat
         - [DBPF v2.0](DBPF.md#dbpf-v20)
         - [DBPF v3.0](DBPF.md#dbpf-v30)
   - [Resource Types](sections/ResourceTypes.md)
-    - [THUM - Thumbnail](sections/ResourceTypes.md#thum-thumbnail)
+    - [THUM - Thumbnail](sections/ResourceTypes.md#thum---thumbnail)
     
 
 ## Background and Acknowledgements

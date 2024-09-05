@@ -17,7 +17,7 @@ To see the library in action, you can visit the [playground](https://anonhostpi.
 
 You can also build and run the playground locally by following the instructions in [Building and Interactive Testing](#building-and-interactive-testing):
 
-![DBPF.js test environment](https://github.com/anonhostpi/DBPF.js/blob/main/docs/assets/test.png)
+![DBPF.js test environment](https://github.com/anonhostpi/DBPF.js/blob/main/docs/assets/v1.1.0.png)
 
 ## Usage
 
