@@ -92,7 +92,7 @@ to list all known resource types and their meanings.
 ## BGEO - Blend Geometry
 | Value      | Type      | Description | Source  |
 |------------|-----------|-------------|---------|
-| 0x067CAA11 | blendgeom | Blend Geometry | [Sims4Tools \> Extensions.txt#L87], [Gibbed.Sims4 \> 'package types.xml'#L23]
+| 0x067CAA11 | blendgeom | Blend Geometry | [Sims4Tools \> Extensions.txt#L87], [Gibbed.Sims4 \> 'package types.xml'#L23], [LlamaLogic \> ResourceType.cs#L160]
 
 [Sims4Tools \> ImageResources.txt#L1]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L1
 [Sims4Tools \> ImageResources.txt#L2]:https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/ImageResource/ImageResources.txt#L2
@@ -156,6 +156,7 @@ to list all known resource types and their meanings.
 
 [LlamaLogic \> ResourceType.cs#L87]:https://github.com/Llama-Logic/LlamaLogic/blob/3aad55e7a7c76104ea0af5d22744e12c56e0ce46/LlamaLogic.Packages/ResourceType.cs#L87
 [LlamaLogic \> ResourceType.cs#L93]:https://github.com/Llama-Logic/LlamaLogic/blob/3aad55e7a7c76104ea0af5d22744e12c56e0ce46/LlamaLogic.Packages/ResourceType.cs#L93
+[LlamaLogic \> ResourceType.cs#L160]:https://github.com/Llama-Logic/LlamaLogic/blob/3aad55e7a7c76104ea0af5d22744e12c56e0ce46/LlamaLogic.Packages/ResourceType.cs#L160
 [LlamaLogic \> ResourceType.cs#L176]:https://github.com/Llama-Logic/LlamaLogic/blob/3aad55e7a7c76104ea0af5d22744e12c56e0ce46/LlamaLogic.Packages/ResourceType.cs#L176
 [LlamaLogic \> ResourceType.cs#L182]:https://github.com/Llama-Logic/LlamaLogic/blob/3aad55e7a7c76104ea0af5d22744e12c56e0ce46/LlamaLogic.Packages/ResourceType.cs#L182
 [LlamaLogic \> ResourceType.cs#L235]:https://github.com/Llama-Logic/LlamaLogic/blob/3aad55e7a7c76104ea0af5d22744e12c56e0ce46/LlamaLogic.Packages/ResourceType.cs#L235
