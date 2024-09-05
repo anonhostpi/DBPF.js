@@ -834,23 +834,29 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
     
             await await_wrap( this.init() )
     
-            let entry = await await_wrap( super.get( key ) )
+            let entry: IDBPFEntry | undefined = await await_wrap( super.get( key ) )
             if( !entry ){
                 const v2_base_offset = this._DBPF.header.dbpf.major === 1 ? 0 : 4 // v1.x doesn't have a mode flag, and the offset is pulled from DBPF.header.index.first instead of DBPF.header.index.offset
                 const v2_header_offset = 4 * (this._header_segments?.size || 0) // skip the header segments, since we already read them in init()
                 this._reader.move( v2_base_offset + v2_header_offset ) // move to the start of the first entry
                 this._reader.advance( this.entryLength * key ) // move to the start of the requested entry
 
-                const type:             FourBytes & Resource.Type                       = this._header_segments?.get(0) || (await await_wrap( this._reader.getInt() )) as number
-                const group:            FourBytes & Resource.Group                      = this._header_segments?.get(1) || (await await_wrap( this._reader.getInt() )) as number
-                const instance_high:    FourBytes & Resource.Instance.Number            = this._header_segments?.get(2) || (await await_wrap( this._reader.getInt() )) as number
+                let type:                   FourBytes & Resource.Type | undefined               = this._header_segments?.get(0)
+                if( type == null )
+                    type                                                                        = await await_wrap( this._reader.getInt() ) as number
+                let group:                  FourBytes & Resource.Group | undefined              = this._header_segments?.get(1)
+                if( group == null )
+                    group                                                                       = await await_wrap( this._reader.getInt() ) as number
+                let instance_high:          FourBytes & Resource.Instance.Number | undefined    = this._header_segments?.get(2)
+                if( instance_high == null )
+                    instance_high                                                               = await await_wrap( this._reader.getInt() ) as number
 
                 if( this._DBPF.header.dbpf.major === 1 ){
                     let instance_low:       FourBytes & Resource.Instance.Number | undefined;
                     if( this._DBPF.header.dbpf.minor === 1 )
                         instance_low = (await await_wrap( this._reader.getInt() )) as number
-                    const offset:           FourBytes & Resource.Offset                     = (await await_wrap( this._reader.getInt() )) as number
-                    const size_file:        FourBytes & Resource.Compression.Uncompressed   = (await await_wrap( this._reader.getInt() )) as number
+                    const offset:           FourBytes & Resource.Offset                         = (await await_wrap( this._reader.getInt() )) as number
+                    const size_file:        FourBytes & Resource.Compression.Uncompressed       = (await await_wrap( this._reader.getInt() )) as number
 
                     const instance: (FourBytes & Resource.Instance.Number) | (EightBytes & Resource.Instance.BigInt) = instance_low != null ? ( BigInt( instance_high ) << 32n ) | BigInt( instance_low ) : instance_high
 
@@ -861,17 +867,23 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
                         instance,
                         offset,
                         {
-                            file: size_file,
+                            file: {
+                                raw: size_file,
+                                reduced: size_file & 0x7FFFFFFF
+                            }
                         }
                     )
                 } else {
-                    const instance_low:     FourBytes & Resource.Instance.Number            = this._header_segments!.get(3) || (await await_wrap( this._reader.getInt() )) as number
-                    const offset:           FourBytes & Resource.Offset                     = (await await_wrap( this._reader.getInt() )) as number
-                    const size_file:        FourBytes & Resource.Compression.Compressed     = (await await_wrap( this._reader.getInt() )) as number
-                    const size_memory:      FourBytes & Resource.Compression.Uncompressed   = (await await_wrap( this._reader.getInt() )) as number
+                    let instance_low:       FourBytes & Resource.Instance.Number | undefined    = this._header_segments!.get(3);
+                    if( instance_low == null )
+                        instance_low                                                            = await await_wrap( this._reader.getInt() ) as number
+
+                    const offset:           FourBytes & Resource.Offset                         = (await await_wrap( this._reader.getInt() )) as number
+                    const size_file:        FourBytes & Resource.Compression.Compressed         = (await await_wrap( this._reader.getInt() )) as number
+                    const size_memory:      FourBytes & Resource.Compression.Uncompressed       = (await await_wrap( this._reader.getInt() )) as number
         
-                    const size_flag:        TwoBytes & Resource.Compression.Flag            = (await await_wrap( this._reader.getShort() )) as number
-                    const unknown:          TwoBytes & Unused                               = (await await_wrap( this._reader.getShort() )) as number
+                    const size_flag:        TwoBytes & Resource.Compression.Flag                = (await await_wrap( this._reader.getShort() )) as number
+                    const unknown:          TwoBytes & Unused                                   = (await await_wrap( this._reader.getShort() )) as number
         
                     const instance: EightBytes & Resource.Instance.BigInt = ( BigInt( instance_high ) << 32n ) | BigInt( instance_low )
         
@@ -882,16 +894,44 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
                         instance,
                         offset,
                         {
-                            file: size_file,
+                            file: {
+                                raw: size_file,
+                                reduced: size_file & 0x7FFFFFFF
+                            },
                             memory: size_memory,
                             flag: size_flag
                         }
                     )
                 }
-                entry = this._DBPF.plugins.reduce(( entry, plugin ) => plugin.parse( entry ) as DBPFEntry, entry )
-                super.set( key, Promise.resolve( entry ) )
+
+                const init = new EventedPromise<void>(
+                    async (
+                        evented_resolve: () => void,
+                        evented_reject: ErrorOnlyCallback
+                    )=>{
+                        try {    
+                            for( let [index, plugin] of this._DBPF.plugins.entries() ){
+                                entry = await plugin.parse( entry as IDBPFEntry )
+                            }
+                        } catch( error ){
+                            evented_reject( error as NullableError )
+                        }
+                        evented_resolve()
+                    },
+                    {
+                        emit: entry.emit,
+                        events: {
+                            resolve: DBPFEntry.ON_INIT,
+                            reject: DBPFEntry.ON_ERROR
+                        }
+                    }
+                )
+
+                entry.init = () => init
+
+                super.set( key, Promise.resolve( entry as DBPFEntry ) )
             }
-            evented_resolve( entry )
+            evented_resolve( entry as DBPFEntry )
         },{
             emit: this.emit,
             events: {
@@ -970,7 +1010,58 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
  * It is a representation of a DBPF resource.
  * - see: [../docs/spec/DBPF.md - Table Entries (AKA "DBPF Resources")](../docs/spec/DBPF.md#table-entries-aka-dbpf-resources)
  */
-export class DBPFEntry {
+export class DBPFEntry extends EventEmitter {
+
+    /**
+     * @param DBPF 
+     * @param type 
+     * @param group 
+     * @param instance 
+     * @param offset 
+     * @param size 
+     */
+    constructor(
+        DBPF: DBPF,
+        type: FourBytes & Resource.Type,
+        group: FourBytes & Resource.Group,
+        instance: EightBytes & Resource.Instance.BigInt | FourBytes & Resource.Instance.Number,
+        offset: FourBytes & Resource.Offset,
+        size: {
+            file: {
+                raw: FourBytes & Resource.Compression.Compressed,
+                reduced: FourBytes & Resource.Compression.Compressed,
+            }
+            memory?: FourBytes & Resource.Compression.Uncompressed,
+            flag?: FourBytes & Resource.Compression.Flag
+        }
+    ){
+        super();
+        this._DBPF = DBPF;
+        this.type = type;
+        this.group = group;
+        this.instance = instance;
+        this.offset = offset;
+        this.size = size;
+        this.reader = DBPF.read( offset, size.file.reduced )
+        deepFreeze( this.size );
+    }
+
+    /**
+     * The event name for when the DBPF Entry is initialized.
+     * @event
+     */
+    static readonly ON_INIT = "init"
+    /**
+     * The event name for when the DBPF Entry encounters an error.
+     * @event
+     */
+    static readonly ON_ERROR = "error"
+
+    /**
+     * Initializes the DBPF Entry asynchronously, evented.
+     */
+    init: (() => EventedPromise<void>) | undefined;
+
     private _DBPF: DBPF;
 
     /**
@@ -998,7 +1089,10 @@ export class DBPFEntry {
         /**
          * The amount of bytes the DBPF resource takes up in the DBPF file.
          */
-        file: FourBytes & Resource.Compression.Compressed,
+        file: {
+            raw: FourBytes & Resource.Compression.Compressed,
+            reduced: FourBytes & Resource.Compression.Compressed,
+        }
         /**
          * The amount of bytes the DBPF resource takes up uncompressed in memory.
          */
@@ -1010,26 +1104,35 @@ export class DBPFEntry {
         flag?: FourBytes & Resource.Compression.Flag
     };
 
-    constructor(
-        DBPF: DBPF,
-        type: FourBytes & Resource.Type,
-        group: FourBytes & Resource.Group,
-        instance: EightBytes & Resource.Instance.BigInt | FourBytes & Resource.Instance.Number,
-        offset: FourBytes & Resource.Offset,
-        size: {
-            file: FourBytes & Resource.Compression.Compressed,
-            memory?: FourBytes & Resource.Compression.Uncompressed,
-            flag?: FourBytes & Resource.Compression.Flag
-        }
-    ){
-        this._DBPF = DBPF;
-        this.type = type;
-        this.group = group;
-        this.instance = instance;
-        this.offset = offset;
-        this.size = size;
-        deepFreeze( this.size );
+    /**
+     * The buffer reader for the DBPF resource.
+     */
+    readonly reader: IBufferReader;
+    mimetype: string | undefined;
+
+    /**
+     * Retrive the DBPF resource as a Blob on demand. This is a memory-efficient way to handle the blobs read from the entry.
+     * 
+     * NOTE: This method is designed to be overwritten by plugins. While it is an option, it is not recommended, as overwriting this method in one plugin may break it for other plugins.
+     * 
+     * @param refresh Whether to refresh the blob. If set to `true`, the blob will be re-read from the entry.
+     * @returns { Promise<Blob> } A promise that resolves with a Blob of the DBPF resource.
+     */
+    blob: ( refresh?: boolean ) => Promise<Blob> = async ( refresh?: boolean ) => {
+        // this is all done for memory efficiency
+        // the reason this is necessary is because this blob is backed by in-process memory (buffer), instead of a file. Meaning that this blob will not be paged.
+
+        if( this._blob && this.mimetype && !refresh ) // if we already have the blob, the mimetype has been explicitly set, and we don't want to refresh, return the cached blob
+            return this._blob
+
+        const out = new Blob([await this.reader.get()], { type: this.mimetype })
+
+        if( this.mimetype ) // only cache the blob if the mimetype is set. This ensures that the blob can be gc'd if it is unreferenced in the calling code.
+            this._blob = out
+
+        return out
     }
+    private _blob: Blob | undefined;
 }
 
 /**
