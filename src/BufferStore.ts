@@ -123,6 +123,15 @@ type BufferStoreEntry = {
 type BufferStoreGetter = ( index: StoreIndex ) => Promise<BufferStoreEntry>;
 
 /**
+ * A function that retrieves a buffer segment directly from the file system.
+ * 
+ * This is for sharing the direct buffer getter with the {@link BufferReader} class.
+ * 
+ * @internal
+ */
+type BufferStoreDirect = ( offset: BufferOffset, length: BufferLength ) => Promise<Buffer>;
+
+/**
  * The parent class buffer store for both Node.js and browser environments.
  * 
  * This is the base buffer cache. It uses the file as a backing store.
@@ -203,7 +212,16 @@ abstract class BaseBufferStore {
      * @returns { Promise<BufferStoreEntry> }
      */
     protected abstract _read( index: StoreIndex ): Promise<BufferStoreEntry>;
-    protected abstract _direct( offset: BufferOffset, length: BufferLength ): Promise<Buffer>;
+    /**
+     * This is the direct buffer getter for retrieving buffer segments directly from the file system.
+     * 
+     * It is implemented by child classes.
+     * @see {@link NodeBufferStore._direct} and {@link BrowserBufferStore._direct}
+     * @param offset The offset in the buffer to start reading from.
+     * @param length The length of the buffer to read.
+     * @returns { Promise<Buffer> }
+     */
+    protected abstract readonly _direct: BufferStoreDirect;
 
     /**
      * The underlying LFU+TTL cache for storing and retrieving cached buffer segments.
@@ -309,7 +327,16 @@ export class NodeBufferStore extends BaseBufferStore {
         })
     }
 
-    protected async _direct( offset: BufferOffset, length: BufferLength ): Promise<Buffer> {
+    /**
+     * The Node.js implementation of the direct buffer getter for retrieving buffer segments directly from the file system.
+     * @see {@link BaseBufferStore._direct}
+     * 
+     * @param offset The offset in the buffer to start reading from.
+     * @param length The length of the buffer to read.
+     * @returns { Promise<Buffer> }
+     * @protected
+     */
+    protected readonly _direct: BufferStoreDirect = async ( offset: BufferOffset, length: BufferLength ): Promise<Buffer> => {
         if( offset < 0 || offset + length > this.length )
             throw new RangeError(`Read out of range (by length): ${ offset } + ${ length }/${ this.length }`);
 
@@ -396,7 +423,16 @@ export class BrowserBufferStore extends BaseBufferStore {
         };
     }
 
-    protected async _direct( offset: BufferOffset, length: BufferLength ): Promise<Buffer> {
+    /**
+     * The browser implementation of the direct buffer getter for retrieving buffer segments directly from the file system.
+     * @see {@link BaseBufferStore._direct}
+     * 
+     * @param offset The offset in the buffer to start reading from.
+     * @param length The length of the buffer to read.
+     * @returns { Promise<Buffer> }
+     * @protected
+     */
+    protected readonly _direct: BufferStoreDirect = async ( offset: BufferOffset, length: BufferLength ): Promise<Buffer> => {
         if( offset < 0 || offset + length > this.length )
             throw new RangeError(`Read out of range (by length): ${ offset } + ${ length }/${ this.length }`);
 
