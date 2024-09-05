@@ -1144,9 +1144,6 @@ export type TaggedEntry = IDBPFEntry & {
     details?: any
 };
 
-// Plugins
-import * as THUM from "./Plugins/ResourceTypes/THUM/plugin"
-
 /**
  * This is the planned structure for the plugin system.
  * 
@@ -1157,13 +1154,7 @@ class Plugin extends Deserialized {
     /**
      * The THUM Resource Type plugin.
      */
-    static readonly THUM = (()=>{
-        const plugin = new Plugin()
-        plugin.parse = THUM.parse
-        plugin.path = "[internal] Plugins/ResourceTypes/THUM"
-        Object.freeze( plugin )
-        return plugin
-    })()
+    static THUM: Plugin | undefined;
     /**
      * The path to the plugin file.
      */
@@ -1173,13 +1164,13 @@ class Plugin extends Deserialized {
      * 
      * When set, the provided function will automatically be bound to the plugin instance.
      */
-    get parse(): (entry: IDBPFEntry, detailed?: boolean) => IDBPFEntry {
+    get parse(): (entry: IDBPFEntry, detailed?: boolean) => Promise<IDBPFEntry> {
         return this._parse
     }
-    set parse( value: (entry: IDBPFEntry, detailed?: boolean) => IDBPFEntry ){
+    set parse( value: (entry: IDBPFEntry, detailed?: boolean) => Promise<IDBPFEntry> ){
         this._parse = value.bind( this )
     }
-    private _parse: (entry: IDBPFEntry, detailed?: boolean) => IDBPFEntry = (entry: IDBPFEntry) => entry;
+    private _parse: (entry: IDBPFEntry, detailed?: boolean) => Promise<IDBPFEntry> = (entry: IDBPFEntry) => Promise.resolve(entry);
 
     static override from(
         this: any,
@@ -1205,11 +1196,12 @@ class Plugin extends Deserialized {
         super( filepath );
 
         let script: string = filepath || "";
+        script = script.trim();
         if( polyfill.isNode && filepath ){
             script = isAbsolute( filepath ) ? filepath : resolve( filepath ); 
         }
 
-        this.parse = polyfill.require( script ).plugin || this.parse;
+        this.parse = script.length ? polyfill.require( script )?.plugin || this.parse : this.parse;
 
         this.path = script as PathString;
     }
@@ -1365,4 +1357,21 @@ export const dbpf = {
     DBPFEntry
 }
 
-Plugins.push( Plugin.THUM )
+// Plugins
+import * as THUM from "./Plugins/ResourceTypes/THUM/plugin"
+
+function handleInternalPlugin(
+    path: string,
+    internal_plugin: {
+        parse: (entry: IDBPFEntry, detailed?: boolean) => Promise<IDBPFEntry>,
+    }
+){
+    const plugin = new Plugin()
+    plugin.parse = internal_plugin.parse
+    plugin.path = "[internal] " + path
+    Object.freeze( plugin )
+    Plugins.push( plugin )
+    return plugin
+}
+
+Plugin.THUM = handleInternalPlugin( "Plugins/ResourceTypes/THUM", THUM )
