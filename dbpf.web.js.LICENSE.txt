@@ -9,6 +9,10 @@
 
 /*! ./LFUCache */
 
+/*! ./Plugins/ResourceTypes/THUM/plugin */
+
+/*! ./details.json */
+
 /*! ./imports */
 
 /*! ./polyfill */
@@ -30,6 +34,8 @@
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
 /*! process */
+
+/*! tslib */
 
 /*!*******************!*\
   !*** ./src/ sync ***!
@@ -86,3 +92,15 @@
 /*!*****************************************!*\
   !*** ./node_modules/process/browser.js ***!
   \*****************************************/
+
+/*!******************************************!*\
+  !*** ./node_modules/tslib/tslib.es6.mjs ***!
+  \******************************************/
+
+/*!**************************************************!*\
+  !*** ./src/Plugins/ResourceTypes/THUM/plugin.ts ***!
+  \**************************************************/
+
+/*!*****************************************************!*\
+  !*** ./src/Plugins/ResourceTypes/THUM/details.json ***!
+  \*****************************************************/
