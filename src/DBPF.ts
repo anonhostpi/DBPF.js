@@ -1218,7 +1218,7 @@ class Plugin extends Deserialized {
  * @see {@link Plugin}
  * @experimental
  */
-class PluginsList extends Array<Plugin> {
+export class PluginsList extends Array<Plugin> {
     /**
      * The default list of plugins to apply to DBPF files. To control the default list, a {@link Plugins} export is provided.
      * 
