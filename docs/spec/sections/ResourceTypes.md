@@ -368,7 +368,7 @@ types:
         type: u4
 ```
 
-<details>
+</details>
 
 <details>
   <summary> skin_controller.ksy </summary>
@@ -495,7 +495,7 @@ types:
         type: f4
 ```
   
-<details>
+</details>
 
 ## BGEO - Blend Geometry
 | Value      | Type      | Description | Source  |
