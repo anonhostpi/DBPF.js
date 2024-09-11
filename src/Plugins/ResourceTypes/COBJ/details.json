@@ -1,0 +1,17 @@
+{
+  "tag": "COBJ",
+  "label": "Catalog Object",
+  "tables": [
+    {
+      "0x319E4F1D": {
+        "value": "0x319E4F1D",
+        "type": "cobj",
+        "description": "Catalog Object",
+        "sources": [
+          "https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L118"
+        ]
+      }
+    }
+  ],
+  "sub_sections": []
+}

@@ -1,0 +1,22 @@
+{
+  "tag": "GEOM",
+  "label": "Body Geometry",
+  "tables": [
+    {
+      "0x015A1849": {
+        "value": "0x015A1849",
+        "type": "geom",
+        "description": "Body Geometry",
+        "sources": [
+          "https://github.com/gibbed/Gibbed.Sims4/blob/8e4042af4b5f780cb294cf9d8d95120f1f619210/bin/projects/The%20Sims%204/package%20types.xml#L4"
+        ]
+      }
+    }
+  ],
+  "sub_sections": [
+    {
+      "title": "Structure",
+      "content": "\r\n\r\n<details>\r\n  <summary> geom.ksy </summary>\r\n\r\n\r\n\r\n</details>\r\n\r\n<details>\r\n  <summary> vertex_collection.ksy </summary>\r\n\r\n\r\n\r\n<details>\r\n\r\n<details>\r\n  <summary> skin_controller.ksy </summary>\r\n\r\n\r\n  \r\n<details>"
+    }
+  ]
+}

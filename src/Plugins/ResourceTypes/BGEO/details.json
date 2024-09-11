@@ -1,0 +1,19 @@
+{
+  "tag": "BGEO",
+  "label": "Blend Geometry",
+  "tables": [
+    {
+      "0x067CAA11": {
+        "value": "0x067CAA11",
+        "type": "blendgeom",
+        "description": "Blend Geometry",
+        "sources": [
+          "https://github.com/gitter-badger/Sims4Tools/blob/65270049263de70b36f792abbba9ce2f7971de6d/s4pi%20Extras/Extensions/Extensions.txt#L87",
+          "https://github.com/gibbed/Gibbed.Sims4/blob/8e4042af4b5f780cb294cf9d8d95120f1f619210/bin/projects/The%20Sims%204/package%20types.xml#L23",
+          "https://github.com/Llama-Logic/LlamaLogic/blob/3aad55e7a7c76104ea0af5d22744e12c56e0ce46/LlamaLogic.Packages/ResourceType.cs#L160"
+        ]
+      }
+    }
+  ],
+  "sub_sections": []
+}

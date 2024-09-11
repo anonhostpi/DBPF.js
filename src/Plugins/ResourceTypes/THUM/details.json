@@ -4,7 +4,7 @@
   "tables": [
     {
       "0x3C1AF1F2": {
-        "value": "0X3C1AF1F2",
+        "value": "0x3C1AF1F2",
         "type": "png",
         "description": "CAS Part Thumbnail",
         "sources": [
@@ -13,7 +13,7 @@
         ]
       },
       "0x5B282D45": {
-        "value": "0X5B282D45",
+        "value": "0x5B282D45",
         "type": "png",
         "description": "Body Part Thumbnail",
         "sources": [
@@ -22,7 +22,7 @@
         ]
       },
       "0x9C925813": {
-        "value": "0X9C925813",
+        "value": "0x9C925813",
         "type": "png",
         "description": "Sim Preset Thumbnail",
         "sources": [
@@ -31,7 +31,7 @@
         ]
       },
       "0xCD9DE247": {
-        "value": "0XCD9DE247",
+        "value": "0xCD9DE247",
         "type": "png",
         "description": "Sim Featured Outfilt Thumbnail",
         "sources": [
@@ -40,7 +40,7 @@
         ]
       },
       "0x0580A2B4": {
-        "value": "0X0580A2B4",
+        "value": "0x0580A2B4",
         "type": "png",
         "description": "Catalog Object\\* - 32x32",
         "sources": [
@@ -50,7 +50,7 @@
         ]
       },
       "0x0580A2B5": {
-        "value": "0X0580A2B5",
+        "value": "0x0580A2B5",
         "type": "png",
         "description": "Catalog Object\\* - 128x128",
         "sources": [
@@ -60,7 +60,7 @@
         ]
       },
       "0x0580A2B6": {
-        "value": "0X0580A2B6",
+        "value": "0x0580A2B6",
         "type": "png",
         "description": "Catalog Object\\* - 256x256",
         "sources": [
@@ -70,7 +70,7 @@
         ]
       },
       "0x0589DC44": {
-        "value": "0X0589DC44",
+        "value": "0x0589DC44",
         "type": "png",
         "description": "Catalog Wall/Floor Pattern - 32x32",
         "sources": [
@@ -80,7 +80,7 @@
         ]
       },
       "0x0589DC45": {
-        "value": "0X0589DC45",
+        "value": "0x0589DC45",
         "type": "png",
         "description": "Catalog Wall/Floor Pattern - 128x128",
         "sources": [
@@ -90,7 +90,7 @@
         ]
       },
       "0x0589DC46": {
-        "value": "0X0589DC46",
+        "value": "0x0589DC46",
         "type": "png",
         "description": "Catalog Wall/Floor Pattern - 256x256",
         "sources": [
@@ -100,7 +100,7 @@
         ]
       },
       "0x0589DC47": {
-        "value": "0X0589DC47",
+        "value": "0x0589DC47",
         "type": "png",
         "description": "Wallpaper Texture",
         "sources": [
@@ -109,7 +109,7 @@
         ]
       },
       "0x05B17698": {
-        "value": "0X05B17698",
+        "value": "0x05B17698",
         "type": "png",
         "description": "Catalog Fireplace - 32x32",
         "sources": [
@@ -119,7 +119,7 @@
         ]
       },
       "0x05B17699": {
-        "value": "0X05B17699",
+        "value": "0x05B17699",
         "type": "png",
         "description": "Catalog Fireplace - 128x128",
         "sources": [
@@ -129,7 +129,7 @@
         ]
       },
       "0x05B1769A": {
-        "value": "0X05B1769A",
+        "value": "0x05B1769A",
         "type": "png",
         "description": "Catalog Fireplace - 256x256",
         "sources": [
@@ -139,7 +139,7 @@
         ]
       },
       "0x05B1B524": {
-        "value": "0X05B1B524",
+        "value": "0x05B1B524",
         "type": "png",
         "description": "Catalog Terrain Paint Brush - 32x32",
         "sources": [
@@ -149,7 +149,7 @@
         ]
       },
       "0x05B1B525": {
-        "value": "0X05B1B525",
+        "value": "0x05B1B525",
         "type": "png",
         "description": "Catalog Terrain Paint Brush - 128x128",
         "sources": [
@@ -159,7 +159,7 @@
         ]
       },
       "0x05B1B526": {
-        "value": "0X05B1B526",
+        "value": "0x05B1B526",
         "type": "png",
         "description": "Catalog Terrain Paint Brush - 256x256",
         "sources": [
@@ -169,7 +169,7 @@
         ]
       },
       "0x2653E3C8": {
-        "value": "0X2653E3C8",
+        "value": "0x2653E3C8",
         "type": "png",
         "description": "Catalog Fence - 32x32",
         "sources": [
@@ -179,7 +179,7 @@
         ]
       },
       "0x2653E3C9": {
-        "value": "0X2653E3C9",
+        "value": "0x2653E3C9",
         "type": "png",
         "description": "Catalog Fence - 128x128",
         "sources": [
@@ -189,7 +189,7 @@
         ]
       },
       "0x2653E3CA": {
-        "value": "0X2653E3CA",
+        "value": "0x2653E3CA",
         "type": "png",
         "description": "Catalog Fence - 256x256",
         "sources": [
@@ -199,7 +199,7 @@
         ]
       },
       "0x2D4284F0": {
-        "value": "0X2D4284F0",
+        "value": "0x2D4284F0",
         "type": "png",
         "description": "Catalog Railing - 32x32",
         "sources": [
@@ -209,7 +209,7 @@
         ]
       },
       "0x2D4284F1": {
-        "value": "0X2D4284F1",
+        "value": "0x2D4284F1",
         "type": "png",
         "description": "Catalog Railing - 128x128",
         "sources": [
@@ -219,7 +219,7 @@
         ]
       },
       "0x2D4284F2": {
-        "value": "0X2D4284F2",
+        "value": "0x2D4284F2",
         "type": "png",
         "description": "Catalog Railing - 256x256",
         "sources": [
@@ -229,7 +229,7 @@
         ]
       },
       "0x5DE9DBA0": {
-        "value": "0X5DE9DBA0",
+        "value": "0x5DE9DBA0",
         "type": "png",
         "description": "Catalog Stairs - 32x32",
         "sources": [
@@ -239,7 +239,7 @@
         ]
       },
       "0x5DE9DBA1": {
-        "value": "0X5DE9DBA1",
+        "value": "0x5DE9DBA1",
         "type": "png",
         "description": "Catalog Stairs - 128x128",
         "sources": [
@@ -249,7 +249,7 @@
         ]
       },
       "0x5DE9DBA2": {
-        "value": "0X5DE9DBA2",
+        "value": "0x5DE9DBA2",
         "type": "png",
         "description": "Catalog Stairs - 256x256",
         "sources": [
@@ -259,7 +259,7 @@
         ]
       },
       "0x626F60CC": {
-        "value": "0X626F60CC",
+        "value": "0x626F60CC",
         "type": "png",
         "description": "Create-a-Sim Color Preset - 32x32",
         "sources": [
@@ -269,7 +269,7 @@
         ]
       },
       "0x626F60CD": {
-        "value": "0X626F60CD",
+        "value": "0x626F60CD",
         "type": "png",
         "description": "Create-a-Sim Color Preset - 128x128",
         "sources": [
@@ -279,7 +279,7 @@
         ]
       },
       "0x626F60CE": {
-        "value": "0X626F60CE",
+        "value": "0x626F60CE",
         "type": "png",
         "description": "Create-a-Sim Color Preset - 256x256",
         "sources": [
@@ -289,7 +289,7 @@
         ]
       },
       "0xFCEAB65B": {
-        "value": "0XFCEAB65B",
+        "value": "0xFCEAB65B",
         "type": "png",
         "description": "Custom Colourswatch",
         "sources": [
@@ -299,7 +299,7 @@
         ]
       },
       "0xAD366F95": {
-        "value": "0XAD366F95",
+        "value": "0xAD366F95",
         "type": "png",
         "description": "Ingredients/Seed",
         "sources": [
@@ -309,7 +309,7 @@
         ]
       },
       "0xAD366F96": {
-        "value": "0XAD366F96",
+        "value": "0xAD366F96",
         "type": "png",
         "description": "Plate with a Sandwich",
         "sources": [
@@ -318,7 +318,7 @@
         ]
       },
       "0x0D338A3A": {
-        "value": "0X0D338A3A",
+        "value": "0x0D338A3A",
         "type": "jpg",
         "description": "Lot Preview Thumbnail",
         "sources": [
@@ -327,7 +327,7 @@
         ]
       },
       "0x16CCF748": {
-        "value": "0X16CCF748",
+        "value": "0x16CCF748",
         "type": "jpg",
         "description": "Sim Portrait Thumbnail",
         "sources": [
@@ -336,7 +336,7 @@
         ]
       },
       "0x3C2A8647": {
-        "value": "0X3C2A8647",
+        "value": "0x3C2A8647",
         "type": "jpg",
         "description": "Buy/Build Mode Thumbnail",
         "sources": [
@@ -345,7 +345,7 @@
         ]
       },
       "0xA1FF2FC4": {
-        "value": "0XA1FF2FC4",
+        "value": "0xA1FF2FC4",
         "type": "jpg",
         "description": "Worldmap Lot Thumbnail",
         "sources": [
@@ -354,7 +354,7 @@
         ]
       },
       "0xE18CAEE2": {
-        "value": "0XE18CAEE2",
+        "value": "0xE18CAEE2",
         "type": "jpg",
         "description": "Sim Portrait Thumbnail",
         "sources": [
@@ -363,7 +363,7 @@
         ]
       },
       "0xE254AE6E": {
-        "value": "0XE254AE6E",
+        "value": "0xE254AE6E",
         "type": "jpg",
         "description": "Sim Portrait Thumbnail",
         "sources": [
@@ -372,7 +372,7 @@
         ]
       },
       "0x8E71065D": {
-        "value": "0X8E71065D",
+        "value": "0x8E71065D",
         "type": "png",
         "description": "Pet Breed Thumbnail",
         "sources": [
@@ -381,7 +381,7 @@
         ]
       },
       "0xB67673A2": {
-        "value": "0XB67673A2",
+        "value": "0xB67673A2",
         "type": "png",
         "description": "Pet Face Preset Thumbnail",
         "sources": [
@@ -390,7 +390,7 @@
         ]
       },
       "0xAB19BCBA": {
-        "value": "0XAB19BCBA",
+        "value": "0xAB19BCBA",
         "type": "png",
         "description": "Apartment Thumbnail 1",
         "sources": [
@@ -398,7 +398,7 @@
         ]
       },
       "0xBD491726": {
-        "value": "0XBD491726",
+        "value": "0xBD491726",
         "type": "png",
         "description": "Apartment Thumbnail 2",
         "sources": [
@@ -406,7 +406,7 @@
         ]
       },
       "0x0119B36D": {
-        "value": "0X0119B36D",
+        "value": "0x0119B36D",
         "type": "png",
         "description": "",
         "sources": [
@@ -414,7 +414,7 @@
         ]
       },
       "0x2F7D0004": {
-        "value": "0X2F7D0004",
+        "value": "0x2F7D0004",
         "type": "png",
         "description": "Moodlet Background Blends",
         "sources": [
@@ -426,7 +426,7 @@
         ]
       },
       "0x3BD45407": {
-        "value": "0X3BD45407",
+        "value": "0x3BD45407",
         "type": "png",
         "description": "Sim Household Thumbnail",
         "sources": [
@@ -435,7 +435,7 @@
         ]
       },
       "0xD33C281E": {
-        "value": "0XD33C281E",
+        "value": "0xD33C281E",
         "type": "png",
         "description": "Blueprint Image",
         "sources": [
@@ -443,6 +443,17 @@
           "https://github.com/Llama-Logic/LlamaLogic/blob/3aad55e7a7c76104ea0af5d22744e12c56e0ce46/LlamaLogic.Packages/ResourceType.cs#L176"
         ]
       }
+    }
+  ],
+  "sub_sections": [
+    {
+      "title": "Mime Types",
+      "lists": [
+        [
+          "image/png",
+          "image/jpeg"
+        ]
+      ]
     }
   ]
 }
