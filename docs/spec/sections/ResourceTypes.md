@@ -8,6 +8,7 @@ There are quite a few of these, and not all are well known. This document will a
 to list all known resource types and their meanings.
 
 **NOTE:** This document follows a strict structure. Try not to deviate from it. It is used by scripts/resources.js to help generate plugin code.
+- For entries that have a well-known mime type, it is listed in the "Mime Types" section. Otherwise, the structure of the entry will be described in the "Structure" section using [Kaitai Structs](https://kaitai.io/)
 
 ## THUM - Thumbnail
 | Value      | Type | Description | Source  |
@@ -69,6 +70,10 @@ to list all known resource types and their meanings.
 - Catalog Roof Pattern
 - Possibly also Wall/Floor Color
 
+### Mime Types
+- `image/png`
+- `image/jpeg`
+
 ## COBJ - Catalog Object
 - also tagged as `OBJD` (likely short for Object Data) in some tools like Nraas, Gibbed.Sims3, sims3-rs
   - [NRaas \> Extensions.txt#L106]
@@ -88,6 +93,409 @@ to list all known resource types and their meanings.
 | Value      | Type | Description | Source  |
 |------------|------|-------------|---------|
 | 0x015A1849 | geom | Body Geometry | [Gibbed.Sims4 \> 'package types.xml'#L4]
+
+### Structure
+
+<details>
+  <summary> geom.ksy </summary>
+
+```yaml
+meta:
+  id: geom
+  file-extension: geom
+  endian: le
+  imports:
+    - vertex_collection
+    - skin_controller
+seq:
+  - id: header
+    type: header
+  - id: shader
+    type: shader
+  - id: merge_group
+    type: u4
+  - id: sort_order
+    type: u4
+  - id: verteces
+    type: vertex_collection(header.version)
+  - id: bodies
+    type: bodies
+  - id: skin_controller
+    type: skin_controller(header.version)
+  - id: bones
+    type: bones
+    doc: 32-bit hash of the bone name
+  # insert TGI block list here
+types:
+  header:
+    seq:
+      - id: magic
+        contents: 'GEOM'
+      - id: version 
+        type: u4
+        valid:
+          any-of: [0x00000005, 0x0000000C, 0x0000000D, 0x0000000E]
+        doc: "see [Sims4Tools \\> GEOM.cs#L129](https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/MeshChunks/GEOM.cs#L129C67-L129C77)"
+      - id: tgi
+        type: tgi_header
+  tgi_header:
+    seq:
+      - id: offset
+        type: u4
+        doc: Offset to the reference data from this object's offset -- may also be from this sequence entry's offset
+      - id: size
+        type: u4
+
+  shader:
+    seq:
+      - id: id
+        type: u4
+        doc: "also referred to as 'EmbeddedID' in some tools. see [simswiki \\> Sims 3 \\> GEOM](https://simswiki.info/wiki.php?title=Sims_3:0x015A1849)"
+      - id: size
+        type: u4
+        if: id != 0
+      - id: mtnf            # Requires definition
+        type: mtnf 
+        if: id != 0     
+  mtnf:
+    seq:
+      - id: magic
+        contents: 'MTNF' # or MTRL
+      - id: unidentified
+        type: u4
+      - id: data_size
+        type: u4
+      - id: entries
+        type: mtnf_array
+      - id: data
+        size: data_size
+  mtnf_array:
+    seq:
+      - id: count
+        type: u4
+      - id: array
+        type: mtnf_entry
+        repeat: expr
+        repeat-expr: count
+  mtnf_entry:
+    seq:
+      - id: id
+        type: u4
+      - id: type
+        type: u4
+      - id: size
+        type: u4
+      - id: offset
+        type: u4
+
+  bodies:
+    seq:
+      - id: count
+        type: u4
+      - id: array
+        type: body
+        repeat: expr
+        repeat-expr: count
+  body:
+    seq:
+      - id: face_size
+        type: u1
+      - id: vertex_count
+        type: u4
+      - id: faces
+        type: face(face_size)
+        repeat: expr
+        repeat-expr: vertex_count / 3
+  face:
+    params:
+      - id: size
+        type: u1
+    seq: 
+      - id: vertices
+        size: size
+        repeat: expr
+        repeat-expr: 3
+
+  bones:
+    seq:
+      - id: count
+        type: u4
+      - id: array
+        type: u4
+        repeat: expr
+        repeat-expr: count
+```
+
+</details>
+
+<details>
+  <summary> vertex_collection.ksy </summary>
+
+```yaml
+meta:
+  id: vertex_collection
+  endian: le
+params:
+  - id: version
+    type: u4
+
+seq:
+  - id: counts
+    type: counts
+  - id: formats 
+    type: format
+    repeat: expr
+    repeat-expr: counts.formats
+  - id: vertices
+    type: vertex
+    repeat: expr
+    repeat-expr: counts.vertices
+
+types:
+  counts:
+    seq:
+      - id: vertices
+        type: u4
+      - id: formats 
+        type: u4
+  format:
+    seq:
+      - id: type
+        type: u4
+        valid:
+          any-of: [1,2,3,4,5,6,7,10]
+        doc: |
+          1. Position
+          2. Normal
+          3. UV
+          4. Bone Assignment
+          5. Weights
+          6. Tangent Normal
+          7. TagVal
+          10: VertexID
+      - id: subtype 
+        type: u4
+        valid:
+          min: 1
+          max: 4
+      - id: size
+        type: u1
+  vertex:
+    seq:
+      - id: elements
+        type: i_element(_parent.formats[_index].type)
+        repeat: expr
+        repeat-expr: _parent.counts.formats
+  i_element:
+    params:
+      - id: format
+        type: u4
+    seq:
+      - id: content
+        type:
+          switch-on: format
+          cases:
+            1: position
+            2: normal
+            3: uv
+            4: bone_assignment
+            5: weights(_parent._parent.version)
+            6: tangent_normal
+            7: tag_val
+            10: id_element
+  position:
+    seq:
+      - id: x
+        type: f4
+      - id: y
+        type: f4
+      - id: z
+        type: f4
+  normal:
+    seq:
+      - id: x
+        type: f4
+      - id: y
+        type: f4
+      - id: z
+        type: f4
+  uv:
+    seq:
+      - id: u
+        type: f4
+      - id: v
+        type: f4
+  bone_assignment:
+    seq:
+      - id: bone
+        type: u4
+  weights:
+    params:
+      - id: version
+        type: u4
+    seq:
+      - id: high_precision
+        type: f4
+        repeat: expr
+        repeat-expr: 4
+        if: version == 0x00000005
+      - id: low_precision
+        type: u1
+        repeat: expr
+        repeat-expr: 4
+        if: version == 0x0000000C
+  tangent_normal:
+    seq:
+      - id: x
+        type: f4
+      - id: y
+        type: f4
+      - id: z
+        type: f4
+  color:
+    seq:
+      - id: red
+        type: u1
+      - id: green
+        type: u1
+      - id: blue
+        type: u1
+      - id: alpha
+        type: u1
+  id_element:
+    seq:
+      - id: id
+        type: u4
+```
+
+<details>
+
+<details>
+  <summary> skin_controller.ksy </summary>
+
+```yaml
+meta:
+  id: skin_controller
+  endian: le
+params:
+  - id: version
+    type: u4
+seq:
+  - id: index
+    type: u4
+    if: version == 0x00000005
+
+  - id: uv_stitches
+    type: uv_stitches
+    if: version >= 0x0000000C
+  - id: seam_stitches
+    type: seam_stitches
+    if: version >= 0x0000000D
+  - id: slot_ray_intersections
+    type: slot_ray_intersections(version)
+    if: version >= 0x0000000C
+types:
+  uv_stitches:
+    seq:
+      - id: count
+        type: u4
+      - id: array
+        type: uv_stitch
+        repeat: expr
+        repeat-expr: count
+  uv_stitch:
+    seq:
+      - id: index # don't know what this does
+        type: u4
+      - id: count
+        type: u4
+      - id: array
+        type: vector2
+        repeat: expr
+        repeat-expr: count
+  seam_stitches:
+    seq:
+      - id: count
+        type: u4
+      - id: array
+        type: seam_stitch
+        repeat: expr
+        repeat-expr: count
+  seam_stitch:
+    seq:
+      - id: index
+        type: u4
+      - id: vertex_id
+        type: u2
+  
+  slot_ray_intersections:
+    params:
+      - id: version
+        type: u4
+    seq:
+      - id: count
+        type: u4
+      - id: array
+        type: slot_ray_intersection(version)
+        repeat: expr
+        repeat-expr: count
+  slot_ray_intersection:
+    params:
+      - id: version
+        type: u4
+    seq:
+      - id: slot_index
+        type: u4
+      - id: indeces
+        type: u2
+        repeat: expr
+        repeat-expr: 3
+      - id: coords
+        type: f4
+        repeat: expr
+        repeat-expr: 2
+      - id: distance
+        type: f4
+      - id: offset_from_intersection_os
+        type: vector3
+      - id: slot_average_pos_os
+        type: vector3
+      - id: transform_to_ls
+        type: vector4
+
+      - id: pivot_bone_hash
+        type: u4
+        if: version >= 0x0000000E
+      - id: pivot_bone_index
+        size: 1
+        if: version < 0x0000000E
+  vector2:
+    seq:
+      - id: x
+        type: f4
+      - id: y
+        type: f4
+  vector3:
+    seq:
+      - id: x
+        type: f4
+      - id: y
+        type: f4
+      - id: z
+        type: f4
+  vector4:
+    seq:
+      - id: x
+        type: f4
+      - id: y
+        type: f4
+      - id: z
+        type: f4
+      - id: w
+        type: f4
+```
+  
+<details>
 
 ## BGEO - Blend Geometry
 | Value      | Type      | Description | Source  |
