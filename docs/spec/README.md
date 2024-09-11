@@ -36,8 +36,13 @@ To preserve this information and keep the community alive, this information is b
         - [DBPF v3.0](DBPF.md#dbpf-v30)
   - [Resource Types](sections/ResourceTypes.md)
     - [THUM - Thumbnail](sections/ResourceTypes.md#thum---thumbnail)
+      - Mime Types
     - [COBJ - Catalog Object](sections/ResourceTypes.md#cobj---catalog-object)
     - [GEOM - Body Geometry](sections/ResourceTypes.md#geom---body-geometry)
+      - Structure
+        - geom.ksy
+        - vertex_collection.ksy
+        - skin_controller.ksy
     - [BGEO - Blend Geometry](sections/ResourceTypes.md#bgeo---blend-geometry)
     
 ## Background and Acknowledgements
