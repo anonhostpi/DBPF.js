@@ -8,7 +8,16 @@ sidebar_position: 1
 The purpose of these documents is to provide an updated, comprehensive, and detailed description of the DBPF file format.
 This is a community effort. The DBPF file format is a file format used in various games, including The Sims Series, SimCity, and Spore.
 
+Currently, it is biased towards The Sims 4, for two reasons:
+- Sims4Tools (s4pe, s4pi, etc) appear to provide the most compehensive and up-to-date parsers for the DBPF format.
+- anonhostpi primarily develops tools for The Sims 4.
+
 Additionally, without official feedback from EA or Maxis, a lot of this information is speculative and based on prior and ongoing reverse-engineering efforts.
+
+Previous efforts to reverse-engineer the DBPF file format were heavily based out of the EA Maxis forums. However, EA has removed a lot (if not all) of this content.
+To preserve this information and keep the community alive, this information is being compiled here on GitHub.
+- see: [EA Maxis Forums Move](https://forums.ea.com/discussions/the-sims-franchise-discussion-en/nominations-thread---content-to-be-considered-for-migration/1339885?after=MjQuOHwyLjF8b3wxMHwxNDowLDM5OjF8MzA)
+- _particularly, a lot of this information is just gone_: https://modthesims.info/wiki.php?title=Tutorials:TS4_General_Modding
 
 ## Table of Contents:
 - [Pre: Background and Acknowledgements](#background-and-acknowledgements)
@@ -31,10 +40,9 @@ Additionally, without official feedback from EA or Maxis, a lot of this informat
     - [GEOM - Body Geometry](sections/ResourceTypes.md#geom---body-geometry)
     - [BGEO - Blend Geometry](sections/ResourceTypes.md#bgeo---blend-geometry)
     
-
 ## Background and Acknowledgements
 
-Currently, the community spec is biased towards The Sims 4, but it is compiled from various community resources across different games, including:
+While the community spec is biased towards The Sims 4, but it is compiled from various community resources across different games, including:
 - Wikis:
   - [SimCity 4 Devotion (SimCity 4 Encyclopaedia)](https://wiki.sc4devotion.com/index.php?title=DBPF)
   - [ModTheSims Wiki](https://modthesims.info/wiki.php?title=DBPF)
