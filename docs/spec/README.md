@@ -42,7 +42,7 @@ To preserve this information and keep the community alive, this information is b
     
 ## Background and Acknowledgements
 
-While the community spec is biased towards The Sims 4, but it is compiled from various community resources across different games, including:
+While the community spec is biased towards The Sims 4, it is compiled from various community resources across different games, including:
 - Wikis:
   - [SimCity 4 Devotion (SimCity 4 Encyclopaedia)](https://wiki.sc4devotion.com/index.php?title=DBPF)
   - [ModTheSims Wiki](https://modthesims.info/wiki.php?title=DBPF)
