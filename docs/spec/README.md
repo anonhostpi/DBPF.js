@@ -100,6 +100,8 @@ While the community spec is biased towards The Sims 4, but it is compiled from v
   - Java:
     - jDBPFX:
       - Github: [memo33/jDBPFX](https://github.com/memo33/jDBPFX)
+    - SporeModder-FX:
+      - Github: [emd4600/SporeModder-FX](https://github.com/emd4600/SporeModder-FX)
   
   - Rust:
     - dbpf:
@@ -109,7 +111,7 @@ While the community spec is biased towards The Sims 4, but it is compiled from v
   
   - TypeScript:
     - SporeTools:
-      - Github: [SporeCommunity/SporeTools](https://github.com/SporeCommunity/SporeTools)
+      - Github: [Spore-Community/SporeTools](https://github.com/Spore-Community/SporeTools)
     - sims4toolkit:
       - Github: [sims4toolkit/models](https://github.com/sims4toolkit/models)
   

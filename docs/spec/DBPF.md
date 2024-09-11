@@ -14,17 +14,20 @@ The DBPF file format has undergone a few revisions over the last few decades. Th
 - DBPF index version: This is the version of the index table format.
 
 ### Known Versions
-| Game            | DBPF Archive Version | DBPF Index Version |
-|-----------------|----------------------|--------------------|
-| The Sims Online | 1.0                  | 7.0                |
-| SimCity 4       | 1.0                  | 7.0                |
-| The Sims 2      | 1.0, 1.1             | 7.1                |
-| MySims          | 2.0                  | n/a                |
-| Spore           | 2.0                  | n/a                |
-| The Sims 3      | 2.0                  | n/a                |
-| SimCity 2013    | 3.0                  | n/a                |
-| The Sims 4      | 2.0                  | n/a                |
+| Game                        | DBPF Archive Version | DBPF Index Version |
+|-----------------------------|----------------------|--------------------|
+| The Sims Online             | 1.0                  | 7.0                |
+| SimCity 4                   | 1.0                  | 7.0                |
+| The Sims 2                  | 1.0, 1.1             | 7.1                |
+| MySims                      | 2.0                  | n/a                |
+| The Sims 3                  | 2.0                  | n/a                |
+| Spore Creature Creator Demo | 2.0                  | n/a                |
+| Spore                       | 3.0                  | n/a                |
+| Darkspore                   | 3.0                  | n/a                |
+| SimCity 2013                | 3.0                  | n/a                |
+| The Sims 4                  | 2.0                  | n/a                |
 - see: http://wiki.niotso.org/DBPF
+- see: https://github.com/anonhostpi/DBPF.js/issues/1
 
 ## Structure
 ### Header
