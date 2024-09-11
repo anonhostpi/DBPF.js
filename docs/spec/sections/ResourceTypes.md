@@ -95,6 +95,8 @@ to list all known resource types and their meanings.
 | 0x015A1849 | geom | Body Geometry | [Gibbed.Sims4 \> 'package types.xml'#L4]
 
 ### Structure
+Most of the following is based on the GEOM parser for S4PE:
+- see [Sims4Tools \> GEOM.cs]
 
 <details>
   <summary> geom.ksy </summary>
@@ -135,7 +137,6 @@ types:
         type: u4
         valid:
           any-of: [0x00000005, 0x0000000C, 0x0000000D, 0x0000000E]
-        doc: "see [Sims4Tools \\> GEOM.cs#L129](https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/MeshChunks/GEOM.cs#L129C67-L129C77)"
       - id: tgi
         type: tgi_header
   tgi_header:
@@ -547,6 +548,7 @@ types:
 [Sims4Tools (Development) \> Extensions.txt#L172]:https://github.com/s4ptacle/Sims4Tools/blob/b5db166dd4b935abc9f47c4c998fce98c61bd4de/s4pi%20Extras/Extensions/Extensions.txt#L172
 [Sims4Tools (Development) \> Extensions.txt#L210]:https://github.com/s4ptacle/Sims4Tools/blob/b5db166dd4b935abc9f47c4c998fce98c61bd4de/s4pi%20Extras/Extensions/Extensions.txt#L210
 [Sims4Tools (Development) \> Extensions.txt#L238]:https://github.com/s4ptacle/Sims4Tools/blob/b5db166dd4b935abc9f47c4c998fce98c61bd4de/s4pi%20Extras/Extensions/Extensions.txt#L238
+[Sims4Tools (Development) \> GEOM.cs]:https://github.com/anonhostpi/Sims4Tools/blob/b5db166dd4b935abc9f47c4c998fce98c61bd4de/s4pi%20Wrappers/MeshChunks/GEOM.cs
 
 [Sims3Tools \> THUM.cs#L42]:https://github.com/anonhostpi/Sims3ToolsClone/blob/fbe86c05d32ba2a7fcc027ff145ad29b2c50e026/s3oc/THUM.cs#L42
 [Sims3Tools \> THUM.cs#L43]:https://github.com/anonhostpi/Sims3ToolsClone/blob/fbe86c05d32ba2a7fcc027ff145ad29b2c50e026/s3oc/THUM.cs#L43
