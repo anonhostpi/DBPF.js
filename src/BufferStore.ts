@@ -6,25 +6,17 @@
 
 'use strict';
 
+import * as fs from "fs";
 import {
-    polyfill
-} from "./polyfill";
+    EngineDetails,
+    BufferExtras
+} from "./boilerplate"
 
-import {
-    fs,
-} from "./polyfill.fs";
+export type BufferOffset = BufferExtras.BufferOffset;
+export type BufferLength = BufferExtras.BufferLength;
 
-import {
-    Buffer,
-    BufferOffset,
-    BufferLength
-} from "./polyfill.Buffer";
-
-export {
-    Buffer,
-    BufferOffset,
-    BufferLength
-} from "./polyfill.Buffer";
+import { Buffer } from "buffer";
+export { Buffer } from "buffer";
 
 import {
     LFUCache
@@ -929,7 +921,7 @@ class BufferReader {
  * The buffer store for the current environment.
  * @see {@link NodeBufferStore} and {@link BrowserBufferStore}
  */
-export const BufferStore = polyfill.isNode ? NodeBufferStore : BrowserBufferStore;
+export const BufferStore = EngineDetails.supports.node ? NodeBufferStore : BrowserBufferStore;
 /**
  * The type definition for the exported {@link BufferStore}.
  */
