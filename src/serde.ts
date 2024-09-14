@@ -4,42 +4,21 @@
  * A TypeScript library for serializing and deserializing JSON files in a Rust-like manner.
  */
 
-/**
- * @ignore
- */
-import { polyfill, AggregateError } from './polyfill';
+import {
+    Polyfills,
+    EngineDetails
+} from './boilerplate';
 
-let polyfills: any[] = [
-    {
-        isAbsolute: (path: string) => /^[a-zA-Z]:[\\/]/.test(path),
-        resolve: (...paths: string[]) => {
-            paths = paths.map( path => path.replace(/\\/g, '/') ).filter( path => path.length );
-            return paths.join('/');
-        },
-        existsSync: () => true, 
-        writeFileSync: () => {}, // no-op
-        cwd: () => ""
-    }
-]
+const cwd = (globalThis as any).process?.cwd || (() => "");
+import {
+    isAbsolute as isAbsolutePath,
+    resolve as resolvePath,
+} from 'path';
 
-if( polyfill.isNode )
-    polyfills.push("node:path","node:fs")
-
-if( globalThis.process )
-    polyfills.push( globalThis.process as any );
-
-const {
-    // path
-    isAbsolute: isAbsolutePath,
-    resolve: resolvePath,
-    // fs
-    existsSync: fs_exists,
-    writeFileSync: fs_write,
-    // process
-    cwd
-} = polyfill(
-    ...polyfills
-) as typeof import("path") & typeof import("fs") & { cwd: () => string };
+import {
+    existsSync as fs_exists,
+    writeFileSync as fs_write,
+} from 'fs';
 
 /**
  * A primitive JSON type.
@@ -71,7 +50,7 @@ function sanitize_path(
     if( !cleaned.length )
         return "";
 
-    if( !polyfill.check() ){
+    if( EngineDetails.supports.require ){
         console.warn("Node.js functionality is not available");
         return cleaned;
     }
@@ -89,7 +68,7 @@ function sanitize_path(
 
         return cleaned;
     } catch( error ) {
-        throw new AggregateError(
+        throw new Polyfills.AggregateError(
             [error],
             `${constructor_name}-Deserializer: Error sanitizing path: ${cleaned}`
         );
@@ -154,7 +133,7 @@ export class Deserialized {
         }
 
         try {
-            const deserialized: any = polyfill.require( this.filepath );
+            const deserialized: any = require( this.filepath );
             Deserialized.from.call( this, deserialized );
             return true;
         } catch( err ){
