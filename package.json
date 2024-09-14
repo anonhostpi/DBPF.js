@@ -34,7 +34,6 @@
     "scripts": {
         "clean":                      "rimraf ./dist && mkdirp ./dist",
 
-        "make:imports":               "node scripts/imports.js",
         "make:node":                  "tsc --project ./tsconfig.esm.json",
         "premake:web":                "tsc --project ./tsconfig.polyfills.json",
         "make:web":                   "webpack --config webpack.config.js",
@@ -51,11 +50,8 @@
         "build:test":                 "npm run make:web && npm run make:test && copyfiles -f ./dist/dbpf.web.js ./test/serve && copyfiles -f ./test/index.html ./test/serve",
         "build:node":                 "npm run make:node",
 
-        "prebuild":                   "npm run clean && npm run make:imports",
-
-        "prebuild:web":               "npm run make:imports",
+        "prebuild":                   "npm run clean",
         "prebuild:test":              "npm run build:web",
-        "prebuild:node":              "npm run make:imports",
 
         "test":                       "npm run build:test && npm run test:serve",
         "test:serve":                 "cd ./test/serve && live-server --port=8080 --open=./index.html",
