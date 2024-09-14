@@ -3,8 +3,10 @@
     "plugin": ["typedoc-plugin-markdown"],
     "out": "./wiki",
     "entryPoints": [
+        "./src/boilerplate.ts",
         "./src/BufferStore.ts",
         "./src/DBPF.ts",
+        "./src/EventedPromise.ts",
         "./src/LFUCache.ts",
         "./src/polyfill.Buffer.ts",
         "./src/polyfill.events.ts",
