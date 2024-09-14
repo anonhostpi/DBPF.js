@@ -22,8 +22,11 @@ import {
 
 /**
  * A primitive JSON type.
+ * 
+ * @remarks
+ * Note that ECMAScript's JSON does not support `bigint` serialization.
  */
-export type JSONPrimitive = string | number | boolean | undefined | null; // bigint is not supported by ECMAScript's JSON
+export type JSONPrimitive = string | number | boolean | undefined | null;
 
 function validateEnumerableTemplate<T>(obj: any, typeTemplate: T): boolean {
     for (const key in typeTemplate) {
