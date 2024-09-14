@@ -1,0 +1,1 @@
+export const Worker = (globalThis as any).Worker

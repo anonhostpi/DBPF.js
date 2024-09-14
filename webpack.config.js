@@ -13,6 +13,12 @@ module.exports = {
         alias: {
         '@': path.resolve(__dirname, 'src'),  // Example alias for imports
         },
+        fallback: {
+            "fs": path.resolve(__dirname, "./src/polyfills/js/fs.js"),
+            "path": path.resolve(__dirname, "./src/polyfills/js/path.js"),
+            "buffer": require.resolve("buffer/"),
+            "worker_threads": path.resolve(__dirname, "./src/polyfills/js/worker_threads.js"),
+        }
     },
     module: {
         rules: [
