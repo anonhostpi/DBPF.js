@@ -8,11 +8,9 @@
         "./src/DBPF.ts",
         "./src/EventedPromise.ts",
         "./src/LFUCache.ts",
-        "./src/polyfill.Buffer.ts",
-        "./src/polyfill.events.ts",
-        "./src/polyfill.fs.ts",
-        "./src/polyfill.ts",
         "./src/serde.ts",
+        "./src/thread.ts",
+        "./src/Threading.ts",
         "./src/plugins/**/*.ts"
     ],
     "projectDocuments": ["./docs/**/*.md"],

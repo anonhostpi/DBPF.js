@@ -56,6 +56,8 @@ import {
     isAbsolute
 } from "path"
 
+import * as Threading from "./Threading"
+
 const {
     assign: obj_assign,
     getOwnPropertyDescriptor: obj_descriptor,
