@@ -224,7 +224,7 @@ sections = sections.map( section => {
     return out
 })
 
-const parent = "src/Plugins/ResourceTypes"
+const parent = "src/plugins/ResourceTypes"
 const codeblocks = {}
 sections.forEach( section => {
     const map = codeblocks[section.tag] = {}
