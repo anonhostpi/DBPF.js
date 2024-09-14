@@ -8,20 +8,20 @@
  */
 
 import {
-    polyfill,
-    deepFreeze,
-    AggregateError
-} from "./polyfill";
+    Operations,
+    EngineDetails,
+    Polyfills,
+} from "./boilerplate";
+
+import * as fs from "fs";
 
 import {
-    fs
-} from "./polyfill.fs";
-
-import {
-    EventEmitter,
-    EventEmitMethod,
     EventedPromise
-} from "./polyfill.events"
+} from "./EventedPromise"
+
+import {
+    EventEmitter
+} from "eventemitter3"
 
 import {
     NodeBufferStore,
@@ -51,22 +51,10 @@ import {
     JSONPrimitive
 } from "./serde"
 
-let polyfills: any[] = [
-    {
-        resolve: (...paths: string[]) => paths.join("/"),
-        isAbsolute: (path: string) => /^[a-zA-Z]:[\\/]/.test(path)
-    }
-]
-
-if( polyfill.isNode )
-    polyfills.push("node:path")
-
-let {
+import {
     resolve,
     isAbsolute
-} = polyfill(
-    ...polyfills
-) as typeof import("path")
+} from "path"
 
 const {
     assign: obj_assign,
@@ -273,7 +261,7 @@ export class DBPF extends EventEmitter {
      */
     private constructor( file: File | Blob | PathString ){
         super()
-        if( !polyfill.isNode && typeof file === "string" )
+        if( !EngineDetails.supports.node && typeof file === "string" )
             throw new TypeError("Cannot use string path in browser environment")
 
         if( typeof file === "string" ){
@@ -364,7 +352,7 @@ export class DBPF extends EventEmitter {
                     trash: _header_trash
                 }
 
-                deepFreeze( this._header )
+                Operations.deepFreeze( this._header )
 
                 this._table = await DBPFIndexTable.create( this )
 
@@ -643,15 +631,16 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
             this._emitter.off( event, listener )
             return this
         }
-        this.emit = (event, ...args) => {
+        this.emit = (event, ...args: any ) => {
+            let _event = event as string
             let parent_emit: boolean;
-            if( event === "error" ){
-                args = new AggregateError( args, "DBPFIndexTable error" )
+            if( _event === "error" ){
+                args = new Polyfills.AggregateError( args, "DBPFIndexTable error" )
                 parent_emit = DBPF.emit( "error", args )
             } else {
-                parent_emit = DBPF.emit( `table_${event}`, ...args )
+                parent_emit = DBPF.emit( `table_${_event}`, ...args )
             }
-            const self_emit = this._emitter.emit( event, ...args )
+            const self_emit = this._emitter.emit( _event, ...args )
             return parent_emit && self_emit
         }
         this.once = (event, listener) => {
@@ -977,10 +966,17 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
     }
 
     private _emitter: EventEmitter;
-    on: (event: string, listener: EventListener) => this
-    off: (event: string, listener: EventListener) => this;
-    emit: EventEmitMethod;
-    once: (event: string, listener: EventListener) => this;
+    on: <T extends string | symbol>(event: T, fn: (...args: any[]) => void, context?: any) => this
+    off: <T extends string | symbol>(event: T, fn?: ((...args: any[]) => void) | undefined, context?: any, once?: boolean | undefined) => this;
+    emit: <T extends string | symbol>(event: T, ...args: any[]) => boolean;
+    once: <T extends string | symbol>(event: T, fn: (...args: any[]) => void, context?: any) => this;
+
+    get addListener(){
+        return this.on
+    }
+    get removeListener(){
+        return this.off
+    }
 
     /**
      * The event name for when the DBPF Index Table is created properly.
@@ -1001,6 +997,23 @@ export class DBPFIndexTable extends Map<number,Promise<DBPFEntry>> implements Ev
      * @event
      */
     static readonly ON_ERROR = "error"
+
+    get eventNames(){
+        return this._emitter.eventNames
+    }
+
+    get listeners(){
+        return this._emitter.listeners
+    }
+
+    get listenerCount(){
+        return this._emitter.listenerCount
+    }
+
+    removeAllListeners(event?: string | symbol | undefined): this {
+        this._emitter.removeAllListeners( event )
+        return this
+    }
 }
 
 /**
@@ -1042,7 +1055,7 @@ export class DBPFEntry extends EventEmitter {
         this.offset = offset;
         this.size = size;
         this.reader = DBPF.read( offset, size.file.reduced )
-        deepFreeze( this.size );
+        Operations.deepFreeze( this.size );
     }
 
     /**
@@ -1196,11 +1209,11 @@ class Plugin extends Deserialized {
 
         let script: string = filepath || "";
         script = script.trim();
-        if( polyfill.isNode && filepath ){
+        if( EngineDetails.supports.node && filepath ){
             script = isAbsolute( filepath ) ? filepath : resolve( filepath ); 
         }
 
-        this.parse = script.length ? polyfill.require( script )?.plugin || this.parse : this.parse;
+        this.parse = script.length ? require( script )?.plugin || this.parse : this.parse;
 
         this.path = script as PathString;
     }
@@ -1357,7 +1370,7 @@ export const dbpf = {
 }
 
 // Plugins
-import * as THUM from "./Plugins/ResourceTypes/THUM/plugin"
+import * as THUM from "./plugins/ResourceTypes/THUM/plugin"
 
 function handleInternalPlugin(
     path: string,
