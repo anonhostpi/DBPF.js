@@ -17,9 +17,32 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts$/,  // Apply this rule to TypeScript files
-                use: 'ts-loader',  // Use ts-loader to transpile TypeScript
-                exclude: /node_modules/,  // Exclude node_modules from transpilation
+                test: /src[\/\\].+.ts$/, // Source Files
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            configFile: 'tsconfig.esm.json',  // Use this tsconfig file
+                        }
+                    }
+                ], // Use ts-loader to transpile TypeScript
+                exclude: [
+                    /node_modules/ // Exclude node_modules from transpilation
+                ],
+            },
+            {
+                test: /test[\/\\].+.ts$/, // Test Files
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            configFile: 'tsconfig.test.json',  // Use this tsconfig file
+                        }
+                    }
+                ], // Use ts-loader to transpile TypeScript
+                exclude: [
+                    /node_modules/ // Exclude node_modules from transpilation
+                ],
             },
             {
                 test: /\.json$/,  // Handle JSON imports

@@ -7,6 +7,7 @@ dist
 dbpf-*.tgz
 #/src/imports.ts
 /scripts/manifests
+/src/polyfills/js
 
 # docs
 /pub/build

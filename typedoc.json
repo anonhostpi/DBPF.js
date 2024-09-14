@@ -18,6 +18,7 @@
     "readme": "none",
     "includeVersion": true,
     "excludePrivate": false,
-    "entryPointStrategy": "expand"
+    "entryPointStrategy": "expand",
+    "tsconfig": "./tsconfig.esm.json"
 }
   

@@ -35,7 +35,8 @@
         "clean":                      "rimraf ./dist && mkdirp ./dist",
 
         "make:imports":               "node scripts/imports.js",
-        "make:node":                  "tsc --project ./tsconfig.json",
+        "make:node":                  "tsc --project ./tsconfig.esm.json",
+        "premake:web":                "tsc --project ./tsconfig.polyfills.json",
         "make:web":                   "webpack --config webpack.config.js",
         "make:test":                  "webpack --config webpack.test.config.js",
         "make:docs":                  "typedoc",
