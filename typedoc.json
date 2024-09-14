@@ -13,7 +13,7 @@
         "./src/polyfill.fs.ts",
         "./src/polyfill.ts",
         "./src/serde.ts",
-        "./src/Plugins/**/*.ts"
+        "./src/plugins/**/*.ts"
     ],
     "projectDocuments": ["./docs/**/*.md"],
     "alwaysCreateEntryPointModule": false,
