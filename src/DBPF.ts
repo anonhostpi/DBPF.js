@@ -7,9 +7,6 @@
  * The community spec for DBPF can be found at [docs/spec/README.md](docs/spec/README.md).
  */
 
-/**
- * @ignore
- */
 import {
     polyfill,
     deepFreeze,
