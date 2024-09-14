@@ -107,6 +107,8 @@ While the community spec is biased towards The Sims 4, it is compiled from vario
       - Github: [memo33/jDBPFX](https://github.com/memo33/jDBPFX)
     - SporeModder-FX:
       - Github: [emd4600/SporeModder-FX](https://github.com/emd4600/SporeModder-FX)
+    - SimReader:
+      - Github: [Redned235/SimReader](https://github.com/Redned235/SimReader)
   
   - Rust:
     - dbpf:
@@ -120,10 +122,26 @@ While the community spec is biased towards The Sims 4, it is compiled from vario
     - sims4toolkit:
       - Github: [sims4toolkit/models](https://github.com/sims4toolkit/models)
   
+  - JavaScript:
+    - sc4:
+      - Github: [sebamarynissen/sc4](https://github.com/sebamarynissen/sc4)
+  
   - C:
     - dbpf_reader:
       - Github: [ytaa/dbpf_reader](https://github.com/ytaa/dbpf_reader)
   
+  - D:
+    - dbpf-d:
+      - Github: [chances/dbpf-d](https://github.com/chances/dbpf-d)
+  
   - Tcl:
     - HexFiend-templates-sims
       - Github: [sw-uci/HexFiend-templates-Sims](https://github.com/sw-uci/HexFiend-templates-Sims)
+
+  - Scala:
+    - scdbpf:
+      - Github: [memo33/scdbpf](https://github.com/memo33/scdbpf)
+ 
+  - GoLang:
+    - godbpf:
+      - Github: [marcboudreau/godbpf](https://github.com/marcboudreau/godbpf)
