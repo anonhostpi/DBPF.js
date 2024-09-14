@@ -34,7 +34,6 @@ types:
         type: u4
         valid:
           any-of: [0x00000005, 0x0000000C, 0x0000000D, 0x0000000E]
-        doc: "see [Sims4Tools \\> GEOM.cs#L129](https://github.com/s4ptacle/Sims4Tools/blob/fff19365a12711879bad26481a393a6fbc62c465/s4pi%20Wrappers/MeshChunks/GEOM.cs#L129C67-L129C77)"
       - id: tgi
         type: tgi_header
   tgi_header:
@@ -53,7 +52,7 @@ types:
       - id: size
         type: u4
         if: id != 0
-      - id: mtnf            # Requires definition
+      - id: mtnf
         type: mtnf 
         if: id != 0     
   mtnf:

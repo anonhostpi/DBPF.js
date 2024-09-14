@@ -16,7 +16,11 @@
   "sub_sections": [
     {
       "title": "Structure",
-      "content": "\r\n\r\n<details>\r\n  <summary> geom.ksy </summary>\r\n\r\n\r\n\r\n</details>\r\n\r\n<details>\r\n  <summary> vertex_collection.ksy </summary>\r\n\r\n\r\n\r\n<details>\r\n\r\n<details>\r\n  <summary> skin_controller.ksy </summary>\r\n\r\n\r\n  \r\n<details>"
+      "lists": [
+        [
+          "see [Sims4Tools \\> GEOM.cs]"
+        ]
+      ]
     }
   ]
 }

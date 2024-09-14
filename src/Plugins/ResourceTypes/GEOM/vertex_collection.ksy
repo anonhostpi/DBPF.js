@@ -38,7 +38,7 @@ types:
           4. Bone Assignment
           5. Weights
           6. Tangent Normal
-          7. Color
+          7. TagVal
           10: VertexID
       - id: subtype 
         type: u4
@@ -68,7 +68,7 @@ types:
             4: bone_assignment
             5: weights(_parent._parent.version)
             6: tangent_normal
-            7: color
+            7: tag_val
             10: id_element
   position:
     seq:
@@ -132,4 +132,4 @@ types:
   id_element:
     seq:
       - id: id
-        type: u4
+        type: u4
