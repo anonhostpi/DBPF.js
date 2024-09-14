@@ -155,7 +155,7 @@ types:
       - id: size
         type: u4
         if: id != 0
-      - id: mtnf            # Requires definition
+      - id: mtnf
         type: mtnf 
         if: id != 0     
   mtnf:
