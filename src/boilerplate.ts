@@ -56,45 +56,6 @@ class AggregateError extends Error {
     override name = 'AggregateError';
 }
 
-type EventListener = (...args: any[]) => void;
-/**
- * @see {@link https://nodejs.org/api/events.html#emitteremiteventname-args}
- */
-type EventEmitMethod = (event: string, ...args: any[]) => boolean;
-
-class _EventEmitter {
-    private events?: { [key: string]: EventListener[] } = {}; // set as optional for the EventEmitter interface type
-
-    on(event: string, listener: EventListener): this {
-        if (!this.events![event]) {
-            this.events![event] = [];
-        }
-        this.events![event].push(listener);
-        return this;
-    }
-
-    off(event: string, listener: EventListener): this {
-        if (!this.events![event]) return this;
-        this.events![event] = this.events![event].filter(l => l !== listener);
-        return this;
-    }
-
-    readonly emit: EventEmitMethod = (event: string, ...args: any[]) => {
-        if (!this.events![event]) return false;
-        this.events![event].forEach(listener => listener.apply(this, args));
-        return true;
-    }
-
-    once(event: string, listener: EventListener): this {
-        const onceListener: EventListener = (...args: any[]) => {
-            this.off(event, onceListener);
-            listener.apply(this, args);
-        };
-        this.on(event, onceListener);
-        return this;
-    }
-}
-
 export class Polyfills {
     static AggregateError = (globalThis as any).AggregateError as typeof AggregateError || AggregateError;
 }
