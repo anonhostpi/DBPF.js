@@ -392,11 +392,18 @@ export class NodeBufferStore extends BaseBufferStore {
             lock( file, { retries: 3, retryInterval: 1000 } ).catch( console.warn ); // only warn if lock fails - also note that this is done async
         this.on( BaseBufferStore.ON_RECYCLABLE, () =>{
             unlock( file ).catch( console.warn ); // only warn if unlock fails - also note that this is done async
+        })
+    }
+    private get _path(): PathString | undefined {
+        return this.__path;
+    }
     /**
      * The setter for the file property.
      * @see {@link BaseBufferStore._file}
      */
     protected set _file( file: File | Blob | PathString ){
+        if( file instanceof Blob ){
+            console.warn( "File locks are not supported for Blobs or Files" );
             this._blob = file;
         } else {
             if( typeof file !== "string" )
