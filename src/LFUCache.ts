@@ -4,6 +4,10 @@
  * A simple implementation of a Least Frequently Used Cache with TTL
  */
 
+import {
+    EventEmitter
+} from "eventemitter3"
+
 /**
  * The entry as stored in the cache
  */
@@ -31,7 +35,7 @@ type CacheEntry<IndexType, CachedValueType> = {
  * 
  * A simple implementation of a Least Frequently Used Cache with TTL
  */
-export class LFUCache<IndexType, CachedValueType>{
+export class LFUCache<IndexType, CachedValueType> extends EventEmitter {
     /**
      * @param capacity The amount of entries the cache can store
      * @param ttl The time-to-live of the cache entries
@@ -40,6 +44,7 @@ export class LFUCache<IndexType, CachedValueType>{
         capacity: number,
         ttl: number
     ) {
+        super();
         this._capacity = capacity;
         this._ttl = ttl;
         this._cache = new Map();
@@ -85,12 +90,17 @@ export class LFUCache<IndexType, CachedValueType>{
 
         // remove the requested entry if provided, otherwise remove the least recently used
         const index = entry?.index || candidates.keys().next().value;
+
+        this.emit( LFUCache.ON_EVICT, index, frequency );
+
         // untrack from this freq
         candidates.delete( index! );
         // untrack the entire frequency if no candidates left
         if( !candidates.size ) this._freq.delete( frequency );
         // update min frequency
         if( this._minFreq === frequency ) this._minFreq = this._freq.size ? this._freq.keys().next().value! : 0;
+
+        if( this._freq.size === 0 ) this.emit( LFUCache.ON_EMPTY );
 
         // remove from cache
         this._cache.delete( index! );
@@ -160,6 +170,8 @@ export class LFUCache<IndexType, CachedValueType>{
             return value;
         }
 
+        this.emit( LFUCache.ON_ADD, index, value );
+
         if( this._cache.size >= this._capacity ) this._evict();
 
         const new_entry: CacheEntry<IndexType, CachedValueType> = {
@@ -178,4 +190,20 @@ export class LFUCache<IndexType, CachedValueType>{
 
         return value;
     }
+
+    /**
+     * The event name for when the LFU cache evicts an entry. This is done when the cache is full or when an entry's TTL expires.
+     * @event
+     */
+    static readonly ON_EVICT = "evict"
+    /**
+     * The event name for when the LFU cache is empty.
+     * @event
+     */
+    static readonly ON_EMPTY = "empty"
+    /**
+     * The event name for when an entry is added to the LFU cache.
+     * @event
+     */
+    static readonly ON_ADD = "add"
 }
