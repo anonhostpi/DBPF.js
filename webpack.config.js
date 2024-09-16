@@ -2,6 +2,9 @@ const path = require('path');
 
 module.exports = {
     entry: './src/DBPF.ts',  // Entry point for your application
+    externals: {
+        "proper-lockfile": "lockfile"
+    },
     output: {
         filename: 'dbpf.web.js',  // Output bundle file
         path: path.resolve(__dirname, 'dist'),  // Output directory
