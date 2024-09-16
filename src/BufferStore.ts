@@ -2,6 +2,11 @@
  * BufferStore
  * 
  * A LFU+TTL cache for reading buffer segments from a file.
+ * 
+ * It is optimized for use with Blobs and File objects, but is also designed to
+ * work file paths in Node.js.
+ * 
+ * It caches the buffers in segments, with each segment being a small, but fixed size.
  */
 
 'use strict';
@@ -21,14 +26,6 @@ export { Buffer } from "buffer";
 import {
     LFUCache
 } from "./LFUCache";
-/**
- * This module provides a LFU+TTL cache implementation for reading file buffers.
- * 
- * It is optimized for use with Blobs and File objects, but is also designed to
- * work file paths in Node.js.
- * 
- * It caches the buffers in segments, with each segment being a small, but fixed size.
- */
 
 /**
  * Default configuration for the buffer cache.
