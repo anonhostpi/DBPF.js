@@ -24,6 +24,11 @@ import { Buffer } from "buffer";
 export { Buffer } from "buffer";
 
 import {
+    lock, lockSync,
+    unlock, unlockSync,
+} from "proper-lockfile"
+
+import {
     LFUCache
 } from "./LFUCache";
 
@@ -377,15 +382,23 @@ export class NodeBufferStore extends BaseBufferStore {
     /**
      * The file property for the Node.js backing store, if it is a file path.
      */
-    private _path: PathString | undefined;
+    private __path: PathString | undefined;
+    private set _path( file: PathString){
+        if( this.__path ){
+            unlock( this.__path ).then( ()=>{
+                lock( file, { retries: 3, retryInterval: 1000 } ).catch( console.warn );
+            }).catch( console.warn );
+        } else
+            lock( file, { retries: 3, retryInterval: 1000 } ).catch( console.warn ); // only warn if lock fails - also note that this is done async
+        this.on( BaseBufferStore.ON_RECYCLABLE, () =>{
+            unlock( file ).catch( console.warn ); // only warn if unlock fails - also note that this is done async
     /**
      * The setter for the file property.
      * @see {@link BaseBufferStore._file}
      */
     protected set _file( file: File | Blob | PathString ){
-        if( file instanceof Blob )
             this._blob = file;
-        else{
+        } else {
             if( typeof file !== "string" )
                 throw new TypeError("Invalid argument for file, expected File, Blob, or string");
             if( !fs.existsSync( file ) )
