@@ -27,6 +27,10 @@ import {
     LFUCache
 } from "./LFUCache";
 
+import {
+    EventEmitter
+} from "eventemitter3"
+
 /**
  * Default configuration for the buffer cache.
  * 
@@ -66,7 +70,16 @@ const DEFAULTS = {
      * 
      * @defaultValue 30 seconds (1000 * 60 * 0.5)
      */
-    SEGMENT_TTL: 1000 * 60 * 0.5 // 30 seconds
+    SEGMENT_TTL: 1000 * 60 * 0.5, // 30 seconds
+
+    /**
+     * The *minimum* time-to-live (TTL) for the store in milliseconds after becoming recyclable.
+     * 
+     * This value defines how long the store remains recyclable before it is considered disposable.
+     * 
+     * @defaultValue 30 seconds (1000 * 60 * 0.5)
+     */
+    STORE_TTL: 1000 * 60 * 0.5 // 30 seconds
 };
 
 /**
@@ -131,7 +144,7 @@ type BufferStoreDirect = ( offset: BufferOffset, length: BufferLength ) => Promi
  * 
  * @internal
  */
-abstract class BaseBufferStore {
+abstract class BaseBufferStore extends EventEmitter {
     /**
      * Creates a new buffer store
      * 
@@ -155,6 +168,7 @@ abstract class BaseBufferStore {
     ){
         if( segment_size < 8 )
             throw new Error("Segment size must be at least 8 bytes");
+        super();
         (this as any)._file = file;
         if( !length )
             throw new Error("Invalid length");
@@ -188,10 +202,44 @@ abstract class BaseBufferStore {
     readonly count: number;
 
     /**
-     * The setter for the file property. Needs to be implemented by child classes.
+     * Whether the buffer store resource is recyclable on this thread.
+     * 
+     * If false, the buffer store's cache is still active and should not be disposed.
+     * 
+     * @public
+     */
+    get recyclable(): boolean {
+        return this._recyclable;
+    }
+    private _recyclable: boolean = true;
+    /**
+     * Whether the buffer store resource is disposable on this thread.
+     * 
+     * If true, the buffer store's cache is empty and can be disposed.
+     * 
+     * @public
+     */
+    get disposable(): boolean {
+        return this._disposable;
+    }
+    private _disposable: boolean = false;
+    private _dispose_timer: NodeJS.Timeout | undefined;
+
+    /**
+     * The internal setter for the file property. Needs to be implemented by child classes.
      * @see {@link NodeBufferStore._file} and {@link BrowserBufferStore._file}
      */
     protected abstract set _file( file: File | Blob | PathString );
+    /**
+     * The setter for the file property. This is the public interface for setting the file when recycling the buffer store resource.
+     */
+    set file( file: File | Blob | PathString ){
+        if( !this._recyclable )
+            throw new Error("Buffer store is not recyclable yet!");
+        this._file = file;
+        this.emit( BaseBufferStore.ON_RECYCLED );
+    }
+
     /**
      * This is the cache fallthrough method for retrieving non-cached buffer segments.
      * 
@@ -229,6 +277,22 @@ abstract class BaseBufferStore {
         if( !out )
             out = await this._read( index );
         this._cache.set( index, out );
+        if( this.recyclable ){
+
+            this._recyclable = false;
+            clearTimeout( this._dispose_timer );
+            this._disposable = false;
+
+            this._cache.once( LFUCache.ON_EMPTY, () => {
+                this._recyclable = true;
+                this.emit( BaseBufferStore.ON_RECYCLABLE );
+
+                this._dispose_timer = setTimeout(() => {
+                    this._disposable = true;
+                    this.emit( BaseBufferStore.ON_DISPOSABLE );
+                }, DEFAULTS.STORE_TTL );
+            })
+        }
         return out;
     }
 
@@ -243,6 +307,48 @@ abstract class BaseBufferStore {
     get( offset: BufferOffset, length: BufferLength ): BufferReader {
         return new BufferReader( this._get, this._direct, this.segment_size, offset, length );
     }
+
+    /**
+     * Cache Event Propagation
+     * 
+     * The event name for propagating cache events.
+     * @event
+     */
+    static readonly ON_CACHE_EVENT = "cache_action"
+    /**
+     * Recyclable Event
+     * 
+     * The event name for when the LFU cache is empty and the store is ready to be recycled.
+     * @event
+     */
+    static readonly ON_RECYCLABLE = "recyclable"
+    /**
+     * Recycled Event
+     * 
+     * The event name for when the store is recycled.
+     * 
+     * In node environments, this is when the file lock is released.
+     * 
+     * Because of this, the DBPF reader should refresh its values the next time it reads from the store.
+     * @event
+     */
+    static readonly ON_RECYCLED = "recycled"
+    /**
+     * Disposable Event
+     * 
+     * The event name for when the store is ready to be disposed
+     * 
+     * @remarks
+     * 
+     * NOTE that objects in JS/TS can't be truly disposed forcefully. This event is just a signal to the resource manager that the object is ready to be dereferenced.
+     * 
+     * If *any* calling code fails to dereference the object, it will remain in memory. For this reason, this class should only be exposed in the worker thread, and should only be controlled by the resource manager.
+     * 
+     * BufferReaders will keep the instances alive, until they themselves are dereferenced/disposed (this is by design, and should remain so).
+     * 
+     * @event
+     */
+    static readonly ON_DISPOSABLE = "disposable"
 }
 
 /**
