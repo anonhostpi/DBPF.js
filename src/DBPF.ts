@@ -56,7 +56,7 @@ import {
     isAbsolute
 } from "path"
 
-import * as Threading from "./Threading"
+import { ReaderServerPool } from "./ReaderServerPool"
 
 const {
     assign: obj_assign,
