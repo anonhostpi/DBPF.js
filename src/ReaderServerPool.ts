@@ -81,7 +81,7 @@ class ReaderServer {
     private _worker: Worker;
     private _thread: ReturnType<typeof Comlink.wrap>
 
-    kill( force_kill: boolean = false ){
+    kill( force_kill: boolean = false ): void {
         if( this._lifecycle.kill() || force_kill ){
             this._worker.terminate();
             this._thread[ Comlink.releaseProxy ]();
@@ -92,7 +92,7 @@ class ReaderServer {
     total: number = 0;
 
     private _idleTimeout: NodeJS.Timeout | undefined;
-    idle(){
+    idle(): void{
         if( this._idleTimeout ){
             clearTimeout( this._idleTimeout );
             this._idleTimeout = undefined;
@@ -102,7 +102,7 @@ class ReaderServer {
         }, DEFAULTS.MAX_IDLE_TIME );
     }
 
-    async request( url: URL, callback: RequestCallback ){
+    async request( url: URL, callback: RequestCallback ): Promise<void> {
         clearTimeout( this._idleTimeout )
         this.total++;
 
@@ -173,7 +173,7 @@ export class ReaderServerPool {
 
     spawn( 
         force_spawn: boolean = false
-    ){
+    ): ReaderServer | undefined {
         if( force_spawn || this._servers.length <= DEFAULTS.MAX_POOLSIZE ){
             const server = new ReaderServer(
                 this._globalEmitter,
@@ -202,7 +202,7 @@ export class ReaderServerPool {
 
     kill(
         server: ReaderServer | number
-    ){
+    ): void {
         if( typeof server === 'number' ){
             const id = server
             this._servers[ id ].kill()
@@ -211,7 +211,9 @@ export class ReaderServerPool {
         }
     }
 
-    killAll( servers: (ReaderServer | number)[] = this._servers){
+    killAll(
+        servers: (ReaderServer | number)[] = this._servers
+    ): void {
         servers = servers.map( server => {
             if( typeof server === "number" ){
                 return this._servers[ server ]
@@ -273,7 +275,7 @@ export class ReaderServerPool {
         }
     }
 
-    setEmitter( url: URL, emitter: EventEmitMethod ){
+    setEmitter( url: URL, emitter: EventEmitMethod ): void {
         this._emitters.set( url, emitter );
     }
 }
