@@ -10,7 +10,7 @@ const DEFAULTS = {
     MIN_POOLSIZE: 4,
     MAX_POOLSIZE: 16,
     MAX_IDLE_TIME: 30 * 1000, // 30 seconds
-    MAX_REQUEST_TIME: 2 * 1000 // 1.5 seconds 
+    MAX_REQUEST_TIME: 1.5 * 1000 // 1.5 seconds 
 }
 
 type EventEmitMethod = import("eventemitter3").EventEmitter["emit"];
