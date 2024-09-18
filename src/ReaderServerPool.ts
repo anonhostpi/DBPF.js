@@ -3,6 +3,7 @@ import { Endpoint } from 'comlink/dist/umd/protocol'
 import nodeEndpoint from 'comlink/dist/umd/node-adapter.js'
 
 import { EngineDetails } from "./boilerplate"
+import { LoadMap } from './LoadMap';
 
 import { Worker } from 'worker_threads';
 
@@ -17,39 +18,7 @@ type EventEmitMethod = import("eventemitter3").EventEmitter["emit"];
 export type GlobalEventEmitMethod = ( url: URL, event: string, ...args: any[] ) => void;
 
 type RequestCallback = ( selected_reader: any ) => void;
-type RequestGUID = string;
 
-type GUIDArray = RequestGUID[] & {
-    delete( request_id: RequestGUID ): void;
-    generate(): RequestGUID;
-}
-
-class LoadMap extends Map<URL, GUIDArray> {
-    get( url: URL ){
-        let requests = super.get( url );
-        if( !requests ){
-            requests = (()=>{
-                const array: RequestGUID[] = [];
-
-                (array as GUIDArray).delete = ( request_id: RequestGUID ) => {
-                    array.splice( array.indexOf( request_id ), 1 );
-                    /* if( array.length === 0 ){ // performance cost is likely not worth it
-                        this.delete( url );
-                    } */
-                }
-                (array as GUIDArray).generate = () => {
-                    const request_id = crypto.randomUUID();
-                    array.push( request_id );
-                    return request_id;
-                }
-
-                return array as GUIDArray;
-            })()
-            super.set( url, requests );
-        }
-        return requests;
-    }
-}
 
 class ReaderServer {
     constructor(
