@@ -149,19 +149,19 @@ class ReaderServer {
 export class ReaderServerPool {
 
     constructor(
-        poolSize: number = DEFAULTS.MIN_POOLSIZE
+        poolsize: number = DEFAULTS.MIN_POOLSIZE
     ) {
-        if( typeof poolSize !== 'number' ){
-            throw new TypeError('Expected a number');
+        if( typeof poolsize !== 'number' ){
+            throw new TypeError( `Expected poolsize to be a number, received ${typeof poolsize}` );
         }
-        if( poolSize < 1 ){
-            throw new RangeError('Expected a number greater than 0');
+        if( poolsize < 1 ){
+            throw new RangeError(`Expected poolsize to be greater than 0, received ${poolsize}`);
         }
 
-        poolSize = Math.max( poolSize, DEFAULTS.MIN_POOLSIZE );
-        poolSize = Math.min( poolSize, DEFAULTS.MAX_POOLSIZE );
+        poolsize = Math.max( poolsize, DEFAULTS.MIN_POOLSIZE );
+        poolsize = Math.min( poolsize, DEFAULTS.MAX_POOLSIZE );
 
-        for( let i = 0; i < poolSize; i++ ){
+        for( let i = 0; i < poolsize; i++ ){
             this.spawn();
         }
     }
