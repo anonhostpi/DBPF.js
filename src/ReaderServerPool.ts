@@ -61,10 +61,10 @@ class ReaderServer {
     ){
         let worker: Worker | Endpoint;
         if( EngineDetails.supports.node ){
-            this._worker = worker = new Worker( new URL( '../dbpf_worker.js', import.meta.url ) ) // NodeJS
+            this._worker = worker = new Worker( new URL( '../ReaderServer.js', import.meta.url ) ) // NodeJS
             worker = nodeEndpoint( worker );
         } else {
-            this._worker = worker = new Worker( new URL( '../dbpf_worker', import.meta.url ) ) // Webpack 5
+            this._worker = worker = new Worker( new URL( '../ReaderServer', import.meta.url ) ) // Webpack 5
         }
         this._thread = Comlink.wrap( worker as Endpoint );
 
@@ -201,13 +201,14 @@ export class ReaderServerPool {
     }
 
     kill(
-        server: ReaderServer | number
+        server: ReaderServer | number,
+        force_kill: boolean = false
     ): void {
         if( typeof server === 'number' ){
             const id = server
-            this._servers[ id ].kill()
+            this._servers[ id ]?.kill( force_kill )
         } else {
-            server.kill()
+            server.kill( force_kill )
         }
     }
 
