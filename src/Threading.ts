@@ -14,7 +14,7 @@ const DEFAULTS = {
 }
 
 type EventEmitMethod = import("eventemitter3").EventEmitter["emit"];
-type GlobalEventEmitMethod = ( url: URL, event: string, ...args: any[] ) => void;
+export type GlobalEventEmitMethod = ( url: URL, event: string, ...args: any[] ) => void;
 
 type RequestCallback = ( selected_reader: any ) => void;
 type RequestGUID = string;
