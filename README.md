@@ -3,7 +3,7 @@
 Currently, the project is in a pretty good place for forking. It supports DBPF v1.0-v2.x and has good documentation for starting work on v3. However, due to external time constraints, I can not actively maintain this at the moment. I am always willing to offer help to anyone who reaches out to me.
 
 What work needs to be done:
-- Add parsers for each DBPF entry type. I recommend using KaiTai parsers for this as they have a JS transpiler, and they work with yaml.
+- Add parsers/plugins for each DBPF entry type. With the way I have designed my reader, this shouldn't be very hard. I recommend using KaiTai parsers for this as they have a JS transpiler, and they work with yaml.
 
 What work should be done:
 - Work on implementing Web Workers/Worker Threads. This would require a huge refactor, because it would have to change how the buffers are cached. The current LFU cache would be inadequate and lacks methods for sharing data efficiently over separate threads.
