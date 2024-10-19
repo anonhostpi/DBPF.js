@@ -1,3 +1,15 @@
+# STATUS: ON HOLD
+
+Currently, the project is in a pretty good place for forking. It supports DBPF v1.0-v2.x and has good documentation for starting work on v3. However, due to external time constraints, I can not actively maintain this at the moment. I am always willing to offer help to anyone who reaches out to me.
+
+What work needs to be done:
+- Add parsers for each DBPF entry type. I recommend using KaiTai parsers for this as they have a JS transpiler, and they work with yaml.
+
+What work should be done:
+- Work on implementing Web Workers/Worker Threads. This would require a huge refactor, because it would have to change how the buffers are cached. The current LFU cache would be inadequate and lacks methods for sharing data efficiently over separate threads.
+  - However, due to the fact that it is designed to work only with fixed memory sizes and chunk counts, it should be easy to refactor it to use a SharedArrayBuffer in place of Map objects, but this would require a decent amount of knowledge on how to store data at the binary level.
+    - I can help with this, if needed and have been working on an idea to efficiently implement a different cache.
+
 # [DBPF.js](https://anonhostpi.github.io/DBPF.js) a performant dbpf file reader written in TypeScript
 
 This is a performant library for reading DBPF files in TypeScript/JavaScript. Currently, it only parses the header, index and index entries, but a plugin system is planned to allow for reading and handling of the actual data.
